@@ -1,0 +1,45 @@
+.pageContent {
+    display: flex;
+    width: 95%;
+    justify-self: center;
+    justify-content: center;
+}
+
+.video {
+    border-radius: 10px;
+    width: 100%;
+}
+
+.mainVideo {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.videoContainer {
+    width: 100%;
+}
+
+.rightSide {
+    width: 20%;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.rightSideContent {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.tags {
+    display: flex;
+}
+
+.tag {
+    margin-right: 10px;
+    height: 30px;
+}
