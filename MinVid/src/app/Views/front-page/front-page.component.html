@@ -1,1 +1,8 @@
-<p>front-page works!</p>
+<div class="frontPageContainer">
+    <h1>Newest videos</h1>
+    <div class="recommendations">
+        <div class="video" *ngFor="let thumbnail of thumbnails">
+            <img src="{{thumbnail}}" alt="">
+        </div>
+    </div>
+</div>

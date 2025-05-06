@@ -1,1 +1,5 @@
 MinVid/.editorconfig
+MinVid-API/obj/
+MinVid-API/.vs/
+MinVid-API/bin
+DATA/

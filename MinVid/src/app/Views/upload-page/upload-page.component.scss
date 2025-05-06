@@ -1,0 +1,30 @@
+.uploadPageContainer {
+    display: flex;
+    flex-direction: column;
+    width: 95%;
+    justify-self: center;
+    align-items: center;
+    color: white;
+}
+
+.fileZone {
+    width: 20%;
+    border: 1px solid white;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.inputField {
+    width: 21%;
+    color: white;
+}
+
+@media screen and (max-width: 900px) {
+
+    .fileZone {
+        width: 80%;
+    }
+    .inputField {
+        width: 100%;
+    }
+}

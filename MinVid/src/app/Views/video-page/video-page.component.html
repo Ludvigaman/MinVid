@@ -1,16 +1,16 @@
-<div class="pageContent">
+<div class="pageContent"  *ngIf="videoLoaded">
     <div class="mainVideo">
         <div class="videoContainer">
             <video controls class="video" (click)="play()" #videoPlayer>
-                <source src="{{video.url}}" type="video/mp4">
+                <source src="{{videoUrl}}" type="{{videoFormat}}">
                 Your browser does not support the video tag.
             </video>
             <div class="videoInfo">
-                <h2>{{video.title}}</h2>
-                <p>{{video.description}}</p>
+                <h2>{{videoMetadata.title}}</h2>
+                <p>{{videoMetadata.description}}</p>
                 <div class="tags">
-                    <ng-container *ngFor="let tag of video.tags">
-                        <a mat-stroked-button href="/tags/{{tag}}" class="tag">{{tag}}</a>
+                    <ng-container *ngFor="let tag of videoMetadata.tags">
+                        <a mat-stroked-button href="/tags/{{tag}}" class="tag">{{ capitalize(tag) }}</a>
                     </ng-container>
                 </div>
             </div>
@@ -18,9 +18,12 @@
     </div>
     <div class="rightSide">
         <div class="rightSideContent">
-            <h2 style="margin: 0;">More like this</h2>
-            <ng-container *ngFor="let tag of video.tags">
-                
+            <h2 style="margin: 0; margin-bottom: 10px;">More like this</h2>
+            <ng-container *ngFor="let tag of videoMetadata.tags">
+                <div class="thumbnail">
+                    <img src="{{videoThumbnailUrl}}" class="thumbnailImg">
+                    <h3 style="margin: 0">Title</h3>
+                </div>
             </ng-container>
         </div>
     </div>

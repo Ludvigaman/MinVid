@@ -1,1 +1,23 @@
-<p>upload-page works!</p>
+<div class="uploadPageContainer">
+    <h1>Upload</h1>
+    <div class="fileZone">
+        <input type="file" accept="video/*" (change)="onFileSelected($event)">
+    </div>
+    <h3>Title</h3>
+    <mat-form-field appearance="outline" class="inputField">
+        <input matInput style="color: white;" placeholder="Title" [(ngModel)]="title">
+    </mat-form-field>
+    
+    <h3 style="margin-top: 0;">Description</h3>
+    <mat-form-field appearance="outline" class="inputField">
+        <textarea matInput style="color: white;" maxlength="256" placeholder="Description" [(ngModel)]="description"></textarea>
+    </mat-form-field>
+        
+    <h3 style="margin-top: 0;">Tags</h3>
+    <p style="margin-top: 0">Separate each tag with a comma sign</p>
+    <mat-form-field appearance="outline" class="inputField">
+        <textarea matInput style="color: white;" maxlength="256" placeholder="Description" [(ngModel)]="tagsString"></textarea>
+    </mat-form-field>
+
+    <a mat-stroked-button (click)="upload()">Upload</a>
+</div>

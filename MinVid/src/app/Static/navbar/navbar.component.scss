@@ -5,6 +5,8 @@
     flex-direction: row;
     justify-content: space-evenly;
     align-items: center;
+    background-color: rgb(22, 22, 22);
+    border-radius: 0 0 10px 10px;
 }
 
 .sideNavRight {
@@ -38,9 +40,28 @@
 .search-bar {
     margin-top: 20px;
     width: 50%;
+    color: white;
 }
 
 mat-form-field.small {
     --mat-form-field-container-height: 30px;
     --mat-form-field-container-vertical-padding: 8px;
-  }
+}
+
+@media screen and (max-width: 900px) {
+    .navbarContainer {
+        flex-direction: column;
+        height: auto;
+        padding: 10px;
+        width: auto;
+    }
+
+    .sideNavRight {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .search-bar {
+        width: 100%;
+    }
+}

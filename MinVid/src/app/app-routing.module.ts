@@ -9,7 +9,7 @@ const routes: Routes = [
   {path: "", component: FrontPageComponent},
   {path: "login", component: LoginPageComponent},
   {path: "upload", component: UploadPageComponent},
-  {path: "video", component: VideoPageComponent}
+  {path: "video/:videoId", component: VideoPageComponent}
 ];
 
 @NgModule({

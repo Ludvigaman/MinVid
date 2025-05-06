@@ -12,8 +12,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { UploadPageComponent } from './Views/upload-page/upload-page.component';
-import { Guid } from "guid-typescript";
 import { TagPageComponent } from './Views/tag-page/tag-page.component';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -32,9 +33,12 @@ import { TagPageComponent } from './Views/tag-page/tag-page.component';
     AppRoutingModule,
     MatButtonModule,
     MatInputModule,
-    MatIconModule
+    MatIconModule,
+    HttpClientModule,
+    FormsModule
   ],
-  providers: [],
+  providers: [  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+

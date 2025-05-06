@@ -3,11 +3,24 @@
     width: 95%;
     justify-self: center;
     justify-content: center;
+    color: white;
 }
 
 .video {
     border-radius: 10px;
     width: 100%;
+}
+
+.thumbnail {
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.thumbnailImg {
+    width: 100%;
+    border-radius: 10px;
 }
 
 .mainVideo {
@@ -18,7 +31,7 @@
 }
 
 .videoContainer {
-    width: 100%;
+    width: 95%;
 }
 
 .rightSide {
@@ -31,8 +44,8 @@
 .rightSideContent {
     width: 100%;
     display: flex;
-    flex-direction: row;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }
 
 .tags {
@@ -42,4 +55,28 @@
 .tag {
     margin-right: 10px;
     height: 30px;
+}
+
+@media screen and (max-width: 900px) {
+    .pageContent {
+        display: flex;
+        flex-direction: column;
+        width: 95%;
+        justify-self: center;
+        justify-content: center;
+        color: white;
+    }
+
+    .mainVideo {
+        width: 100%;
+    }
+
+    .rightSide {
+        margin-top: 50px;
+        width: 100%;
+    }
+
+    .rightSideContent {
+        align-items: flex-start;
+    }
 }

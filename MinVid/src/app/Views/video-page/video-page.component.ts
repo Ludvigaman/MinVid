@@ -1,5 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Video } from '../../Models/video';
+import { VideoMetadata } from '../../Models/videoMetadata';
+import { ActivatedRoute } from '@angular/router'; // To get the videoId from route params
+import { FileServiceService } from '../../Services/file-service.service';
 
 @Component({
   selector: 'app-video-page',
@@ -11,14 +13,29 @@ export class VideoPageComponent implements OnInit {
   @ViewChild('videoPlayer') videoplayer: ElementRef;
 
   paused = false;
-  video: Video;
+  videoMetadata: VideoMetadata;
+  videoUrl: string;
+  videoThumbnailUrl: string;
+  videoFormat: string;
 
-  constructor(){
+  videoLoaded = false;
+
+  constructor(private videoService: FileServiceService, private route: ActivatedRoute){
 
   }
 
   ngOnInit(){
-    this.video = new Video("Test", "/assets/videos/af169eb7-0707-453a-a02b-d7e5d2f8eefc.mp4", "Denna videon ør najs!",["TestTag", "AnotherTag"]);
+    const videoId = this.route.snapshot.paramMap.get('videoId') || ''; 
+
+    if (videoId) {
+      this.videoService.getVideoMetadata(videoId).subscribe((videoData: VideoMetadata) => {
+        this.videoMetadata = videoData; // Set the video metadata
+        this.videoThumbnailUrl = this.videoService.getThumbnailUrl(videoId);
+        this.videoFormat = "video/" + this.videoMetadata.format;
+        this.videoUrl = this.videoService.getVideoUrl(videoId) + `?cb=${Date.now()}`;
+        this.videoLoaded = true;
+      });
+    }  
   }
 
   play() {
@@ -29,5 +46,10 @@ export class VideoPageComponent implements OnInit {
       this.videoplayer?.nativeElement.pause();
       this.paused = true;
     }
+  }
+
+  capitalize(input: string){
+    if (!input) return '';
+    return input.charAt(0).toUpperCase() + input.slice(1);
   }
 }
