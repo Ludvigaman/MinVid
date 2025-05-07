@@ -19,5 +19,6 @@
         <textarea matInput style="color: white;" maxlength="256" placeholder="Description" [(ngModel)]="tagsString"></textarea>
     </mat-form-field>
 
-    <a mat-stroked-button (click)="upload()">Upload</a>
+    <a mat-stroked-button (click)="upload()" *ngIf="!isUploading">Upload</a>
+    <h4 *ngIf="isUploading">Please wait while file uploads...</h4>
 </div>

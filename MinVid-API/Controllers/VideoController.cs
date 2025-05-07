@@ -13,10 +13,30 @@ namespace MinVid_API.Controllers
             _videoService = videoService;
         }
 
+        [HttpGet("login/{password}")]
+        public bool Login(string password)
+        {
+            return _videoService.Login(password);
+        }
+
+        [HttpGet("delete/{videoId}")]
+        public bool Delete(string videoId)
+        {
+            return _videoService.Delete(videoId);
+        }
+
         [HttpGet("getAllVideos")]
         public List<VideoMetadata> GetCatalog()
         {
             var videos = _videoService.GetVideoMetadataCatalog();
+            return videos;
+        }
+
+        [HttpPost("search")]
+        public List<VideoMetadata> Search([FromBody] string[] tags)
+        {
+            var list = tags.ToList();
+            var videos = _videoService.Search(list);
             return videos;
         }
 
@@ -32,6 +52,20 @@ namespace MinVid_API.Controllers
         {
             var video = _videoService.GetVideoMetadata(videoId);
             return video;
+        }
+
+        [HttpGet("getRecommended/{videoId}")]
+        public List<VideoMetadata> GetRecommended(string videoId)
+        {
+            var videos = _videoService.GetSimilar(videoId);
+            return videos;
+        }
+
+        [HttpGet("getVideosWithTag/{tag}")]
+        public List<VideoMetadata> GetVideosWithTag(string tag)
+        {
+            var videos = _videoService.GetWithTag(tag);
+            return videos;
         }
 
         [HttpGet("getThumbnail/{videoId}")]
@@ -69,7 +103,7 @@ namespace MinVid_API.Controllers
         }
 
         [HttpPost("upload")]
-        [RequestSizeLimit(500_000_000)] // optional: limit to 500MB
+        [RequestSizeLimit(long.MaxValue)]
         public async Task<IActionResult> UploadVideo([FromForm] IFormFile videoFile, [FromForm] string metadataJson)
         {
             if (videoFile == null || string.IsNullOrWhiteSpace(metadataJson))

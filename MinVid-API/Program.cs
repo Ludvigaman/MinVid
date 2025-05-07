@@ -1,4 +1,5 @@
-﻿using MinVid_API.Services;
+﻿using Microsoft.AspNetCore.Http.Features;
+using MinVid_API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,16 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
+});
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = 1_000_000_000; // ~1 GB
+});
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 1_000_000_000; // ~1 GB
 });
 
 var app = builder.Build();

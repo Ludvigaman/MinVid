@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { VideoMetadata } from '../../Models/videoMetadata';
-import { ActivatedRoute } from '@angular/router'; // To get the videoId from route params
+import { ActivatedRoute, Router } from '@angular/router'; // To get the videoId from route params
 import { FileServiceService } from '../../Services/file-service.service';
 
 @Component({
@@ -18,24 +18,42 @@ export class VideoPageComponent implements OnInit {
   videoThumbnailUrl: string;
   videoFormat: string;
 
+  recommendedVideos: VideoMetadata[];
+  recommendedThumbnails: string[];
+
   videoLoaded = false;
 
-  constructor(private videoService: FileServiceService, private route: ActivatedRoute){
+  constructor(private videoService: FileServiceService, private route: ActivatedRoute, private router: Router){
 
   }
 
-  ngOnInit(){
+  async ngOnInit(){
     const videoId = this.route.snapshot.paramMap.get('videoId') || ''; 
 
     if (videoId) {
       this.videoService.getVideoMetadata(videoId).subscribe((videoData: VideoMetadata) => {
+        if(videoData == null){
+          window.location.href="/"
+        }
         this.videoMetadata = videoData; // Set the video metadata
         this.videoThumbnailUrl = this.videoService.getThumbnailUrl(videoId);
         this.videoFormat = "video/" + this.videoMetadata.format;
         this.videoUrl = this.videoService.getVideoUrl(videoId) + `?cb=${Date.now()}`;
         this.videoLoaded = true;
       });
+
+      this.recommendedVideos = await this.videoService.getRecommended(videoId);
+
+      this.recommendedThumbnails = [];
+      this.recommendedVideos.forEach(v => {
+        var thumb = this.videoService.getThumbnailUrl(v.id);
+        this.recommendedThumbnails.push(thumb);
+      })
     }  
+  }
+
+  getRecThumbnail(videoId: string){
+    return this.recommendedThumbnails.find(t => t.includes(videoId));
   }
 
   play() {
@@ -50,6 +68,21 @@ export class VideoPageComponent implements OnInit {
 
   capitalize(input: string){
     if (!input) return '';
-    return input.charAt(0).toUpperCase() + input.slice(1);
+    return input.toLowerCase().charAt(0).toUpperCase() + input.toLowerCase().slice(1);
+  }
+
+  navigate(id: string){
+    window.location.href = "/video/" + id;
+  }
+
+  async delete(id: string){
+    var res = confirm("Are you sure you want to delete this video?");
+    if(res){
+      var res = await this.videoService.delete(id);
+      if(res){
+        alert("Video sucessfully deleted...");
+        window.location.href="/"
+      }
+    }
   }
 }

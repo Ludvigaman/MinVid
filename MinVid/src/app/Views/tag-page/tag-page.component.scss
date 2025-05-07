@@ -1,0 +1,54 @@
+.frontPageContainer {
+    display: flex;
+    width: 95%;
+    justify-self: center;
+    justify-content: center;
+    color: white;
+    flex-direction: column;
+    align-items: center;
+}
+
+.recommendations {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+}
+
+.tags {
+    display: flex;
+}
+
+.video {
+    width: 23%;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.thumbnail {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+@media screen and (max-width: 1800px) {
+
+    .video {
+        width: 30%;
+    }
+}
+
+@media screen and (max-width: 1300px) {
+
+    .video {
+        width: 45%;
+    }
+}
+
+@media screen and (max-width: 900px) {
+
+    .video {
+        width: 100%;
+    }
+}

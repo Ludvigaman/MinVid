@@ -1,8 +1,17 @@
 <div class="frontPageContainer">
-    <h1>Newest videos</h1>
+    <h1>Latest uploads</h1>
     <div class="recommendations">
-        <div class="video" *ngFor="let thumbnail of thumbnails">
-            <img src="{{thumbnail}}" alt="">
+        <div class="video" *ngFor="let meta of catalog" (click)="navigate(meta.id)">
+            <img src="{{getThumbnail(meta.id)}}" class="thumbnail">
+            <div class="info">
+                <h4 style="margin: 0">{{capitalize(meta.title)}}</h4>
+                <div class="tags">
+                    <p style="margin: 0; margin-right: 5px; margin-top: 5px; font-size: small;" *ngFor="let tag of meta.tags"><i>#{{capitalize(tag)}}</i></p>
+                </div>
+            </div>
         </div>
+    </div>
+    <div *ngIf="catalog.length == 0">
+        It doesn't seem like there are any videos yet...
     </div>
 </div>

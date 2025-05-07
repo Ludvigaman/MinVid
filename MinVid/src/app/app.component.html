@@ -1,7 +1,21 @@
-<div class="main">
+<div class="main" *ngIf="isLoggedin">
   <app-navbar style="width: 98vw;"></app-navbar>
   <div class="outlet">
     <router-outlet/>
   </div>
   <app-footer style="width: 98vw;"></app-footer>  
+</div>
+
+<div class="main" *ngIf="!isLoggedin">
+  <div class="outlet">
+    <div class="content">
+      <img src="/assets/images/logo.png" style="width: 20%; margin-bottom: 50px;" alt="">
+      <h2>Login</h2>
+      <mat-form-field appearance="outline" class="inputField">
+        <input matInput style="color: white;" placeholder="Password" type="password" [(ngModel)]="password">
+      </mat-form-field>
+      <a mat-stroked-button (click)="login()">Go!</a>
+      <h4 *ngIf="pwFailed">Wrong password...</h4>
+    </div>
+  </div>
 </div>

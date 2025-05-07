@@ -11,10 +11,42 @@ namespace MinVid_API.Services
     public class VideoService
     {
         private readonly string _dataPath;
+        private readonly string _pw; 
 
         public VideoService(IConfiguration configuration)
         {
             _dataPath = configuration.GetValue<string>("data_path");
+            _pw = configuration.GetValue<string>("password");
+        }
+
+        public bool Login(string password)
+        {
+            return (_pw == password);
+        }
+
+        public bool Delete(string videoId)
+        {
+            if (!Directory.Exists(_dataPath))
+                return false;
+
+            try
+            {
+                // Get all files matching the videoId.* pattern
+                var matchingFiles = Directory.GetFiles(_dataPath, $"{videoId}.*");
+
+                foreach (var file in matchingFiles)
+                {
+                    File.Delete(file);
+                }
+
+                return matchingFiles.Length > 0;
+            }
+            catch (Exception ex)
+            {
+                // Optional: log the error
+                Console.WriteLine($"Error deleting files for videoId {videoId}: {ex.Message}");
+                return false;
+            }
         }
 
         public FileStream GetVideo(string videoId, string format)
@@ -68,6 +100,74 @@ namespace MinVid_API.Services
             }
         }
 
+        public List<VideoMetadata> Search(List<string> tags)
+        {
+
+            if (tags == null || tags.Count == 0)
+                return new List<VideoMetadata>();
+
+            var catalog = GetVideoMetadataCatalog();
+
+            var scoredVideos = catalog
+                .Select(video => new
+                {
+                    Video = video,
+                    Score = video.tags.Intersect(tags, StringComparer.OrdinalIgnoreCase).Count()
+                })
+                .Where(x => x.Score > 0)
+                .OrderByDescending(x => x.Score)
+                .Take(4)
+                .Select(x => x.Video)
+                .ToList();
+
+            return scoredVideos;
+        }
+
+        public List<VideoMetadata> GetSimilar(string videoId)
+        {
+            var metadata = GetVideoMetadata(videoId);
+            if (metadata == null)
+                return new List<VideoMetadata>();
+
+            List<string> tags = metadata.tags;
+
+            if (tags == null || tags.Count == 0)
+                return new List<VideoMetadata>();
+
+            var catalog = GetVideoMetadataCatalog();
+
+            var scoredVideos = catalog
+                .Where(video => !string.Equals(video.id, videoId, StringComparison.OrdinalIgnoreCase)) // Exclude self
+                .Select(video => new
+                {
+                    Video = video,
+                    Score = video.tags.Intersect(tags, StringComparer.OrdinalIgnoreCase).Count()
+                })
+                .Where(x => x.Score > 0)
+                .OrderByDescending(x => x.Score)
+                .Take(4)
+                .Select(x => x.Video)
+                .ToList();
+
+            return scoredVideos;
+        }
+
+        public List<VideoMetadata> GetWithTag(string tag)
+        {
+            if (string.IsNullOrWhiteSpace(tag))
+                return new List<VideoMetadata>();
+
+            var catalog = GetVideoMetadataCatalog();
+
+            var matchedVideos = catalog
+                .Where(video => video.tags.Any(t => string.Equals(t, tag, StringComparison.OrdinalIgnoreCase)))
+                .OrderByDescending(video => video.uploadDate) // Sort by upload date (newest first)
+                .ToList();
+
+            return matchedVideos;
+        }
+
+
         public List<VideoMetadata> GetVideoMetadataCatalog()
         {
             var videos = new List<VideoMetadata>();
@@ -110,7 +210,7 @@ namespace MinVid_API.Services
 
             var jsonFiles = Directory.GetFiles(_dataPath, "*.json")
                                      .OrderByDescending(file => File.GetLastWriteTime(file)) 
-                                     .Take(10); 
+                                     .Take(12); 
 
             foreach (var file in jsonFiles)
             {
@@ -165,7 +265,7 @@ namespace MinVid_API.Services
 
             var ffmpegProcess = new System.Diagnostics.Process();
             ffmpegProcess.StartInfo.FileName = ffmpegPath;
-            ffmpegProcess.StartInfo.Arguments = $"-i \"{videoPath}\" -ss 00:00:01 -vframes 1 \"{thumbnailPath}\"";
+            ffmpegProcess.StartInfo.Arguments = $"-i \"{videoPath}\" -ss 00:00:04 -vframes 1 \"{thumbnailPath}\"";
             ffmpegProcess.StartInfo.UseShellExecute = false;
             ffmpegProcess.StartInfo.CreateNoWindow = true;
             ffmpegProcess.StartInfo.RedirectStandardError = true;

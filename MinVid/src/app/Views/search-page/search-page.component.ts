@@ -1,29 +1,33 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { VideoMetadata } from '../../Models/videoMetadata';
 import { FileServiceService } from '../../Services/file-service.service';
 
 @Component({
-  selector: 'app-tag-page',
+  selector: 'app-search-page',
   standalone: false,
-  templateUrl: './tag-page.component.html',
-  styleUrl: './tag-page.component.scss'
+  templateUrl: './search-page.component.html',
+  styleUrl: './search-page.component.scss'
 })
-export class TagPageComponent {
-  
+export class SearchPageComponent {
   catalog: VideoMetadata[] = [];
   thumbnails: string[] = [];
-  tag: string;
+  searchString: string;
 
   constructor(private videoService: FileServiceService, private router: Router, private route: ActivatedRoute){
 
   }
 
   async ngOnInit() {
-    const tag  = this.route.snapshot.paramMap.get('tag') || ''; 
-    this.tag = tag;
+    const searchString  = this.route.snapshot.paramMap.get('searchString') || ''; 
+    this.searchString = searchString;
 
-    this.catalog = await this.videoService.getVideosWithTag(tag);
+    var searchArray = this.searchString
+        .split(' ')
+        .map(t => t.trim())
+        .filter(t => t.length > 0);
+
+    this.catalog = await this.videoService.search(searchArray);
     if(this.catalog.length > 0){
       this.catalog.forEach(c => {
         var thumbnail = this.videoService.getThumbnailUrl(c.id);

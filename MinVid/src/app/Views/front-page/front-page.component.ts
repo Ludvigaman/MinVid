@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FileServiceService } from '../../Services/file-service.service';
 import { VideoMetadata } from '../../Models/videoMetadata';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-front-page',
@@ -13,7 +14,7 @@ export class FrontPageComponent implements OnInit {
   catalog: VideoMetadata[];
   thumbnails: string[] = [];
 
-  constructor(private videoService: FileServiceService){
+  constructor(private videoService: FileServiceService, private router: Router){
 
   }
 
@@ -21,14 +22,22 @@ export class FrontPageComponent implements OnInit {
     this.catalog = await this.videoService.loadLatest();
     if(this.catalog.length > 0){
       this.catalog.forEach(c => {
-        console.log(c)
         var thumbnail = this.videoService.getThumbnailUrl(c.id);
-        console.log(this.videoService.getThumbnailUrl(c.id))
         this.thumbnails.push(thumbnail);
       });
-  
-      console.log(this.thumbnails)
     }
+  }
 
+  getThumbnail(id: string){
+    return this.thumbnails.find(t => t.includes(id))
+  }
+
+  navigate(id: string){
+    this.router.navigateByUrl("/video/" + id)
+  }
+
+  capitalize(input: string){
+    if (!input) return '';
+    return input.toLowerCase().charAt(0).toUpperCase() + input.toLowerCase().slice(1);
   }
 }

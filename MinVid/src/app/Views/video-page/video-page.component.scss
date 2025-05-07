@@ -9,6 +9,15 @@
 .video {
     border-radius: 10px;
     width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+}
+
+.first {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .thumbnail {
@@ -21,6 +30,8 @@
 .thumbnailImg {
     width: 100%;
     border-radius: 10px;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
 }
 
 .mainVideo {

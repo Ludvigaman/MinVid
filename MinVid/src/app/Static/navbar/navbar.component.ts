@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { AuthServiceService } from '../../Services/auth-service.service';
+import { FileServiceService } from '../../Services/file-service.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -9,14 +10,19 @@ import { AuthServiceService } from '../../Services/auth-service.service';
 })
 export class NavbarComponent {
 
-  _authService: AuthServiceService
+  input: string;
+  
+  constructor(private router: Router){
 
-  constructor(authService: AuthServiceService){
-    this._authService = authService;
+  }
+
+  search(){
+    window.location.href = "search/" + this.input;
   }
 
   logOut(){
-    this._authService.logOut();
+    sessionStorage.clear();
+    location.reload();
   }
 
 }

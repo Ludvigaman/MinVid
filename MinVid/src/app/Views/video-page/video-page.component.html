@@ -6,7 +6,10 @@
                 Your browser does not support the video tag.
             </video>
             <div class="videoInfo">
-                <h2>{{videoMetadata.title}}</h2>
+                <div class="first">
+                    <h2 style="margin-bottom: 0;">{{videoMetadata.title}}</h2>
+                    <label style="display: flex; align-items: center; cursor: pointer;" (click)="delete(videoMetadata.id)">Remove video<mat-icon style="color: #ba005c;">delete_forever</mat-icon></label>
+                </div>
                 <p>{{videoMetadata.description}}</p>
                 <div class="tags">
                     <ng-container *ngFor="let tag of videoMetadata.tags">
@@ -18,12 +21,15 @@
     </div>
     <div class="rightSide">
         <div class="rightSideContent">
-            <h2 style="margin: 0; margin-bottom: 10px;">More like this</h2>
-            <ng-container *ngFor="let tag of videoMetadata.tags">
-                <div class="thumbnail">
-                    <img src="{{videoThumbnailUrl}}" class="thumbnailImg">
-                    <h3 style="margin: 0">Title</h3>
+            <h2 style="margin: 0; margin-bottom: 10px;">Similar videos</h2>
+            <ng-container *ngFor="let data of recommendedVideos">
+                <div class="thumbnail" (click)="navigate(data.id)">
+                    <img src="{{getRecThumbnail(data.id)}}" class="thumbnailImg">
+                    <h3 style="margin: 0">{{capitalize(data.title)}}</h3>
                 </div>
+            </ng-container>
+            <ng-container *ngIf="recommendedVideos.length == 0">
+                <p>No similar videos...</p>
             </ng-container>
         </div>
     </div>

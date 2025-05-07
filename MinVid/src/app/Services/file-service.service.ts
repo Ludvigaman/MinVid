@@ -16,7 +16,34 @@ export class FileServiceService {
     this._client = httpClient;
   }
 
-  //Should be GUID; but it's tricky...
+  //Please don't ever do it like this, this is STUPID and holy moly unsecure... But I don't really care at the moments, it's a private site with no public endpoints.
+  async login(password: string): Promise<boolean> {
+    try {
+      return await firstValueFrom(this._client.get<boolean>(`${API_URL}/login/${password}`));
+    } catch (error) {
+      console.error('Error during login', error);
+      return false;
+    }
+  }
+
+  async delete(id: string): Promise<boolean> {
+    try {
+      return await firstValueFrom(this._client.get<boolean>(`${API_URL}/delete/${id}`));
+    } catch (error) {
+      console.error('Error deleting video', error);
+      return false;
+    }
+  }
+  
+  async search(tags: string[]): Promise<VideoMetadata[]> {
+    try {
+      return await firstValueFrom(this._client.post<VideoMetadata[]>(`${API_URL}/search/`, tags));
+    } catch (error) {
+      console.error('Error during search', error);
+      return [];
+    }
+  }
+
   getVideoMetadata(videoId: string): Observable<VideoMetadata> {
     const url = `${API_URL}/getVideoMetadata/${videoId}`;
     return this._client.get<VideoMetadata>(url);
@@ -34,6 +61,26 @@ export class FileServiceService {
   async loadLatest(): Promise<VideoMetadata[]> {
     try {
       const result = await firstValueFrom(this._client.get<VideoMetadata[]>(API_URL + "/getLatestVideos"));
+      return result;
+    } catch (error) {
+      console.error('Error loading catalog', error);
+      return [];
+    }
+  }
+
+  async getRecommended(videoId: string): Promise<VideoMetadata[]> {
+    try {
+      const result = await firstValueFrom(this._client.get<VideoMetadata[]>(`${API_URL}/getRecommended/${videoId}`));
+      return result;
+    } catch (error) {
+      console.error('Error loading catalog', error);
+      return [];
+    }
+  }
+
+  async getVideosWithTag(tag: string): Promise<VideoMetadata[]> {
+    try {
+      const result = await firstValueFrom(this._client.get<VideoMetadata[]>(`${API_URL}/getVideosWithTag/${tag}`));
       return result;
     } catch (error) {
       console.error('Error loading catalog', error);

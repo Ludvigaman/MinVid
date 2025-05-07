@@ -1,15 +1,17 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { FrontPageComponent } from './Views/front-page/front-page.component';
-import { LoginPageComponent } from './Views/login-page/login-page.component';
 import { UploadPageComponent } from './Views/upload-page/upload-page.component';
 import { VideoPageComponent } from './Views/video-page/video-page.component';
+import { TagPageComponent } from './Views/tag-page/tag-page.component';
+import { SearchPageComponent } from './Views/search-page/search-page.component';
 
 const routes: Routes = [
   {path: "", component: FrontPageComponent},
-  {path: "login", component: LoginPageComponent},
   {path: "upload", component: UploadPageComponent},
-  {path: "video/:videoId", component: VideoPageComponent}
+  {path: "video/:videoId", component: VideoPageComponent},
+  {path: "tags/:tag", component: TagPageComponent},
+  {path: "search/:searchString", component: SearchPageComponent}
 ];
 
 @NgModule({

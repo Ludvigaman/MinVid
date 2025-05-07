@@ -1,5 +1,5 @@
 <div class="frontPageContainer">
-    <h1>Videos tagged with : {{capitalize(tag)}}</h1>
+    <h1>Search result for : {{capitalize(searchString)}}</h1>
     <div class="recommendations">
         <div class="video" *ngFor="let meta of catalog" (click)="navigate(meta.id)">
             <img src="{{getThumbnail(meta.id)}}" class="thumbnail">

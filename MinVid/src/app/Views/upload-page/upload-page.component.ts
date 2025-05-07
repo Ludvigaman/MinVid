@@ -16,6 +16,7 @@ export class UploadPageComponent {
   description: string = '';
   tagsString: string = '';
   selectedFile: File | null = null;
+  isUploading = false
 
   _url = API_URL;
 
@@ -58,9 +59,11 @@ export class UploadPageComponent {
     formData.append('videoFile', this.selectedFile);
     formData.append('metadataJson', JSON.stringify(metadata));
 
+    this.isUploading = true;
     this.http.post<{ id: string }>(`${this._url}/upload`, formData).subscribe(
       res => {
         console.log('Upload success', res);
+        window.location.href = "/video/" + res.id;
       },
       err => {
         console.error('Upload failed', err);
