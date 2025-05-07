@@ -43,7 +43,7 @@ namespace MinVid_API.Controllers
         [HttpGet("getLatestVideos/{count}")]
         public List<VideoMetadata> GetLatestCatalog(int count)
         {
-            var videos = _videoService.GetVideoMetadataCatalogCount(12);
+            var videos = _videoService.GetVideoMetadataCatalogCount(count);
             return videos;
         }
 
