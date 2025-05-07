@@ -201,7 +201,7 @@ namespace MinVid_API.Services
             return videos;
         }
 
-        public List<VideoMetadata> GetVideoMetadataCatalogLastTen()
+        public List<VideoMetadata> GetVideoMetadataCatalogCount(int amount)
         {
             var videos = new List<VideoMetadata>();
 
@@ -210,7 +210,7 @@ namespace MinVid_API.Services
 
             var jsonFiles = Directory.GetFiles(_dataPath, "*.json")
                                      .OrderByDescending(file => File.GetLastWriteTime(file)) 
-                                     .Take(12); 
+                                     .Take(amount); 
 
             foreach (var file in jsonFiles)
             {

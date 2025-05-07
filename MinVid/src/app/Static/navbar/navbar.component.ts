@@ -17,7 +17,11 @@ export class NavbarComponent {
   }
 
   search(){
-    window.location.href = "search/" + this.input;
+    if(this.input == undefined || this.input == "" || this.input == " ") {
+      window.location.href = "search/all";
+    } else {
+      window.location.href = "search/" + this.input;
+    }
   }
 
   logOut(){

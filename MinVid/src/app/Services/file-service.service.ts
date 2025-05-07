@@ -58,9 +58,9 @@ export class FileServiceService {
     return `${API_URL}/video/${videoId}`;
   }
 
-  async loadLatest(): Promise<VideoMetadata[]> {
+  async loadLatest(count: number): Promise<VideoMetadata[]> {
     try {
-      const result = await firstValueFrom(this._client.get<VideoMetadata[]>(API_URL + "/getLatestVideos"));
+      const result = await firstValueFrom(this._client.get<VideoMetadata[]>(API_URL + "/getLatestVideos/" + count));
       return result;
     } catch (error) {
       console.error('Error loading catalog', error);

@@ -3,3 +3,5 @@ MinVid-API/obj/
 MinVid-API/.vs/
 MinVid-API/bin
 DATA/
+MinVid-API/Properties/PublishProfiles/
+MinVid-API/MinVid-API.csproj.user

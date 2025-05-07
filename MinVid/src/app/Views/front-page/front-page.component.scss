@@ -20,7 +20,8 @@
 }
 
 .video {
-    width: 23%;
+    max-width: 23%;
+    height: 100%;
     padding: 10px;
     cursor: pointer;
 }

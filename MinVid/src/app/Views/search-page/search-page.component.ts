@@ -20,19 +20,32 @@ export class SearchPageComponent {
 
   async ngOnInit() {
     const searchString  = this.route.snapshot.paramMap.get('searchString') || ''; 
-    this.searchString = searchString;
+    if(searchString == "all"){
+      this.searchString = "all"
 
-    var searchArray = this.searchString
-        .split(' ')
-        .map(t => t.trim())
-        .filter(t => t.length > 0);
+      this.catalog = await this.videoService.loadLatest(100);
+      if(this.catalog.length > 0){
+        this.catalog.forEach(c => {
+          var thumbnail = this.videoService.getThumbnailUrl(c.id);
+          this.thumbnails.push(thumbnail);
+        });
+      }
 
-    this.catalog = await this.videoService.search(searchArray);
-    if(this.catalog.length > 0){
-      this.catalog.forEach(c => {
-        var thumbnail = this.videoService.getThumbnailUrl(c.id);
-        this.thumbnails.push(thumbnail);
-      });
+    } else {
+      this.searchString = searchString;
+
+      var searchArray = this.searchString
+          .split(' ')
+          .map(t => t.trim())
+          .filter(t => t.length > 0);
+  
+      this.catalog = await this.videoService.search(searchArray);
+      if(this.catalog.length > 0){
+        this.catalog.forEach(c => {
+          var thumbnail = this.videoService.getThumbnailUrl(c.id);
+          this.thumbnails.push(thumbnail);
+        });
+      }
     }
   }
 

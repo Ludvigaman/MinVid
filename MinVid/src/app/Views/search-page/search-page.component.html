@@ -1,5 +1,6 @@
 <div class="frontPageContainer">
-    <h1>Search result for : {{capitalize(searchString)}}</h1>
+    <h1 *ngIf="searchString != 'all'">Search result for : {{capitalize(searchString)}}</h1>
+    <h1 *ngIf="searchString == 'all'">Showing all videos</h1>
     <div class="recommendations">
         <div class="video" *ngFor="let meta of catalog" (click)="navigate(meta.id)">
             <img src="{{getThumbnail(meta.id)}}" class="thumbnail">
@@ -12,6 +13,6 @@
         </div>
     </div>
     <div *ngIf="catalog.length == 0">
-        It doesn't seem like any videos have this tag!
+        It doesn't seem like we found any videos!
     </div>
 </div>
