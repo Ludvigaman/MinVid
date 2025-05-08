@@ -12,13 +12,16 @@ builder.Services.AddScoped<VideoService>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+var allowedOrigin = builder.Configuration["AllowedOrigin"];
+
+
 // Add CORS policy
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
         policy
-            .WithOrigins("http://localhost:4200")
+            .WithOrigins(allowedOrigin)
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
