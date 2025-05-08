@@ -5,6 +5,7 @@ This tube-like application is super simple to set up and takes basically nothing
 - Fully mobile adapted
 - Frontpage (latest 12 videos)
 - Search (by title or tags)
+- Tags index
 - Video recommendations (score based on shared tags)
 - Upload (Currently set to 1GB in _program.cs_) / Delete video features
 - All videos stored locally on the API server, so you can technically add manual videos; or custom thumbnails.
@@ -19,6 +20,9 @@ This tube-like application is super simple to set up and takes basically nothing
 
 **Video page**
 ![videoPage](https://github.com/user-attachments/assets/006988b2-5585-4f98-82be-571852c7383a)
+
+**Tag index**
+![image](https://github.com/user-attachments/assets/54f1693a-a84c-48ff-8c7d-13c655aff0f3)
 
 **Search page**
 ![searchPage](https://github.com/user-attachments/assets/ba3cfae4-b0bc-4ddc-a018-b45e0329308c)
