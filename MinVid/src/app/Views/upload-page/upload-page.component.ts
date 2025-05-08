@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { API_URL } from '../../CONFIG/constants';
 import { HttpClient } from '@angular/common/http';
 import { Guid } from 'guid-typescript';
 import { VideoMetadata } from '../../Models/videoMetadata';
+import { ConfigServiceService } from '../../Services/config-service.service';
 
 @Component({
   selector: 'app-upload-page',
@@ -18,10 +18,12 @@ export class UploadPageComponent {
   selectedFile: File | null = null;
   isUploading = false
 
-  _url = API_URL;
+  _url: string;
 
-  constructor(private http: HttpClient){
-
+  constructor(private http: HttpClient, private config: ConfigServiceService){
+    this.config.getConfig().subscribe(config => {
+      this._url = config.API_URL;
+    })
   }
 
   onFileSelected(event: any) {
