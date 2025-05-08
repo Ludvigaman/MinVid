@@ -12,6 +12,10 @@ This tube-like application is super simple to set up and takes basically nothing
 - Automatic thumbnail generation using FFMPEG (comes packages with the API)
 - Login feature (extremely simple, no users; just a "global" password)
 
+**Things I want to add**
+- Perhaps an image board, so you can store images too
+- Comic / Manga etc?
+
 **Login**
 ![login](https://github.com/user-attachments/assets/3bc42560-02be-441a-a01a-be9784a3479f)
 
