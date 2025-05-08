@@ -5,11 +5,16 @@ This tube-like application is super simple to set up and takes basically nothing
 - Fully mobile adapted
 - Frontpage (latest 12 videos)
 - Search (by title or tags)
+- Tags index
 - Video recommendations (score based on shared tags)
 - Upload (Currently set to 1GB in _program.cs_) / Delete video features
 - All videos stored locally on the API server, so you can technically add manual videos; or custom thumbnails.
 - Automatic thumbnail generation using FFMPEG (comes packages with the API)
 - Login feature (extremely simple, no users; just a "global" password)
+
+**Things I want to add**
+- Perhaps an image board, so you can store images too
+- Comic / Manga etc?
 
 **Login**
 ![login](https://github.com/user-attachments/assets/3bc42560-02be-441a-a01a-be9784a3479f)
@@ -19,6 +24,9 @@ This tube-like application is super simple to set up and takes basically nothing
 
 **Video page**
 ![videoPage](https://github.com/user-attachments/assets/006988b2-5585-4f98-82be-571852c7383a)
+
+**Tag index**
+![image](https://github.com/user-attachments/assets/54f1693a-a84c-48ff-8c7d-13c655aff0f3)
 
 **Search page**
 ![searchPage](https://github.com/user-attachments/assets/ba3cfae4-b0bc-4ddc-a018-b45e0329308c)
