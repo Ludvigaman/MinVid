@@ -2,6 +2,7 @@
 This tube-like application is super simple to set up and takes basically nothing to host. It's built with an Angular front end, and a .NET backend.
 
 **Features**
+- Fully mobile adapted
 - Frontpage (latest 12 videos)
 - Search (by title or tags)
 - Video recommendations (score based on shared tags)
