@@ -14,6 +14,7 @@ This tube-like application is super simple to set up and takes basically nothing
 
 **Things I want to add**
 - Perhaps an image board, so you can store images too
+- The option to enable subtitles and add SRT files etc.
 - Comic / Manga etc?
 
 **Login**
