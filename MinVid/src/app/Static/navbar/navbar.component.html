@@ -4,7 +4,7 @@
     </div>
 
     <mat-form-field appearance="outline" class="search-bar small" >
-        <input style="color: white; " matInput placeholder="Search by tags" [(ngModel)]="input" (keyup.enter)="search()"/>
+        <input style="color: white; " matInput placeholder="Search" [(ngModel)]="input" (keyup.enter)="search()"/>
         <button mat-icon-button matSuffix (click)="search()">
             <mat-icon style="color: white">search</mat-icon>
         </button>

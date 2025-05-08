@@ -112,7 +112,10 @@ namespace MinVid_API.Services
                 .Select(video => new
                 {
                     Video = video,
+                    // Match score: +1 for each tag match, +2 if title contains the term
                     Score = video.tags.Intersect(tags, StringComparer.OrdinalIgnoreCase).Count()
+                            + tags.Count(tag => video.title != null &&
+                                                    video.title.IndexOf(tag, StringComparison.OrdinalIgnoreCase) >= 0) * 2
                 })
                 .Where(x => x.Score > 0)
                 .OrderByDescending(x => x.Score)

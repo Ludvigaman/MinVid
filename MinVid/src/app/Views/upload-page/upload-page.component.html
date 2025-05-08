@@ -16,7 +16,7 @@
     <h3 style="margin-top: 0;">Tags</h3>
     <p style="margin-top: 0">Separate each tag with a comma sign</p>
     <mat-form-field appearance="outline" class="inputField">
-        <textarea matInput style="color: white;" maxlength="256" placeholder="Description" [(ngModel)]="tagsString"></textarea>
+        <textarea matInput style="color: white;" maxlength="256" placeholder="Tags - separate with comma" [(ngModel)]="tagsString"></textarea>
     </mat-form-field>
 
     <a mat-stroked-button (click)="upload()" *ngIf="!isUploading">Upload</a>
