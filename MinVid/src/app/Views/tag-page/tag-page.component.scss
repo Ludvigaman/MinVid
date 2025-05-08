@@ -33,6 +33,41 @@
     border-radius: 5px;
 }
 
+.tag-groups {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .tag-group {
+    width: 30%;
+    margin-bottom: 30px;
+  }
+  
+  .tag-group h2 {
+    border-bottom: 1px solid white;
+    margin-bottom: 10px;
+  }
+  
+  .tag-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .tag-list li {
+    margin: 5px 0;
+  }
+  
+  .tag-list a {
+    color: #ffffff;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .tag-list a:hover {
+    text-decoration: underline;
+  }
+
 @media screen and (max-width: 1800px) {
 
     .video {

@@ -68,6 +68,13 @@ namespace MinVid_API.Controllers
             return videos;
         }
 
+        [HttpGet("getTagList")]
+        public List<string> GetTagList()
+        {
+            var videos = _videoService.GetTagList();
+            return videos;
+        }
+
         [HttpGet("getThumbnail/{videoId}")]
         public IActionResult GetThumbnail(string videoId)
         {

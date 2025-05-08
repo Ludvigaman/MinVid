@@ -88,6 +88,16 @@ export class FileServiceService {
     }
   }
 
+  async getTagList(): Promise<string[]> {
+    try {
+      const result = await firstValueFrom(this._client.get<string[]>(`${API_URL}/getTagList/`));
+      return result;
+    } catch (error) {
+      console.error('Error loading catalog', error);
+      return [];
+    }
+  }
+
   async loadCatalog(): Promise<VideoMetadata[]> {
     try {
       const result = await firstValueFrom(this._client.get<VideoMetadata[]>(API_URL + "/getAllVideos"));

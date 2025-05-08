@@ -14,6 +14,13 @@ export class TagPageComponent {
   catalog: VideoMetadata[] = [];
   thumbnails: string[] = [];
   tag: string;
+  allTags: string[];
+  showTagList = false;
+  groupedTags: { [key: string]: string[] } = {};
+
+  alphabeticalSort = (a: { key: string }, b: { key: string }) => {
+    return a.key.localeCompare(b.key);
+  };
 
   constructor(private videoService: FileServiceService, private router: Router, private route: ActivatedRoute){
 
@@ -21,15 +28,40 @@ export class TagPageComponent {
 
   async ngOnInit() {
     const tag  = this.route.snapshot.paramMap.get('tag') || ''; 
-    this.tag = tag;
 
-    this.catalog = await this.videoService.getVideosWithTag(tag);
-    if(this.catalog.length > 0){
-      this.catalog.forEach(c => {
-        var thumbnail = this.videoService.getThumbnailUrl(c.id);
-        this.thumbnails.push(thumbnail);
-      });
+    if(tag == "all"){
+      this.tag = "all"
+      this.showTagList = true;
+      
+      this.allTags = await this.videoService.getTagList();
+
+      this.groupedTags = this.allTags.reduce((groups, tag) => {
+        const key = tag.trim().charAt(0).toUpperCase();
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(tag);
+        return groups;
+      }, {} as { [key: string]: string[] });
+  
+      for (const key in this.groupedTags) {
+        this.groupedTags[key].sort((a, b) => a.localeCompare(b));
+      }
+
+    } else {
+      this.tag = tag;
+
+      this.catalog = await this.videoService.getVideosWithTag(tag);
+      if(this.catalog.length > 0){
+        this.catalog.forEach(c => {
+          var thumbnail = this.videoService.getThumbnailUrl(c.id);
+          this.thumbnails.push(thumbnail);
+        });
+      }
     }
+
+  }
+
+  navigateToTag(tag: string) {
+    window.location.href = "/tags/" + tag;
   }
 
   getThumbnail(id: string){

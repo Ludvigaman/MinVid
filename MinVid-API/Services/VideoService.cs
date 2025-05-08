@@ -170,6 +170,31 @@ namespace MinVid_API.Services
             return matchedVideos;
         }
 
+        public List<string> GetTagList()
+        {
+            var catalog = GetVideoMetadataCatalog();
+            if (catalog.Count == 0)
+                return new List<string>();
+
+            var tagList = new List<string>();
+
+            foreach (var meta in catalog)
+            {
+                if (meta.tags == null) continue;
+
+                foreach (var tag in meta.tags)
+                {
+                    var trimmedTag = tag.Trim();
+                    if (!tagList.Contains(trimmedTag, StringComparer.OrdinalIgnoreCase))
+                    {
+                        tagList.Add(trimmedTag);
+                    }
+                }
+            }
+
+            return tagList;
+        }
+
 
         public List<VideoMetadata> GetVideoMetadataCatalog()
         {

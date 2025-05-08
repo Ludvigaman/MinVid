@@ -1,4 +1,4 @@
-<div class="frontPageContainer">
+<div class="frontPageContainer" *ngIf="!showTagList">
     <h1>Videos tagged with : {{capitalize(tag)}}</h1>
     <div class="recommendations">
         <div class="video" *ngFor="let meta of catalog" (click)="navigate(meta.id)">
@@ -13,5 +13,24 @@
     </div>
     <div *ngIf="catalog.length == 0">
         It doesn't seem like any videos have this tag!
+    </div>
+</div>
+
+<div class="frontPageContainer" *ngIf="showTagList">
+    <h1>Browse by tag</h1>
+    <div class="tag-groups">
+        <ng-container *ngFor="let group of groupedTags | keyvalue: alphabeticalSort">
+          <div class="tag-group">
+            <h2>{{ group.key }}</h2>
+            <ul class="tag-list">
+              <li *ngFor="let tag of group.value">
+                <a (click)="navigateToTag(tag)">#{{ capitalize(tag) }}</a>
+              </li>
+            </ul>
+          </div>
+        </ng-container>
+      </div>
+    <div *ngIf="allTags.length == 0">
+        It doesn't seem like there exist any tags yet!
     </div>
 </div>
