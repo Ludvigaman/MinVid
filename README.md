@@ -28,6 +28,9 @@ This tube-like application is super simple to set up and takes basically nothing
 **Video page**
 ![videoPage](https://github.com/user-attachments/assets/006988b2-5585-4f98-82be-571852c7383a)
 
+**Edit video**
+![editPage](https://github.com/user-attachments/assets/182d9809-7b02-446c-8281-abb2cbfd66eb)
+
 **Tag index**
 ![image](https://github.com/user-attachments/assets/54f1693a-a84c-48ff-8c7d-13c655aff0f3)
 
@@ -39,3 +42,6 @@ This tube-like application is super simple to set up and takes basically nothing
 
 **Tag page**
 ![tagPage](https://github.com/user-attachments/assets/9e615edf-4d5a-4f03-a139-f9e04ece0431)
+
+**Settings page**
+![settingsPage](https://github.com/user-attachments/assets/fd10d086-24a8-4a1e-b175-5eda444dbe9e)
