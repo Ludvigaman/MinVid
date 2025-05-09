@@ -1,0 +1,20 @@
+<div class="editContainer">
+    <h2>Edit video</h2>
+    <h3 style="margin-top: 0;">New title</h3>
+    <mat-form-field appearance="outline" class="inputField">
+        <input matInput style="color: white;" placeholder="Title" [(ngModel)]="title">
+    </mat-form-field>
+    
+    <h3 style="margin-top: 0;">New description</h3>
+    <mat-form-field appearance="outline" class="inputField">
+        <textarea matInput style="color: white;" maxlength="256" placeholder="Description" [(ngModel)]="description"></textarea>
+    </mat-form-field>
+        
+    <h3 style="margin-top: 0;">Add tags</h3>
+    <p style="margin-top: 0">Separate each tag with a comma sign</p>
+    <mat-form-field appearance="outline" class="inputField">
+        <textarea matInput style="color: white;" maxlength="256" placeholder="Tags - separate with comma" [(ngModel)]="tagString"></textarea>
+    </mat-form-field>
+
+    <a mat-stroked-button (click)="submit()">Save</a>
+</div>

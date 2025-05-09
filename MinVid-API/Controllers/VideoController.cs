@@ -40,6 +40,13 @@ namespace MinVid_API.Controllers
             return videos;
         }
 
+        [HttpPost("updateMetadata")]
+        public async Task<bool> UpdateMetadata([FromBody] VideoMetadata metadata)
+        {
+            var res = await _videoService.UpdateMetadataAsync(metadata);
+            return res;
+        }
+
         [HttpGet("getLatestVideos/{count}")]
         public List<VideoMetadata> GetLatestCatalog(int count)
         {
@@ -87,6 +94,13 @@ namespace MinVid_API.Controllers
             {
                 return NotFound("Thumbnail not found");
             }
+        }
+
+        [HttpGet("scanLibrary/")]
+        public async Task<List<string>> ScanLibrary()
+        {
+            var amountScanned = await _videoService.InitializeUnprocessedVideos();
+            return amountScanned;
         }
 
         [HttpGet("video/{videoId}")]

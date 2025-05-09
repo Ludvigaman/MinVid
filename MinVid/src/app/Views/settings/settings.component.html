@@ -1,0 +1,18 @@
+<div class="uploadPageContainer">
+    <h1>Log out</h1>
+    <a mat-stroked-button class="settingsBtn" (click)="logOut()">Log out</a>
+    <br><br>
+    <h1>Library import</h1>
+    <p>If you wish to import a batch of external videos directly, without uploading them manually; you can do that here.<br>
+    Simply create a new folder inside your DATA folder; and name it "import". <br>
+    Move all your files into the import folder; then press the <b>Scan library</b> button below.</p>
+    <a mat-stroked-button class="settingsBtn" (click)="scan()" *ngIf="!scanning">Scan library</a>
+    <mat-spinner *ngIf="scanning" diameter="50" style="margin-top: 29px;"></mat-spinner>
+    <p *ngIf="scanning">Scanning...</p>
+    <p *ngIf="!scanning && result > 0">{{result}} videos imported...</p>
+    <p>After the process has finished; all videos imported will be given their file name, and the tag "Non-indexed";  <br>
+    you don't have to stay and wait on this page; you can come back later. <br>
+    Just use the button below to go to the import page. You can change the title, description and tags on the corresponding video page.</p>
+    <a mat-stroked-button class="settingsBtn" href="/tags/non-indexed">Non-indexed videos</a>
+
+</div>

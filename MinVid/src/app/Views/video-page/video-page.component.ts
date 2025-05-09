@@ -2,6 +2,8 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { VideoMetadata } from '../../Models/videoMetadata';
 import { ActivatedRoute, Router } from '@angular/router'; // To get the videoId from route params
 import { FileServiceService } from '../../Services/file-service.service';
+import { MatDialog } from '@angular/material/dialog';
+import { EditComponent } from './edit/edit.component';
 
 @Component({
   selector: 'app-video-page',
@@ -23,7 +25,7 @@ export class VideoPageComponent implements OnInit {
 
   videoLoaded = false;
 
-  constructor(private videoService: FileServiceService, private route: ActivatedRoute, private router: Router){
+  constructor(private videoService: FileServiceService, private route: ActivatedRoute, private router: Router, private dialog: MatDialog){
 
   }
 
@@ -50,6 +52,21 @@ export class VideoPageComponent implements OnInit {
         this.recommendedThumbnails.push(thumb);
       })
     }  
+  }
+
+  async edit(){
+    const dialogRef = this.dialog.open(EditComponent, {
+      data: this.videoMetadata,
+      width: '50%',
+      height: "50%"
+    });
+
+    dialogRef.afterClosed().subscribe(async (result: VideoMetadata) => {
+      var res = await this.videoService.updateVideoMetadata(result);
+      if(res){
+        alert("Changes saved sucessfully...");
+      } 
+    });
   }
 
   getRecThumbnail(videoId: string){

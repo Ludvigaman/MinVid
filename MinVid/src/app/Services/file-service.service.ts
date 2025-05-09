@@ -17,7 +17,12 @@ export class FileServiceService {
     
     this.config.getConfig().subscribe(config => {
       this.API_URL = config.API_URL;
+      sessionStorage.setItem("API_URL", config.API_URL);
     })
+
+    if(this.API_URL == undefined){
+      this.API_URL = sessionStorage.getItem("API_URL")!;
+    }
   }
 
   //Please don't ever do it like this, this is STUPID and holy moly unsecure... But I don't really care at the moments, it's a private site with no public endpoints.
@@ -27,6 +32,15 @@ export class FileServiceService {
     } catch (error) {
       console.error('Error during login', error);
       return false;
+    }
+  }
+
+  async scanLibrary(): Promise<string[]> {
+    try {
+      return await firstValueFrom(this._client.get<string[]>(`${this.API_URL}/scanLibrary/`));
+    } catch (error) {
+      console.error('Error during login', error);
+      return [];
     }
   }
 
@@ -45,6 +59,15 @@ export class FileServiceService {
     } catch (error) {
       console.error('Error during search', error);
       return [];
+    }
+  }
+
+  async updateVideoMetadata(metadata: VideoMetadata): Promise<boolean> {
+    try {
+      return await firstValueFrom(this._client.post<boolean>(`${this.API_URL}/updateMetadata/`, metadata));
+    } catch (error) {
+      console.error('Error during search', error);
+      return false;
     }
   }
 

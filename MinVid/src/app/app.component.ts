@@ -38,6 +38,7 @@ export class AppComponent implements OnInit {
       this.isLoggedin = true;
     } else {
       sessionStorage.clear();
+      localStorage.clear();
       this.pwFailed = true;
       this.isLoggedin = false;
     }

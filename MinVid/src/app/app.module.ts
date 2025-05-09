@@ -15,6 +15,9 @@ import { TagPageComponent } from './Views/tag-page/tag-page.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { SearchPageComponent } from './Views/search-page/search-page.component';
+import { SettingsComponent } from './Views/settings/settings.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { EditComponent } from './Views/video-page/edit/edit.component';
 
 
 @NgModule({
@@ -26,7 +29,9 @@ import { SearchPageComponent } from './Views/search-page/search-page.component';
     FooterComponent,
     UploadPageComponent,
     TagPageComponent,
-    SearchPageComponent
+    SearchPageComponent,
+    SettingsComponent,
+    EditComponent
   ],
   imports: [
     BrowserModule,
@@ -35,7 +40,8 @@ import { SearchPageComponent } from './Views/search-page/search-page.component';
     MatInputModule,
     MatIconModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    MatProgressSpinnerModule
   ],
   providers: [  ],
   bootstrap: [AppComponent]

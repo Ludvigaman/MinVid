@@ -11,11 +11,13 @@ namespace MinVid_API.Services
     public class VideoService
     {
         private readonly string _dataPath;
+        private readonly string _importPath;
         private readonly string _pw; 
 
         public VideoService(IConfiguration configuration)
         {
             _dataPath = configuration.GetValue<string>("data_path");
+            _importPath = _dataPath + "\\import";
             _pw = configuration.GetValue<string>("password");
         }
 
@@ -303,6 +305,104 @@ namespace MinVid_API.Services
             ffmpegProcess.WaitForExit();
 
             return metadata.id.ToString();
+        }
+
+        public async Task<bool> UpdateMetadataAsync(VideoMetadata updatedData)
+        {
+            string metadataPath = Path.Combine(_dataPath, $"{updatedData.id}.json");
+
+            if (!File.Exists(metadataPath))
+                return false; // Metadata file not found
+
+            try
+            {
+                // Load the existing metadata
+                var existingJson = await File.ReadAllTextAsync(metadataPath);
+                var existingMetadata = JsonSerializer.Deserialize<VideoMetadata>(existingJson, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                if (existingMetadata == null)
+                    return false;
+
+                existingMetadata.title = updatedData.title ?? existingMetadata.title;
+                existingMetadata.description = updatedData.description ?? existingMetadata.description;
+                existingMetadata.tags = updatedData.tags ?? existingMetadata.tags;
+                existingMetadata.format = updatedData.format ?? existingMetadata.format;
+
+                var newJson = JsonSerializer.Serialize(existingMetadata, new JsonSerializerOptions { WriteIndented = true });
+                await File.WriteAllTextAsync(metadataPath, newJson);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating metadata: {ex.Message}");
+                return false;
+            }
+        }
+
+
+        public async Task<List<string>> InitializeUnprocessedVideos()
+        {
+            string stagingPath = _importPath;
+            Directory.CreateDirectory(stagingPath);
+
+            string libraryPath = _dataPath;
+
+            var videoFiles = Directory.GetFiles(stagingPath, "*.*")
+                .Where(f => f.EndsWith(".mp4") || f.EndsWith(".mov") || f.EndsWith(".avi")) // Add formats as needed
+                .ToList();
+
+            var initializedIds = new List<string>();
+
+            foreach (var videoFile in videoFiles)
+            {
+                var newId = Guid.NewGuid().ToString();
+                var format = Path.GetExtension(videoFile).TrimStart('.');
+                var newFileName = $"{newId}.{format}";
+                var newPath = Path.Combine(libraryPath, newFileName);
+
+                File.Move(videoFile, newPath);
+
+                var metadata = new VideoMetadata
+                {
+                    id = newId,
+                    title = Path.GetFileNameWithoutExtension(videoFile),
+                    description = "Imported video",
+                    tags = new List<string> { "non-indexed" },
+                    uploadDate = DateTime.Now,
+                    format = format,
+                };
+
+                var metadataJson = JsonSerializer.Serialize(metadata, new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    PropertyNameCaseInsensitive = true
+                });
+
+                await File.WriteAllTextAsync(Path.Combine(libraryPath, newId + ".json"), metadataJson);
+
+                var thumbnailPath = Path.Combine(_dataPath, metadata.id + ".jpg");
+
+                var ffmpegPath = Path.Combine(AppContext.BaseDirectory, "Utils", "ffmpeg.exe");
+
+                var ffmpegProcess = new System.Diagnostics.Process();
+                ffmpegProcess.StartInfo.FileName = ffmpegPath;
+                ffmpegProcess.StartInfo.Arguments = $"-i \"{newPath}\" -ss 00:00:04 -vframes 1 \"{thumbnailPath}\"";
+                ffmpegProcess.StartInfo.UseShellExecute = false;
+                ffmpegProcess.StartInfo.CreateNoWindow = true;
+                ffmpegProcess.StartInfo.RedirectStandardError = true;
+                ffmpegProcess.Start();
+
+                string output = await ffmpegProcess.StandardError.ReadToEndAsync(); // Useful for debugging
+                ffmpegProcess.WaitForExit();
+
+                initializedIds.Add(newId);
+            }
+
+            return initializedIds;
         }
 
 

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FileServiceService } from '../../Services/file-service.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -12,7 +12,7 @@ export class NavbarComponent {
 
   input: string;
   
-  constructor(private router: Router){
+  constructor(private router: Router, private route: ActivatedRoute){
 
   }
 
@@ -24,9 +24,13 @@ export class NavbarComponent {
     }
   }
 
-  logOut(){
-    sessionStorage.clear();
-    location.reload();
+  navigate(url: string){
+    var path = window.location.pathname.split("/");
+    if(path[1].includes(url)){
+      window.location.href = url;
+    } else {
+      this.router.navigateByUrl(url)
+    }
   }
 
 }

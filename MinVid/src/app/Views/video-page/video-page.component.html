@@ -8,7 +8,10 @@
             <div class="videoInfo">
                 <div class="first">
                     <h2 style="margin-bottom: 0;">{{videoMetadata.title}}</h2>
-                    <label style="display: flex; align-items: center; cursor: pointer;" (click)="delete(videoMetadata.id)">Remove video<mat-icon style="color: #ba005c;">delete_forever</mat-icon></label>
+                    <div class="edit">
+                        <label style="display: flex; align-items: center; cursor: pointer;" (click)="edit()"><mat-icon>edit</mat-icon></label>
+                        <label style="display: flex; align-items: center; cursor: pointer; margin-left: 10px;" (click)="delete(videoMetadata.id)"><mat-icon>delete_forever</mat-icon></label>
+                    </div>
                 </div>
                 <p>{{videoMetadata.description}}</p>
                 <div class="tags">
