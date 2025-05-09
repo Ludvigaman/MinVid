@@ -2,6 +2,7 @@
 This tube-like application is super simple to set up and takes basically nothing to host. It's built with an Angular front end, and a .NET backend.
 
 **Installation and update guide!**
+
 https://github.com/Ludvigaman/MinVid/wiki/Installation---Update-guide
 
 **Features**
