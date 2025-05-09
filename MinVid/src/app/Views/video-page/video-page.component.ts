@@ -57,8 +57,7 @@ export class VideoPageComponent implements OnInit {
   async edit(){
     const dialogRef = this.dialog.open(EditComponent, {
       data: this.videoMetadata,
-      width: '50%',
-      height: "50%"
+      width: "80%"
     });
 
     dialogRef.afterClosed().subscribe(async (result: VideoMetadata) => {

@@ -5,10 +5,31 @@
     justify-content: center;
     background-color: rgb(31, 31, 31);
     color: white;
-    height: 100%;
-    width: 100%;
+    height: 50vh;
+    padding-left: 40px;
+    padding-right: 40px;
+    justify-self: center;
 }
 
 .inputField{
-    width: 80%;
+    width: 90%;
+}
+
+@media screen and (max-width: 900px) {
+    .editContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: rgb(31, 31, 31);
+        color: white;
+        height: 60vh;
+        width: 100%;
+        padding: 0;
+    }
+    
+    .inputField{
+        width: 80%
+    }
+    
 }
