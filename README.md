@@ -6,6 +6,7 @@ This tube-like application is super simple to set up and takes basically nothing
 https://github.com/Ludvigaman/MinVid/wiki/Installation---Update-guide
 
 **Features**
+- Upload custom thumbnails (**NEW!**)
 - Library import feature (**NEW!**)
 - Edit video metadata (**NEW!**)
 - Fully mobile adapted
