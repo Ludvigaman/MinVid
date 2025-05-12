@@ -23,6 +23,10 @@
     border-radius: 10px;
 }
 
+.buttons {
+    display: flex;
+}
+
 @media screen and (max-width: 900px) {
     .editContainer {
         display: flex;
