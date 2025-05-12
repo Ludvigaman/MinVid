@@ -1,0 +1,11 @@
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /MinVid-API
+COPY . .                           
+RUN dotnet restore
+RUN dotnet publish -c Release -o ./app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
+WORKDIR /MinVid-API/app/publish
+COPY --from=build . .
+EXPOSE 5000
+ENTRYPOINT ["dotnet", "MinVid-API.dll"]
