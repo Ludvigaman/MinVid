@@ -1,5 +1,5 @@
 <div class="frontPageContainer">
-    <h1>Latest uploads</h1>
+    <h1 style="color: #ba005c;">Latest uploads</h1>
     <div class="recommendations">
         <div class="video" *ngFor="let meta of catalog" (click)="navigate(meta.id)">
             <img src="{{getThumbnail(meta.id)}}" class="thumbnail">
