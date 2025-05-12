@@ -142,5 +142,25 @@ namespace MinVid_API.Controllers
             }
         }
 
+        [HttpPost("upload-thumbnail/{videoId}")]
+        [RequestSizeLimit(long.MaxValue)]
+        public async Task<IActionResult> UploadThumbnail([FromForm] IFormFile thumbnail, string videoId)
+        {
+            if (thumbnail == null || thumbnail.Length == 0)
+                return BadRequest("No thumbnail file uploaded.");
+
+            try
+            {
+                await _videoService.SaveThumbnailAsync(videoId, thumbnail);
+                return Ok(true);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Thumbnail upload error: {ex.Message}");
+                return StatusCode(500, false);
+            }
+        }
+
+
     }
 }

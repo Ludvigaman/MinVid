@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Guid } from 'guid-typescript';
 import { VideoMetadata } from '../../Models/videoMetadata';
 import { ConfigServiceService } from '../../Services/config-service.service';
+import { FileServiceService } from '../../Services/file-service.service';
 
 @Component({
   selector: 'app-upload-page',
@@ -20,7 +21,7 @@ export class UploadPageComponent {
 
   _url: string;
 
-  constructor(private http: HttpClient, private config: ConfigServiceService){
+  constructor(private http: HttpClient, private config: ConfigServiceService, private videoService: FileServiceService){
     this.config.getConfig().subscribe(config => {
       this._url = config.API_URL;
     })
@@ -33,7 +34,7 @@ export class UploadPageComponent {
     }
   }
   
-  upload() {
+  async upload() {
     if (!this.selectedFile) {
       alert('Please select a video file.');
       return;
@@ -62,15 +63,9 @@ export class UploadPageComponent {
     formData.append('metadataJson', JSON.stringify(metadata));
 
     this.isUploading = true;
-    this.http.post<{ id: string }>(`${this._url}/upload`, formData).subscribe(
-      res => {
-        console.log('Upload success', res);
-        window.location.href = "/video/" + res.id;
-      },
-      err => {
-        console.error('Upload failed', err);
-      }
-    );
+    var res = await this.videoService.uploadVideo(formData)
+    console.log('Upload success', res);
+    window.location.href = "/video/" + res.id;
   }
 
 }

@@ -71,6 +71,24 @@ export class FileServiceService {
     }
   }
 
+  async uploadVideo(formData: FormData): Promise<{ id: string }> {
+    try {
+      return await firstValueFrom(this._client.post<{ id: string }>(`${this.API_URL}/upload`, formData));
+    } catch (error) {
+      console.error('Error during search', error);
+      return { id: "0" };
+    }
+  }
+
+  async uploadThumbnail(formData: FormData, videoId: string): Promise<boolean> {
+    try {
+      return await firstValueFrom(this._client.post<boolean>(`${this.API_URL}/upload-thumbnail/${videoId}`, formData));
+    } catch (error) {
+      console.error('Error during search', error);
+      return false;
+    }
+  }
+
   getVideoMetadata(videoId: string): Observable<VideoMetadata> {
     const url = `${this.API_URL}/getVideoMetadata/${videoId}`;
     return this._client.get<VideoMetadata>(url);

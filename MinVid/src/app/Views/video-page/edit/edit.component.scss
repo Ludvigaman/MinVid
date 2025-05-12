@@ -5,7 +5,7 @@
     justify-content: center;
     background-color: rgb(31, 31, 31);
     color: white;
-    height: 50vh;
+    height: 90vh;
     padding-left: 40px;
     padding-right: 40px;
     justify-self: center;
@@ -13,6 +13,14 @@
 
 .inputField{
     width: 90%;
+}
+
+
+.fileZone {
+    width: 84%;
+    border: 1px solid rgb(124, 124, 124);
+    padding: 15px;
+    border-radius: 10px;
 }
 
 @media screen and (max-width: 900px) {
@@ -23,13 +31,16 @@
         justify-content: center;
         background-color: rgb(31, 31, 31);
         color: white;
-        height: 60vh;
         width: 100%;
         padding: 0;
     }
     
     .inputField{
         width: 80%
+    }
+
+    .fileZone {
+        width: 70%;
     }
     
 }

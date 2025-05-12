@@ -307,6 +307,17 @@ namespace MinVid_API.Services
             return metadata.id.ToString();
         }
 
+        public async Task<bool> SaveThumbnailAsync(string videoId, IFormFile thumbnail)
+        {
+            var thumbnailPath = Path.Combine(_dataPath, $"{videoId}.jpg");
+
+            using (var stream = new FileStream(thumbnailPath, FileMode.Create))
+            {
+                await thumbnail.CopyToAsync(stream);
+                return true;
+            }
+        }
+
         public async Task<bool> UpdateMetadataAsync(VideoMetadata updatedData)
         {
             string metadataPath = Path.Combine(_dataPath, $"{updatedData.id}.json");

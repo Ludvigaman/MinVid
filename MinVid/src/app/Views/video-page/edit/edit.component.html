@@ -10,11 +10,21 @@
         <textarea matInput style="color: white;" maxlength="256" placeholder="Description" [(ngModel)]="description"></textarea>
     </mat-form-field>
         
-    <h3 style="margin-top: 0;">Add tags</h3>
-    <p style="margin-top: 0">Separate each tag with a comma sign</p>
+    <h3 style="margin-top: 0; margin-bottom: 0;">Add tags</h3>
+    <p style="margin-top: 10px">Separate each tag with a comma sign</p>
     <mat-form-field appearance="outline" class="inputField">
         <textarea matInput style="color: white;" maxlength="256" placeholder="Tags - separate with comma" [(ngModel)]="tagString"></textarea>
     </mat-form-field>
 
-    <a mat-stroked-button (click)="submit()">Save</a>
+    <h3 style="margin-top: 0; margin-bottom: 0;">Upload new thumbnail</h3>
+    <p style="margin-top: 10px; text-align: center;">Images will be cropped to the 16:9 aspect ratio</p>
+    <div class="fileZone" >
+        <input type="file" accept=".jpg,.jpeg,.png" (change)="onFileSelected($event)">
+    </div>
+    
+    <div class="buttons">
+        <a mat-stroked-button (click)="submit()" style="margin-top: 20px; margin-right: 10px;">Save video info</a>
+        <a mat-stroked-button (click)="saveThumbnail()" style="margin-top: 20px;">Upload thumbnail</a>
+    </div>
+
 </div>

@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { VideoMetadata } from '../../../Models/videoMetadata';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { VideoPageComponent } from '../video-page.component';
+import { FileServiceService } from '../../../Services/file-service.service';
 
 @Component({
   selector: 'app-edit',
@@ -16,8 +17,9 @@ export class EditComponent {
   tags: string[];
   tagString: string;
   newVideoMetadata: VideoMetadata;
-
-  constructor(public dialogRef: MatDialogRef<VideoPageComponent>, @Inject(MAT_DIALOG_DATA) public data: VideoMetadata) 
+  selectedFile: File | null = null;
+  
+  constructor(public dialogRef: MatDialogRef<VideoPageComponent>, @Inject(MAT_DIALOG_DATA) public data: VideoMetadata, private videoService: FileServiceService) 
   { 
     this.newVideoMetadata = data;
     this.title = data.title;
@@ -28,6 +30,32 @@ export class EditComponent {
 
   onNoClick() {
     this.dialogRef.close();
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+    }
+  }
+
+  async saveThumbnail(){
+    if(this.selectedFile){
+      var ok = confirm("Are you sure you want to overwrite / upload this thumbnail?")
+      if(ok){
+        const formData = new FormData();
+        formData.append('thumbnail', this.selectedFile);
+
+        var res = await this.videoService.uploadThumbnail(formData, this.newVideoMetadata.id);
+        if(res){
+          alert("Thumbnail uploaded sucessfully!")
+        } else {
+          alert("Something went wrong...");
+        }
+      }
+    } else {
+      alert("No file selected...")
+    }
   }
 
   submit() {
