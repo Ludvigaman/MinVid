@@ -25,28 +25,28 @@ https://github.com/Ludvigaman/MinVid/wiki/Installation---Update-guide
 - Comic / Manga etc?
 
 **Login**
-![login](https://github.com/user-attachments/assets/3bc42560-02be-441a-a01a-be9784a3479f)
+![login](https://github.com/user-attachments/assets/cf5feb1a-9683-45ca-8b46-dc96f97bdfc8)
 
 **Front page**
-![frontPage](https://github.com/user-attachments/assets/3abbef3e-467e-47ce-a4ae-5e8b3443c4b7)
+![frontPage](https://github.com/user-attachments/assets/13294fc9-bcd6-4174-a044-6669d9a67979)
 
 **Video page**
-![videoPage](https://github.com/user-attachments/assets/006988b2-5585-4f98-82be-571852c7383a)
+![videoPage](https://github.com/user-attachments/assets/8afedb97-b81d-4c3d-9173-270d274dc444)
 
 **Edit video**
-![editPage](https://github.com/user-attachments/assets/182d9809-7b02-446c-8281-abb2cbfd66eb)
+![editPage](https://github.com/user-attachments/assets/8b093daf-b657-47ea-982e-bb801acc8e4f)
 
 **Tag index**
-![image](https://github.com/user-attachments/assets/54f1693a-a84c-48ff-8c7d-13c655aff0f3)
+![tagIndex](https://github.com/user-attachments/assets/ba1c461e-d77e-41af-8448-7d0fd0d84eec)
 
 **Search page**
-![searchPage](https://github.com/user-attachments/assets/ba3cfae4-b0bc-4ddc-a018-b45e0329308c)
+![searchPage](https://github.com/user-attachments/assets/4bf42c27-c93a-4b79-9784-d429a8e19a92)
 
 **Upload page**
-![uploadPage](https://github.com/user-attachments/assets/6418b90c-a4b7-418b-a014-3c16508a3a9b)
+![uploadPage](https://github.com/user-attachments/assets/1b1aead3-11cb-4fc7-8d65-ea1eca3bca94)
 
 **Tag page**
-![tagPage](https://github.com/user-attachments/assets/9e615edf-4d5a-4f03-a139-f9e04ece0431)
+![tagPage](https://github.com/user-attachments/assets/464512a6-b5f7-4cc1-9039-8412e6745dda)
 
 **Settings page**
-![settingsPage](https://github.com/user-attachments/assets/fd10d086-24a8-4a1e-b175-5eda444dbe9e)
+![settingsPage](https://github.com/user-attachments/assets/ad3a8396-2bc1-44b1-93a9-4486716d6721)
