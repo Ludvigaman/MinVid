@@ -69,9 +69,12 @@ export class UploadPageComponent {
     this.isUploading = true;
     var res = await this.videoService.uploadVideo(formData)
     console.log('Upload success', res);
-    alert("Upload sucessful!")
-
-    window.location.href = "/video/" + res.id;
+    var goTo = confirm("Upload sucessful, go to video?")
+    if(goTo){
+      window.location.href = "/video/" + res.id;
+    } 
+    this.isUploading = false;
+    this.selectedFile = null;
   }
 
   switchMode(mode: string){
@@ -111,6 +114,8 @@ export class UploadPageComponent {
     var res = await this.videoService.uploadImage(formData)
     console.log('Upload success', res);
     alert("Upload sucessful!")
+    this.isUploadingImage = false;
+    this.selectedFile = null;
   }
 
 }
