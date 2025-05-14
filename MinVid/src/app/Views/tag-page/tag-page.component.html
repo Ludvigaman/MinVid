@@ -1,19 +1,64 @@
 <div class="frontPageContainer" *ngIf="!showTagList">
-    <h1 style="color: #ba005c;">Videos tagged with : {{capitalize(tag)}}</h1>
-    <div class="recommendations">
-        <div class="video" *ngFor="let meta of catalog" (click)="navigate(meta.id)">
-            <img src="{{getThumbnail(meta.id)}}" class="thumbnail">
-            <div class="info">
-                <h4 style="margin: 0">{{capitalize(meta.title)}}</h4>
-                <div class="tags">
-                    <p style="margin: 0; margin-right: 5px; margin-top: 5px; font-size: small;" *ngFor="let tag of meta.tags"><i>#{{capitalize(tag)}}</i></p>
+    <div class="button">
+        <a mat-stroked-button (click)="isVideo = false" style="margin-right: 20px; text-align: center;"><mat-icon class="ico">image</mat-icon>Show images</a>
+        <a mat-stroked-button (click)="isVideo = true" style="text-align: center;"><mat-icon class="ico">subscriptions</mat-icon>Show videos</a>
+    </div>
+
+    <ng-container *ngIf="isVideo">
+      <h1 style="color: #ba005c;">Videos tagged with : {{capitalize(tag)}}</h1>
+      <div class="recommendations">
+          <div class="video" *ngFor="let meta of catalog" (click)="navigate(meta.id)">
+              <img src="{{getThumbnail(meta.id)}}" class="thumbnail">
+              <div class="info">
+                  <h4 style="margin: 0">{{capitalize(meta.title)}}</h4>
+                  <div class="tags">
+                      <p style="margin: 0; margin-right: 5px; margin-top: 5px; font-size: small;" *ngFor="let tag of meta.tags"><i>#{{capitalize(tag)}}</i></p>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div *ngIf="catalog.length == 0">
+          It doesn't seem like any videos have this tag!
+      </div>
+    </ng-container>
+    <ng-container *ngIf="!isVideo">
+
+      <div class="frontPageContainer">
+          <h1 style="color: #ba005c;">Images tagged with : {{capitalize(tag)}}</h1>
+            <div class="imageRecommendation">
+                <div class="imgContainer" *ngFor="let meta of imageCatalog; let i = index" (click)="openImage(i)">
+                    <img src="{{getImage(meta.id)}}" class="image">
                 </div>
             </div>
+            <div *ngIf="imageCatalog.length == 0">
+                It doesn't seem like there are any images yet...
+            </div>
         </div>
-    </div>
-    <div *ngIf="catalog.length == 0">
-        It doesn't seem like any videos have this tag!
-    </div>
+
+        <div class="imageModal" *ngIf="selectedImageIndex !== null">
+            <div class="imageOverlay" (click)="closeImage()"></div>
+
+            <!-- Close button -->
+            <div class="closeButton" (click)="closeImage()">×</div>
+
+            <!-- Navigation zones -->
+            <div class="navZone left" (click)="prevImage($event)"></div>
+            <div class="navZone right" (click)="nextImage($event)"></div>
+
+            <!-- Arrows -->
+            <div class="arrow left-arrow">&#10094;</div>
+            <div class="arrow right-arrow">&#10095;</div>
+
+            <!-- Image -->
+            <img [src]="getImage(imageCatalog[selectedImageIndex].id)" class="fullImage" />
+            <div class="tagRow" *ngIf="selectedImageIndex !== null">
+                <span class="tag" *ngFor="let tag of imageCatalog[selectedImageIndex]?.tags" (click)="toTag(tag)">
+                #{{ capitalize(tag) }}
+                </span>
+            </div>
+        </div>
+
+    </ng-container>
 </div>
 
 <div class="frontPageContainer" *ngIf="showTagList">
@@ -33,4 +78,5 @@
     <div *ngIf="allTags.length == 0">
         It doesn't seem like there exist any tags yet!
     </div>
+    
 </div>

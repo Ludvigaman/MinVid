@@ -4,6 +4,7 @@ import { Guid } from 'guid-typescript';
 import { VideoMetadata } from '../../Models/videoMetadata';
 import { ConfigServiceService } from '../../Services/config-service.service';
 import { FileServiceService } from '../../Services/file-service.service';
+import { ImageMetadata } from '../../Models/imageMetadata';
 
 @Component({
   selector: 'app-upload-page',
@@ -18,6 +19,9 @@ export class UploadPageComponent {
   tagsString: string = '';
   selectedFile: File | null = null;
   isUploading = false
+  isUploadingImage = false;
+
+  isVideo = true;
 
   _url: string;
 
@@ -65,7 +69,48 @@ export class UploadPageComponent {
     this.isUploading = true;
     var res = await this.videoService.uploadVideo(formData)
     console.log('Upload success', res);
+    alert("Upload sucessful!")
+
     window.location.href = "/video/" + res.id;
+  }
+
+  switchMode(mode: string){
+    this.selectedFile = null;
+    this.title = "";
+    this.description = "";
+    this.tagsString = "";
+    this.isVideo = !this.isVideo;
+
+    if(mode == "img"){
+      this.isVideo = false;
+    } else {
+      this.isVideo = true;
+    }
+  }
+
+  async uploadImage() {
+    if (!this.selectedFile) {
+      alert('Please select a image file.');
+      return;
+    } else if(this.tagsString == "" || this.tagsString == undefined){
+      alert('Please enter at least one tag.');
+      return;
+    }
+
+    var metadata: ImageMetadata = {
+      id: 'no-id',
+      tags: this.tagsString.split(',').map(t => t.trim()),
+      format: this.selectedFile.name.split('.').pop() || 'jpg'
+    };
+
+    const formData = new FormData();
+    formData.append('imageFile', this.selectedFile);
+    formData.append('metadataJson', JSON.stringify(metadata));
+
+    this.isUploadingImage = true;
+    var res = await this.videoService.uploadImage(formData)
+    console.log('Upload success', res);
+    alert("Upload sucessful!")
   }
 
 }

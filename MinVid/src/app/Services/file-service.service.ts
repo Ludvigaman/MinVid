@@ -3,6 +3,7 @@ import { VideoMetadata } from '../Models/videoMetadata';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
 import { ConfigServiceService } from './config-service.service';
+import { ImageMetadata } from '../Models/imageMetadata';
 
 @Injectable({
   providedIn: 'root'
@@ -52,6 +53,10 @@ export class FileServiceService {
       return false;
     }
   }
+
+  getImageUrl(imageId: string): string {
+    return `${this.API_URL}/image/${imageId}`;
+  }
   
   async search(tags: string[]): Promise<VideoMetadata[]> {
     try {
@@ -59,6 +64,34 @@ export class FileServiceService {
     } catch (error) {
       console.error('Error during search', error);
       return [];
+    }
+  }
+
+  async searchImages(tags: string[]): Promise<ImageMetadata[]> {
+    try {
+      return await firstValueFrom(this._client.post<ImageMetadata[]>(`${this.API_URL}/searchImages/`, tags));
+    } catch (error) {
+      console.error('Error during search', error);
+      return [];
+    }
+  }
+
+  async getImagesWithTag(tag: string): Promise<ImageMetadata[]> {
+    try {
+      const result = await firstValueFrom(this._client.get<ImageMetadata[]>(`${this.API_URL}/getImagesWithTag/${tag}`));
+      return result;
+    } catch (error) {
+      console.error('Error loading tag list', error);
+      return [];
+    }
+  }
+
+  async uploadImage(formData: FormData): Promise<{ id: string }> {
+    try {
+      return await firstValueFrom(this._client.post<{ id: string }>(`${this.API_URL}/uploadImage`, formData));
+    } catch (error) {
+      console.error('Error during upload', error);
+      return { id: "0" };
     }
   }
 
@@ -75,7 +108,7 @@ export class FileServiceService {
     try {
       return await firstValueFrom(this._client.post<{ id: string }>(`${this.API_URL}/upload`, formData));
     } catch (error) {
-      console.error('Error during search', error);
+      console.error('Error during upload', error);
       return { id: "0" };
     }
   }
@@ -106,6 +139,16 @@ export class FileServiceService {
   async loadLatest(count: number): Promise<VideoMetadata[]> {
     try {
       const result = await firstValueFrom(this._client.get<VideoMetadata[]>(this.API_URL + "/getLatestVideos/" + count));
+      return result;
+    } catch (error) {
+      console.error('Error loading catalog', error);
+      return [];
+    }
+  }
+
+  async loadLatestImages(count: number): Promise<ImageMetadata[]> {
+    try {
+      const result = await firstValueFrom(this._client.get<ImageMetadata[]>(this.API_URL + "/getLatestImages/" + count));
       return result;
     } catch (error) {
       console.error('Error loading catalog', error);

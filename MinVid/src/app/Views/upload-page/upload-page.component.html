@@ -1,24 +1,46 @@
 <div class="uploadPageContainer">
-    <h1 style="color: #ba005c;">Upload</h1>
-    <div class="fileZone">
-        <input type="file" accept="video/*" (change)="onFileSelected($event)">
+    <div class="button">
+        <a mat-stroked-button (click)="switchMode('img')" style="margin-right: 20px; text-align: center;"><mat-icon class="ico">image</mat-icon>Upload image</a>
+        <a mat-stroked-button (click)="switchMode('vid')" style="text-align: center;"><mat-icon class="ico">subscriptions</mat-icon>Upload video</a>
     </div>
-    <h3>Title</h3>
-    <mat-form-field appearance="outline" class="inputField">
-        <input matInput style="color: white;" placeholder="Title" [(ngModel)]="title">
-    </mat-form-field>
-    
-    <h3 style="margin-top: 0;">Description</h3>
-    <mat-form-field appearance="outline" class="inputField">
-        <textarea matInput style="color: white;" maxlength="256" placeholder="Description" [(ngModel)]="description"></textarea>
-    </mat-form-field>
-        
-    <h3 style="margin-top: 0;">Tags</h3>
-    <p style="margin-top: 0">Separate each tag with a comma sign</p>
-    <mat-form-field appearance="outline" class="inputField">
-        <textarea matInput style="color: white;" maxlength="256" placeholder="Tags - separate with comma" [(ngModel)]="tagsString"></textarea>
-    </mat-form-field>
 
-    <a mat-stroked-button (click)="upload()" *ngIf="!isUploading">Upload</a>
-    <h4 *ngIf="isUploading">Please wait while file uploads...</h4>
+    <ng-container *ngIf="!isVideo">
+        <h1 style="color: #ba005c;">Upload image</h1>
+        <div class="fileZone">
+            <input type="file" accept="image/*" (change)="onFileSelected($event)">
+        </div>
+            
+        <h3 style="margin-top: 20px;">Tags</h3>
+        <p style="margin-top: 0">Separate each tag with a comma sign</p>
+        <mat-form-field appearance="outline" class="inputField">
+            <textarea matInput style="color: white;" maxlength="256" placeholder="Tags - separate with comma" [(ngModel)]="tagsString"></textarea>
+        </mat-form-field>
+        <a mat-stroked-button (click)="uploadImage()" *ngIf="!isUploadingImage">Upload</a>
+        <h4 *ngIf="isUploading">Please wait while file uploads...</h4>
+    </ng-container>
+
+    <ng-container *ngIf="isVideo">
+        <h1 style="color: #ba005c;">Upload Video</h1>
+        <div class="fileZone">
+            <input type="file" accept="video/*" (change)="onFileSelected($event)">
+        </div>
+        <h3>Title</h3>
+        <mat-form-field appearance="outline" class="inputField">
+            <input matInput style="color: white;" placeholder="Title" [(ngModel)]="title">
+        </mat-form-field>
+        
+        <h3 style="margin-top: 0;">Description</h3>
+        <mat-form-field appearance="outline" class="inputField">
+            <textarea matInput style="color: white;" maxlength="256" placeholder="Description" [(ngModel)]="description"></textarea>
+        </mat-form-field>
+            
+        <h3 style="margin-top: 0;">Tags</h3>
+        <p style="margin-top: 0">Separate each tag with a comma sign</p>
+        <mat-form-field appearance="outline" class="inputField">
+            <textarea matInput style="color: white;" maxlength="256" placeholder="Tags - separate with comma" [(ngModel)]="tagsString"></textarea>
+        </mat-form-field>
+        <p style="margin-top: 0">Adding a thumbnail is possible after upload.</p>
+        <a mat-stroked-button (click)="upload()" *ngIf="!isUploading">Upload</a>
+        <h4 *ngIf="isUploading">Please wait while file uploads...</h4>
+    </ng-container>
 </div>

@@ -26,7 +26,8 @@ export class NavbarComponent {
 
   navigate(url: string){
     var path = window.location.pathname.split("/");
-    if(path[1].includes(url)){
+    console.log(path, url)
+    if(url.includes(path[1])){
       window.location.href = url;
     } else {
       this.router.navigateByUrl(url)

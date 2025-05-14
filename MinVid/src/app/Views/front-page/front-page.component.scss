@@ -1,24 +1,3 @@
-.frontPageContainer {
-    display: flex;
-    width: 95%;
-    justify-self: center;
-    justify-content: center;
-    color: white;
-    flex-direction: column;
-    align-items: center;
-}
-
-.recommendations {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-    justify-content: center;
-}
-
-.tags {
-    display: flex;
-}
-
 .video {
     height: 100%;
     width: 23%;
@@ -51,5 +30,9 @@
 
     .video {
         width: 100%;
+    }
+
+    .image {
+        max-width: 100%;
     }
 }

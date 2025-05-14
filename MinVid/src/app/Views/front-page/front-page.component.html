@@ -1,5 +1,5 @@
 <div class="frontPageContainer">
-    <h1 style="color: #ba005c;">Latest uploads</h1>
+    <h1 style="color: #ba005c;">Latest videos</h1>
     <div class="recommendations">
         <div class="video" *ngFor="let meta of catalog" (click)="navigate(meta.id)">
             <img src="{{getThumbnail(meta.id)}}" class="thumbnail">
@@ -13,5 +13,40 @@
     </div>
     <div *ngIf="catalog.length == 0">
         It doesn't seem like there are any videos yet...
+    </div>
+</div>
+
+<div class="frontPageContainer">
+    <h1 style="color: #ba005c;">Latest images</h1>
+    <div class="imageRecommendation">
+        <div class="imgContainer" *ngFor="let meta of imageCatalog; let i = index" (click)="openImage(i)">
+            <img src="{{getImage(meta.id)}}" class="image">
+        </div>
+    </div>
+    <div *ngIf="imageCatalog.length == 0">
+        It doesn't seem like there are any images yet...
+    </div>
+</div>
+
+<div class="imageModal" *ngIf="selectedImageIndex !== null">
+  <div class="imageOverlay" (click)="closeImage()"></div>
+
+  <!-- Close button -->
+  <div class="closeButton" (click)="closeImage()">×</div>
+
+  <!-- Navigation zones -->
+  <div class="navZone left" (click)="prevImage($event)"></div>
+  <div class="navZone right" (click)="nextImage($event)"></div>
+
+  <!-- Arrows -->
+  <div class="arrow left-arrow">&#10094;</div>
+  <div class="arrow right-arrow">&#10095;</div>
+
+  <!-- Image -->
+  <img [src]="getImage(imageCatalog[selectedImageIndex].id)" class="fullImage" />
+    <div class="tagRow" *ngIf="selectedImageIndex !== null">
+        <span class="tag" *ngFor="let tag of imageCatalog[selectedImageIndex]?.tags" (click)="toTag(tag)">
+            #{{ capitalize(tag) }}
+        </span>
     </div>
 </div>

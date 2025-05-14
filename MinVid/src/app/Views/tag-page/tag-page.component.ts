@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VideoMetadata } from '../../Models/videoMetadata';
 import { FileServiceService } from '../../Services/file-service.service';
+import { ImageMetadata } from '../../Models/imageMetadata';
 
 @Component({
   selector: 'app-tag-page',
@@ -12,11 +13,15 @@ import { FileServiceService } from '../../Services/file-service.service';
 export class TagPageComponent {
   
   catalog: VideoMetadata[] = [];
+  imageCatalog: ImageMetadata[] = [];
   thumbnails: string[] = [];
   tag: string;
   allTags: string[];
   showTagList = false;
   groupedTags: { [key: string]: string[] } = {};
+  isVideo = true;
+  selectedImageIndex: number | null = null;
+
 
   alphabeticalSort = (a: { key: string }, b: { key: string }) => {
     return a.key.localeCompare(b.key);
@@ -49,7 +54,13 @@ export class TagPageComponent {
     } else {
       this.tag = tag;
 
+      this.imageCatalog = await this.videoService.getImagesWithTag(tag)
       this.catalog = await this.videoService.getVideosWithTag(tag);
+
+      if(this.catalog.length == 0 && this.imageCatalog.length > 0){
+        this.isVideo = false;
+      }
+
       if(this.catalog.length > 0){
         this.catalog.forEach(c => {
           var thumbnail = this.videoService.getThumbnailUrl(c.id);
@@ -75,5 +86,35 @@ export class TagPageComponent {
   capitalize(input: string){
     if (!input) return '';
     return input.toLowerCase().charAt(0).toUpperCase() + input.toLowerCase().slice(1);
+  }
+
+getImage(iamgeId: string){
+    return this.videoService.getImageUrl(iamgeId);
+  }
+
+  openImage(index: number): void {
+    this.selectedImageIndex = index;
+  }
+
+  nextImage(event: MouseEvent) {
+    event.stopPropagation(); // prevent closing modal
+    if (this.selectedImageIndex !== null && this.selectedImageIndex < this.imageCatalog.length - 1) {
+      this.selectedImageIndex++;
+    }
+  }
+
+  toTag(tag: string){
+    this.router.navigateByUrl("/tags/" + tag)
+  }
+
+  prevImage(event: MouseEvent) {
+    event.stopPropagation();
+    if (this.selectedImageIndex !== null && this.selectedImageIndex > 0) {
+      this.selectedImageIndex--;
+    }
+  }
+
+  closeImage() {
+    this.selectedImageIndex = null;
   }
 }

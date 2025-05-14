@@ -6,3 +6,138 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .background {
     background-color: rgb(31, 31, 31);
 }
+
+.frontPageContainer {
+    display: flex;
+    width: 95%;
+    justify-self: center;
+    justify-content: center;
+    color: white;
+    flex-direction: column;
+    align-items: center;
+}
+
+.recommendations {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+}
+
+.imageRecommendation {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+}
+
+.tagRow {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  text-align: center;
+  z-index: 5;
+  font-size: 1rem;
+  color: white;
+  background: rgba(0, 0, 0, 0.4); // subtle background for contrast
+  padding: 5px 0;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tag {
+  color: white;
+  font-style: bold;
+  user-select: none;
+  cursor: pointer;
+}
+
+.tags {
+    display: flex;
+}
+.imageModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.fullImage {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  z-index: 2;
+}
+
+.navZone {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  z-index: 3;
+  cursor: pointer;
+}
+
+.navZone.left {
+  left: 0;
+}
+
+.navZone.right {
+  right: 0;
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  font-size: 3rem;
+  color: white;
+  opacity: 0.5;
+  z-index: 4;
+  pointer-events: none;
+  user-select: none;
+  transform: translateY(-50%);
+}
+
+.left-arrow {
+  left: 20px;
+}
+
+.right-arrow {
+  right: 20px;
+}
+
+.closeButton {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 2.5rem;
+  color: white;
+  cursor: pointer;
+  z-index: 5;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  user-select: none;
+}
+
+.closeButton:hover {
+  opacity: 1;
+}
+
+.image {
+    max-height: 300px;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.imgContainer {
+    display: flex;
+    justify-content: center;
+}

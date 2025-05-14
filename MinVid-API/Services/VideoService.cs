@@ -11,12 +11,14 @@ namespace MinVid_API.Services
     public class VideoService
     {
         private readonly string _dataPath;
+        private readonly ImageService _imageService;
         private readonly string _importPath;
         private readonly string _pw; 
 
-        public VideoService(IConfiguration configuration)
+        public VideoService(IConfiguration configuration, ImageService imgService)
         {
             _dataPath = configuration.GetValue<string>("data_path");
+            _imageService = imgService;
             _importPath = _dataPath + "\\import";
             _pw = configuration.GetValue<string>("password");
         }
@@ -121,7 +123,6 @@ namespace MinVid_API.Services
                 })
                 .Where(x => x.Score > 0)
                 .OrderByDescending(x => x.Score)
-                .Take(4)
                 .Select(x => x.Video)
                 .ToList();
 
@@ -174,8 +175,10 @@ namespace MinVid_API.Services
 
         public List<string> GetTagList()
         {
+            var imageCatalog = _imageService.GetImageCatalog();
             var catalog = GetVideoMetadataCatalog();
-            if (catalog.Count == 0)
+
+            if (catalog.Count == 0 && imageCatalog.Count == 0)
                 return new List<string>();
 
             var tagList = new List<string>();
@@ -185,6 +188,20 @@ namespace MinVid_API.Services
                 if (meta.tags == null) continue;
 
                 foreach (var tag in meta.tags)
+                {
+                    var trimmedTag = tag.Trim();
+                    if (!tagList.Contains(trimmedTag, StringComparer.OrdinalIgnoreCase))
+                    {
+                        tagList.Add(trimmedTag);
+                    }
+                }
+            }
+
+            foreach (var img in imageCatalog)
+            {
+                if(img.tags == null) continue;
+
+                foreach(var tag in img.tags)
                 {
                     var trimmedTag = tag.Trim();
                     if (!tagList.Contains(trimmedTag, StringComparer.OrdinalIgnoreCase))
