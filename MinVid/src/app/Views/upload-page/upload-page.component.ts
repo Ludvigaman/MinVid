@@ -59,7 +59,8 @@ export class UploadPageComponent {
       description: this.description,
       uploadDate: new Date(),
       tags: this.tagsString.split(',').map(t => t.trim()),
-      format: this.selectedFile.name.split('.').pop() || 'mp4'
+      format: this.selectedFile.name.split('.').pop() || 'mp4',
+      duration: 0
     };
 
     const formData = new FormData();

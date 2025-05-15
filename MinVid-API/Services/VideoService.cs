@@ -5,6 +5,8 @@ using System;
 using System.Net;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.Text.Json;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace MinVid_API.Services
 {
@@ -305,21 +307,42 @@ namespace MinVid_API.Services
                 await videoFile.CopyToAsync(stream);
             }
 
-            var metadataOut = JsonSerializer.Serialize(metadata, new JsonSerializerOptions { WriteIndented = true, PropertyNameCaseInsensitive = true });
-            await File.WriteAllTextAsync(metadataPath, metadataOut);
-
             var ffmpegPath = Path.Combine(AppContext.BaseDirectory, "Utils", "ffmpeg.exe");
 
-            var ffmpegProcess = new System.Diagnostics.Process();
-            ffmpegProcess.StartInfo.FileName = ffmpegPath;
-            ffmpegProcess.StartInfo.Arguments = $"-i \"{videoPath}\" -ss 00:00:04 -vframes 1 \"{thumbnailPath}\"";
-            ffmpegProcess.StartInfo.UseShellExecute = false;
-            ffmpegProcess.StartInfo.CreateNoWindow = true;
-            ffmpegProcess.StartInfo.RedirectStandardError = true;
-            ffmpegProcess.Start();
+            var ffmpegProcess = new System.Diagnostics.Process
+            {
+                StartInfo = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = ffmpegPath,
+                    Arguments = $"-i \"{videoPath}\" -ss 00:00:04 -vframes 1 \"{thumbnailPath}\"",
+                    UseShellExecute = false,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                }
+            };
 
-            string output = await ffmpegProcess.StandardError.ReadToEndAsync(); // Useful for debugging
+            ffmpegProcess.Start();
+            string output = await ffmpegProcess.StandardError.ReadToEndAsync();
             ffmpegProcess.WaitForExit();
+
+            // 🔍 Parse duration from stderr
+            var durationMatch = Regex.Match(output, @"Duration: (\d+):(\d+):(\d+.\d+)");
+            if (durationMatch.Success)
+            {
+                var hours = int.Parse(durationMatch.Groups[1].Value);
+                var minutes = int.Parse(durationMatch.Groups[2].Value);
+                var seconds = double.Parse(durationMatch.Groups[3].Value, CultureInfo.InvariantCulture);
+
+                metadata.duration = (int)(hours * 3600 + minutes * 60 + seconds);
+            }
+
+            // 💾 Save metadata JSON
+            var metadataOut = JsonSerializer.Serialize(metadata, new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                PropertyNameCaseInsensitive = true
+            });
+            await File.WriteAllTextAsync(metadataPath, metadataOut);
 
             return metadata.id.ToString();
         }
@@ -401,9 +424,40 @@ namespace MinVid_API.Services
                     description = "Imported video",
                     tags = new List<string> { "non-indexed" },
                     uploadDate = DateTime.Now,
-                    format = format,
+                    format = format
                 };
 
+                var thumbnailPath = Path.Combine(_dataPath, metadata.id + ".jpg");
+                var ffmpegPath = Path.Combine(AppContext.BaseDirectory, "Utils", "ffmpeg.exe");
+
+                var ffmpegProcess = new System.Diagnostics.Process
+                {
+                    StartInfo = new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = ffmpegPath,
+                        Arguments = $"-i \"{newPath}\" -ss 00:00:04 -vframes 1 \"{thumbnailPath}\"",
+                        UseShellExecute = false,
+                        RedirectStandardError = true,
+                        CreateNoWindow = true
+                    }
+                };
+
+                ffmpegProcess.Start();
+                string output = await ffmpegProcess.StandardError.ReadToEndAsync();
+                ffmpegProcess.WaitForExit();
+
+                // 🧠 Extract duration
+                var durationMatch = Regex.Match(output, @"Duration: (\d+):(\d+):(\d+\.\d+)");
+                if (durationMatch.Success)
+                {
+                    int hours = int.Parse(durationMatch.Groups[1].Value);
+                    int minutes = int.Parse(durationMatch.Groups[2].Value);
+                    double seconds = double.Parse(durationMatch.Groups[3].Value, CultureInfo.InvariantCulture);
+
+                    metadata.duration = (int)(hours * 3600 + minutes * 60 + seconds);
+                }
+
+                // 💾 Save metadata
                 var metadataJson = JsonSerializer.Serialize(metadata, new JsonSerializerOptions
                 {
                     WriteIndented = true,
@@ -411,21 +465,6 @@ namespace MinVid_API.Services
                 });
 
                 await File.WriteAllTextAsync(Path.Combine(libraryPath, newId + ".json"), metadataJson);
-
-                var thumbnailPath = Path.Combine(_dataPath, metadata.id + ".jpg");
-
-                var ffmpegPath = Path.Combine(AppContext.BaseDirectory, "Utils", "ffmpeg.exe");
-
-                var ffmpegProcess = new System.Diagnostics.Process();
-                ffmpegProcess.StartInfo.FileName = ffmpegPath;
-                ffmpegProcess.StartInfo.Arguments = $"-i \"{newPath}\" -ss 00:00:04 -vframes 1 \"{thumbnailPath}\"";
-                ffmpegProcess.StartInfo.UseShellExecute = false;
-                ffmpegProcess.StartInfo.CreateNoWindow = true;
-                ffmpegProcess.StartInfo.RedirectStandardError = true;
-                ffmpegProcess.Start();
-
-                string output = await ffmpegProcess.StandardError.ReadToEndAsync(); // Useful for debugging
-                ffmpegProcess.WaitForExit();
 
                 initializedIds.Add(newId);
             }
