@@ -1,4 +1,4 @@
-**MinVid** - (Swedish "MyVid", or Minimalistic Video host), is a simple self hosted video platform for those of you that want to keep your stash of videos private behind a password. 
+**MinVid** - (Swedish "MyVid", or Minimalistic Video host), is a simple self hosted video platform for those of you that want to keep your stash of videos and images private behind a password. 
 This tube-like application is super simple to set up and takes basically nothing to host. It's built with an Angular front end, and a .NET backend.
 
 **Installation and update guide!**
