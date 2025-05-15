@@ -9,6 +9,7 @@ https://github.com/Ludvigaman/MinVid/wiki/Installation---Update-guide
 - Image support!
 - New upload UI
 - Mobile UI Enhanced
+- Video duration on the previews _(NOTE; this is a bit bugged because videos uploaded BEFORE this feature was added, will not display a duration)_
 
 **Features**
 - Upload custom thumbnails
