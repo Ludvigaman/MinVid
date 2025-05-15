@@ -35,6 +35,9 @@ https://github.com/Ludvigaman/MinVid/wiki/Installation---Update-guide
 **Front page**
 ![frontPage](https://github.com/user-attachments/assets/e331782a-f9f4-48dd-bfec-34f750604f21)
 
+**Photo mode**
+![photoPage](https://github.com/user-attachments/assets/48c8f0de-6555-4e91-bffd-8c6b97698fb8)
+
 **Video page**
 ![videoPage](https://github.com/user-attachments/assets/e256df51-a34f-436f-8972-cd2ba60637c6)
 
