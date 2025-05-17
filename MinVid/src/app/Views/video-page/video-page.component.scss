@@ -69,11 +69,13 @@
 
 .tags {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .tag {
     margin-right: 10px;
     height: 30px;
+    margin-top: 10px;
 }
 
 @media screen and (max-width: 900px) {

@@ -32,6 +32,20 @@ export class FrontPageComponent implements OnInit {
     }
   }
 
+  createDurationString(duration: number): string {
+    const hours = Math.floor(duration / 3600);
+    const minutes = Math.floor((duration % 3600) / 60);
+    const seconds = duration % 60;
+
+    const pad = (n: number) => n.toString().padStart(2, '0');
+
+    if (hours > 0) {
+      return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+    } else {
+      return `${pad(minutes)}:${pad(seconds)}`;
+    }
+  }
+
   openImage(index: number): void {
     this.selectedImageIndex = index;
   }

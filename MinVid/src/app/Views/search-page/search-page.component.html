@@ -10,7 +10,10 @@
             <div class="video" *ngFor="let meta of catalog" (click)="navigate(meta.id)">
                 <img src="{{getThumbnail(meta.id)}}" class="thumbnail">
                 <div class="info">
-                    <h4 style="margin: 0">{{capitalize(meta.title)}}</h4>
+                    <div class="topRow">
+                        <h4 style="margin: 0">{{capitalize(meta.title)}}</h4>
+                        <p style="margin: 0; font-size: small;">{{createDurationString(meta.duration)}}</p>
+                    </div>
                     <div class="tags">
                         <p style="margin: 0; margin-right: 5px; margin-top: 5px; font-size: small;" *ngFor="let tag of meta.tags"><i>#{{capitalize(tag)}}</i></p>
                     </div>

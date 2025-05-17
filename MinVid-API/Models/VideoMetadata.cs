@@ -8,5 +8,6 @@
         public string description { get; set; } 
         public List<string> tags { get; set; }
         public DateTime uploadDate { get; set; }
+        public int duration { get; set; }
     }
 }

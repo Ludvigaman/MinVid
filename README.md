@@ -1,4 +1,4 @@
-**MinVid** - (Swedish "MyVid", or Minimalistic Video host), is a simple self hosted video platform for those of you that want to keep your stash of videos private behind a password. 
+**MinVid** - (Swedish "MyVid", or Minimalistic Video host), is a simple self hosted video platform for those of you that want to keep your stash of videos and images private behind a password. 
 This tube-like application is super simple to set up and takes basically nothing to host. It's built with an Angular front end, and a .NET backend.
 
 **Installation and update guide!**
@@ -9,6 +9,7 @@ https://github.com/Ludvigaman/MinVid/wiki/Installation---Update-guide
 - Image support!
 - New upload UI
 - Mobile UI Enhanced
+- Video duration on the previews _(NOTE; this is a bit bugged because videos uploaded BEFORE this feature was added, will not display a duration)_
 
 **Features**
 - Upload custom thumbnails
@@ -33,25 +34,28 @@ https://github.com/Ludvigaman/MinVid/wiki/Installation---Update-guide
 ![login](https://github.com/user-attachments/assets/cf5feb1a-9683-45ca-8b46-dc96f97bdfc8)
 
 **Front page**
-![frontPage](https://github.com/user-attachments/assets/13294fc9-bcd6-4174-a044-6669d9a67979)
+![frontPage](https://github.com/user-attachments/assets/e331782a-f9f4-48dd-bfec-34f750604f21)
+
+**Photo mode**
+![photoPage](https://github.com/user-attachments/assets/48c8f0de-6555-4e91-bffd-8c6b97698fb8)
 
 **Video page**
-![videoPage](https://github.com/user-attachments/assets/8afedb97-b81d-4c3d-9173-270d274dc444)
+![videoPage](https://github.com/user-attachments/assets/e256df51-a34f-436f-8972-cd2ba60637c6)
 
 **Edit video**
-![editPage](https://github.com/user-attachments/assets/8b093daf-b657-47ea-982e-bb801acc8e4f)
+![editPage](https://github.com/user-attachments/assets/b220ae72-2dd7-4b21-98c3-bb166aeb4f75)
 
 **Tag index**
-![tagIndex](https://github.com/user-attachments/assets/ba1c461e-d77e-41af-8448-7d0fd0d84eec)
+![tagIndex](https://github.com/user-attachments/assets/cd45c0a6-bc01-43df-82ec-66c217994eb4)
 
 **Search page**
-![searchPage](https://github.com/user-attachments/assets/4bf42c27-c93a-4b79-9784-d429a8e19a92)
+![searchPage](https://github.com/user-attachments/assets/12fdf0d1-5764-411b-a486-a06f52c65518)
 
 **Upload page**
-![uploadPage](https://github.com/user-attachments/assets/1b1aead3-11cb-4fc7-8d65-ea1eca3bca94)
+![uploadPage](https://github.com/user-attachments/assets/220b2ad5-8302-4f84-8487-90ab0b55db22)
 
 **Tag page**
-![tagPage](https://github.com/user-attachments/assets/464512a6-b5f7-4cc1-9039-8412e6745dda)
+![tagPage](https://github.com/user-attachments/assets/09783c89-a140-4e5c-bbdf-ee7d281a8e2e)
 
 **Settings page**
 ![settingsPage](https://github.com/user-attachments/assets/ad3a8396-2bc1-44b1-93a9-4486716d6721)
