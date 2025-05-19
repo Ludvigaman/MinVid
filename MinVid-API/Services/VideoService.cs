@@ -15,13 +15,23 @@ namespace MinVid_API.Services
         private readonly string _dataPath;
         private readonly ImageService _imageService;
         private readonly string _importPath;
-        private readonly string _pw; 
+        private readonly string _pw;
 
         public VideoService(IConfiguration configuration, ImageService imgService)
         {
-            _dataPath = configuration.GetValue<string>("data_path");
+            var runningInContainer = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
+
+            if (runningInContainer)
+            {
+                _dataPath = configuration.GetValue<string>("docker_data_path");
+            }
+            else
+            {
+                _dataPath = configuration.GetValue<string>("data_path");
+            }
+
             _imageService = imgService;
-            _importPath = _dataPath + "\\import";
+            _importPath = Path.Combine(_dataPath, "import");  // better cross-platform than string concat
             _pw = configuration.GetValue<string>("password");
         }
 

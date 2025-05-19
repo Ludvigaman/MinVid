@@ -10,7 +10,16 @@ namespace MinVid_API.Services
 
         public ImageService(IConfiguration configuration)
         {
-            _dataPath = configuration.GetValue<string>("image_data_path");
+            var runningInContainer = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
+
+            if (runningInContainer)
+            {
+                _dataPath = configuration.GetValue<string>("docker_image_data_path");
+            }
+            else
+            {
+                _dataPath = configuration.GetValue<string>("image_data_path");
+            }
         }
 
         public FileStreamResult GetImage(string imageId, string format)

@@ -4,9 +4,13 @@ services:
     build:
       context: ./MinVid-API
     ports:
-      - "5000:5000"
+      - "5000:8080"
     networks:
       - app-network
+    environment:
+      - DOTNET_RUNNING_IN_CONTAINER=true
+    volumes:
+      - C:/DATA:/app/data   # map your host data folder here
 
   frontend:
     build:
