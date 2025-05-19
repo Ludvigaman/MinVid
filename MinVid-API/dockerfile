@@ -1,11 +1,22 @@
+# Use the .NET 9 SDK image for building (Linux)
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-WORKDIR /MinVid-API
-COPY . .                           
-RUN dotnet restore
-RUN dotnet publish -c Release -o ./app/publish
 
+# Install ffmpeg in the build stage (to use during publish if needed)
+RUN apt-get update && apt-get install -y ffmpeg
+
+WORKDIR /app
+COPY . .
+RUN dotnet restore
+RUN dotnet publish -c Release -o /app/publish
+
+# Use the .NET 9 ASP.NET runtime image (Linux)
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
-WORKDIR /MinVid-API/app/publish
-COPY --from=build . .
+
+# Install ffmpeg in the runtime image as well
+RUN apt-get update && apt-get install -y ffmpeg
+
+WORKDIR /app
+COPY --from=build /app/publish .
+
 EXPOSE 5000
 ENTRYPOINT ["dotnet", "MinVid-API.dll"]

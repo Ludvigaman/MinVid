@@ -307,7 +307,7 @@ namespace MinVid_API.Services
                 await videoFile.CopyToAsync(stream);
             }
 
-            var ffmpegPath = Path.Combine(AppContext.BaseDirectory, "Utils", "ffmpeg.exe");
+            var ffmpegPath = GetFFmpegPath();
 
             var ffmpegProcess = new System.Diagnostics.Process
             {
@@ -428,7 +428,7 @@ namespace MinVid_API.Services
                 };
 
                 var thumbnailPath = Path.Combine(_dataPath, metadata.id + ".jpg");
-                var ffmpegPath = Path.Combine(AppContext.BaseDirectory, "Utils", "ffmpeg.exe");
+                var ffmpegPath = GetFFmpegPath();
 
                 var ffmpegProcess = new System.Diagnostics.Process
                 {
@@ -470,6 +470,22 @@ namespace MinVid_API.Services
             }
 
             return initializedIds;
+        }
+
+        private string GetFFmpegPath()
+        {
+            if (OperatingSystem.IsWindows())
+            {
+                return Path.Combine(AppContext.BaseDirectory, "Utils", "ffmpeg.exe");
+            }
+            else if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
+            {
+                return "ffmpeg"; // Assumes installed and on PATH
+            }
+            else
+            {
+                throw new PlatformNotSupportedException("Unsupported OS platform for ffmpeg.");
+            }
         }
 
 
