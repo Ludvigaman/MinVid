@@ -1,17 +1,18 @@
 **MinVid** - (Swedish "MyVid", or Minimalistic Video host), is a simple self hosted video platform for those of you that want to keep your stash of videos and images private behind a password. 
 This tube-like application is super simple to set up and takes basically nothing to host. It's built with an Angular front end, and a .NET backend.
 
-**Installation and update guide!**
+**Installation and update guides!**
 
-https://github.com/Ludvigaman/MinVid/wiki/Installation---Update-guide
+https://github.com/Ludvigaman/MinVid/wiki
 
 **Recently added features**
+- Docker support!
+
+**Features**
 - Image support!
 - New upload UI
 - Mobile UI Enhanced
 - Video duration on the previews _(NOTE; this is a bit bugged because videos uploaded BEFORE this feature was added, will not display a duration)_
-
-**Features**
 - Upload custom thumbnails
 - Library import feature 
 - Edit video metadata 
