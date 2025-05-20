@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { VideoMetadata } from '../../Models/videoMetadata';
 import { FileServiceService } from '../../Services/file-service.service';
 import { ImageMetadata } from '../../Models/imageMetadata';
+import { Comic } from '../../Models/comic';
 
 @Component({
   selector: 'app-search-page',
@@ -14,9 +15,12 @@ export class SearchPageComponent {
   
   catalog: VideoMetadata[] = [];
   imageCatalog: ImageMetadata[] = [];
+  comicCatalog: Comic[] = [];
   thumbnails: string[] = [];
   searchString: string;
   isVideo = true;
+  isComic = false;
+  isImages = false;
   selectedImageIndex: number | null = null;
 
   constructor(private videoService: FileServiceService, private router: Router, private route: ActivatedRoute){
@@ -37,6 +41,7 @@ export class SearchPageComponent {
       }
 
       this.imageCatalog = await this.videoService.loadLatestImages(100);
+      this.comicCatalog = await this.videoService.getCatalog(100);
 
     } else {
       this.searchString = searchString;
@@ -48,10 +53,7 @@ export class SearchPageComponent {
   
       this.imageCatalog = await this.videoService.searchImages(searchArray);
       this.catalog = await this.videoService.search(searchArray);
-
-      if(this.catalog.length == 0 && this.imageCatalog.length > 0){
-        this.isVideo = false
-      }
+      this.comicCatalog = await this.videoService.searchComics(searchArray);
 
       if(this.catalog.length > 0){
         this.catalog.forEach(c => {
@@ -59,6 +61,35 @@ export class SearchPageComponent {
           this.thumbnails.push(thumbnail);
         });
       }
+    }
+
+    if(this.catalog.length == 0 && this.comicCatalog.length > 0){
+      this.isVideo = false;
+      this.isComic = true;
+    } else if (this.catalog.length == 0 && this.imageCatalog.length > 0){
+      this.isVideo = false;
+      this.isImages = true;
+    }
+  }
+
+  getPageImageUrl(comicId: string, page: number){
+    var url = this.videoService.getPageImageUrl(comicId, page);
+    return url;
+  }
+
+  setView(view: string){
+    if(view == "images") {
+      this.isVideo = false;
+      this.isComic = false;
+      this.isImages = true;
+    } else if (view == "comics") {
+      this.isVideo = false;
+      this.isImages = false;
+      this.isComic = true;
+    } else {
+      this.isComic = false;
+      this.isImages = false;
+      this.isVideo = true;
     }
   }
 
@@ -112,6 +143,10 @@ export class SearchPageComponent {
 
   navigate(id: string){
     this.router.navigateByUrl("/video/" + id)
+  }
+
+  openComic(id: string){
+    this.router.navigateByUrl("/comic/" + id)
   }
 
   capitalize(input: string){

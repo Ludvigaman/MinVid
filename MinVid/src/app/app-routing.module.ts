@@ -6,6 +6,7 @@ import { VideoPageComponent } from './Views/video-page/video-page.component';
 import { TagPageComponent } from './Views/tag-page/tag-page.component';
 import { SearchPageComponent } from './Views/search-page/search-page.component';
 import { SettingsComponent } from './Views/settings/settings.component';
+import { ComicPageComponent } from './Views/comic-page/comic-page.component';
 
 const routes: Routes = [
   {path: "", component: FrontPageComponent},
@@ -13,7 +14,8 @@ const routes: Routes = [
   {path: "video/:videoId", component: VideoPageComponent},
   {path: "tags/:tag", component: TagPageComponent},
   {path: "search/:searchString", component: SearchPageComponent},
-  {path: "settings", component: SettingsComponent}
+  {path: "settings", component: SettingsComponent},
+  {path: "comic/:comicId", component: ComicPageComponent}
 ];
 
 @NgModule({

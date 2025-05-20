@@ -1,10 +1,11 @@
 <div class="uploadPageContainer">
     <div class="button">
-        <a mat-stroked-button (click)="switchMode('img')" style="margin-right: 20px; text-align: center;"><mat-icon class="ico">image</mat-icon>Upload image</a>
-        <a mat-stroked-button (click)="switchMode('vid')" style="text-align: center;"><mat-icon class="ico">subscriptions</mat-icon>Upload video</a>
+        <a mat-stroked-button (click)="switchMode('image')" style="margin-right: 20px; text-align: center;"><mat-icon class="ico">image</mat-icon>Upload image</a>
+        <a mat-stroked-button (click)="switchMode('comics')" style="margin-right: 20px; text-align: center;"><mat-icon class="ico">book</mat-icon>Upload comic</a>
+        <a mat-stroked-button (click)="switchMode('video')" style="text-align: center;"><mat-icon class="ico">subscriptions</mat-icon>Upload video</a>
     </div>
 
-    <ng-container *ngIf="!isVideo">
+    <ng-container *ngIf="isImage">
         <h1 style="color: #ba005c;">Upload image</h1>
         <div class="fileZone">
             <input type="file" accept="image/*" (change)="onFileSelected($event)">
@@ -17,6 +18,41 @@
         </mat-form-field>
         <a mat-stroked-button (click)="uploadImage()" *ngIf="!isUploadingImage">Upload</a>
         <h4 *ngIf="isUploading">Please wait while file uploads...</h4>
+    </ng-container>
+    <ng-container *ngIf="isComic">
+        <h1 style="color: #ba005c;">Upload comic</h1>
+
+        <div class="fileZone">
+            <input type="file" accept=".zip" (change)="onComicZipSelected($event)">
+            <p *ngIf="selectedComicZipFile">Selected file: {{ selectedComicZipFile.name }}</p>
+        </div>
+        <p style="text-align: center;"><i>Select a ZIP file containing all the pages. <br>Note that they MUST be numered i.e. "1.png", "2.png" etc. <br>
+            page number 1 will be used as the "cover" image.
+        </i></p>
+
+        <h3 style="margin-top: 20px;">Title</h3>
+        <mat-form-field appearance="outline" class="inputField">
+            <input matInput style="color: white;" placeholder="Title" [(ngModel)]="comicTitle">
+        </mat-form-field>
+
+        <h3 style="margin-top: 0;">Description</h3>
+        <mat-form-field appearance="outline" class="inputField">
+            <textarea matInput style="color: white;" maxlength="256" placeholder="Description" [(ngModel)]="comicDescription"></textarea>
+        </mat-form-field>
+
+        <h3 style="margin-top: 0;">Artist</h3>
+        <mat-form-field appearance="outline" class="inputField">
+            <input matInput style="color: white;" placeholder="Artist name" [(ngModel)]="comicArtist">
+        </mat-form-field>
+
+        <h3 style="margin-top: 0;">Tags</h3>
+        <p style="margin-top: 0">Separate each tag with a comma sign</p>
+        <mat-form-field appearance="outline" class="inputField">
+            <textarea matInput style="color: white;" maxlength="256" placeholder="Tags - separate with comma" [(ngModel)]="tagsString"></textarea>
+        </mat-form-field>
+
+        <a mat-stroked-button (click)="uploadComicZip()" *ngIf="!isUploadingComic">Upload</a>
+        <h4 *ngIf="isUploadingComic">Please wait while comic uploads...</h4>
     </ng-container>
 
     <ng-container *ngIf="isVideo">

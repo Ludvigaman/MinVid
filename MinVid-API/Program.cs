@@ -9,6 +9,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<VideoService>();
 builder.Services.AddScoped<ImageService>(); 
+builder.Services.AddScoped<ComicService>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();

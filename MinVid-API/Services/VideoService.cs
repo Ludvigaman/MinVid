@@ -15,11 +15,12 @@ namespace MinVid_API.Services
     {
         private readonly string _dataPath;
         private readonly ImageService _imageService;
+        private readonly ComicService _comicService;
         private readonly string _importPath;
         private readonly string _pw;
         private readonly IConfiguration _conf;
 
-        public VideoService(IConfiguration configuration, ImageService imgService)
+        public VideoService(IConfiguration configuration, ImageService imgService, ComicService comicService)
         {
             var runningInContainer = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
 
@@ -33,6 +34,7 @@ namespace MinVid_API.Services
             }
 
             _imageService = imgService;
+            _comicService = comicService;
             _importPath = Path.Combine(_dataPath, "import");  // better cross-platform than string concat
             _pw = configuration.GetValue<string>("password");
 
@@ -211,14 +213,29 @@ namespace MinVid_API.Services
         public List<string> GetTagList()
         {
             var imageCatalog = _imageService.GetImageCatalog();
+            var comicCatalog = _comicService.GetCatalog();
             var catalog = GetVideoMetadataCatalog();
 
-            if (catalog.Count == 0 && imageCatalog.Count == 0)
+            if (catalog.Count == 0 && imageCatalog.Count == 0 && comicCatalog.Count == 0)
                 return new List<string>();
 
             var tagList = new List<string>();
 
             foreach (var meta in catalog)
+            {
+                if (meta.tags == null) continue;
+
+                foreach (var tag in meta.tags)
+                {
+                    var trimmedTag = tag.Trim();
+                    if (!tagList.Contains(trimmedTag, StringComparer.OrdinalIgnoreCase))
+                    {
+                        tagList.Add(trimmedTag);
+                    }
+                }
+            }
+
+            foreach (var meta in comicCatalog)
             {
                 if (meta.tags == null) continue;
 

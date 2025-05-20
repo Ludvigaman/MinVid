@@ -18,6 +18,7 @@ import { SearchPageComponent } from './Views/search-page/search-page.component';
 import { SettingsComponent } from './Views/settings/settings.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { EditComponent } from './Views/video-page/edit/edit.component';
+import { ComicPageComponent } from './Views/comic-page/comic-page.component';
 
 
 @NgModule({
@@ -31,7 +32,8 @@ import { EditComponent } from './Views/video-page/edit/edit.component';
     TagPageComponent,
     SearchPageComponent,
     SettingsComponent,
-    EditComponent
+    EditComponent,
+    ComicPageComponent
   ],
   imports: [
     BrowserModule,

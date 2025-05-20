@@ -3,6 +3,7 @@ import { FileServiceService } from '../../Services/file-service.service';
 import { VideoMetadata } from '../../Models/videoMetadata';
 import { Router } from '@angular/router';
 import { ImageMetadata } from '../../Models/imageMetadata';
+import { Comic } from '../../Models/comic';
 
 @Component({
   selector: 'app-front-page',
@@ -14,6 +15,7 @@ export class FrontPageComponent implements OnInit {
 
   catalog: VideoMetadata[];
   imageCatalog: ImageMetadata[];
+  comicCatalog: Comic[] = [];
   thumbnails: string[] = [];
   selectedImageIndex: number | null = null;
 
@@ -23,6 +25,7 @@ export class FrontPageComponent implements OnInit {
 
   async ngOnInit() {
     this.imageCatalog = await this.videoService.loadLatestImages(12);
+    this.comicCatalog = await this.videoService.getCatalog(12);
     this.catalog = await this.videoService.loadLatest(12);
     if(this.catalog.length > 0){
       this.catalog.forEach(c => {
@@ -66,6 +69,15 @@ export class FrontPageComponent implements OnInit {
 
   closeImage() {
     this.selectedImageIndex = null;
+  }
+
+  openComic(id: string){
+    this.router.navigateByUrl("/comic/" + id)
+  }
+
+  getPageImageUrl(comicId: string, page: number){
+    var url = this.videoService.getPageImageUrl(comicId, page);
+    return url;
   }
 
   get selectedImage(): ImageMetadata | null {

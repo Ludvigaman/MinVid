@@ -1,8 +1,31 @@
 <div class="frontPageContainer">
     <div class="button">
-        <a mat-stroked-button (click)="isVideo = false" style="margin-right: 20px; text-align: center;"><mat-icon class="ico">image</mat-icon>Show images</a>
-        <a mat-stroked-button (click)="isVideo = true" style="text-align: center;"><mat-icon class="ico">subscriptions</mat-icon>Show videos</a>
+        <a mat-stroked-button (click)="setView('images')" style="margin-right: 20px; text-align: center;"><mat-icon class="ico">image</mat-icon>Show images</a>
+        <a mat-stroked-button (click)="setView('comics')" style="margin-right: 20px; text-align: center;"><mat-icon class="ico">book</mat-icon>Show comics</a>
+        <a mat-stroked-button (click)="setView('videos')" style="text-align: center;"><mat-icon class="ico">subscriptions</mat-icon>Show videos</a>
+        
     </div>
+    <ng-container *ngIf="isComic">
+        <h1 style="color: #ba005c;" *ngIf="searchString != 'all'">Comic results for : {{capitalize(searchString)}}</h1>
+        <h1 style="color: #ba005c;" *ngIf="searchString == 'all'">Showing all comics</h1>
+        <div class="recommendations">
+            <div class="comic" *ngFor="let meta of comicCatalog" (click)="openComic(meta.id)">
+                <img src="{{getPageImageUrl(meta.id, 1)}}" class="comicThumbnail">
+                <div class="info">
+                    <div class="topRowComic">
+                        <h4 style="margin: 0">{{capitalize(meta.name)}}</h4>
+                        <p style="margin: 0; margin-top: 5px; font-size: small;">{{capitalize(meta.artist)}}</p>
+                    </div>
+                    <div class="tags">
+                        <p style="margin: 0; margin-right: 5px; margin-top: 5px; font-size: small;" *ngFor="let tag of meta.tags"><i>#{{capitalize(tag)}}</i></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="comicCatalog.length == 0">
+            It doesn't seem like we found any comics!
+        </div>
+    </ng-container>
     <ng-container *ngIf="isVideo">
         <h1 style="color: #ba005c;" *ngIf="searchString != 'all'">Video results for : {{capitalize(searchString)}}</h1>
         <h1 style="color: #ba005c;" *ngIf="searchString == 'all'">Showing all videos</h1>
@@ -24,7 +47,7 @@
             It doesn't seem like we found any videos!
         </div>
     </ng-container>
-    <ng-container *ngIf="!isVideo">
+    <ng-container *ngIf="isImages">
         <div class="frontPageContainer">
             <h1 style="color: #ba005c;" *ngIf="searchString != 'all'">Image results for : {{capitalize(searchString)}}</h1>
             <h1 style="color: #ba005c;" *ngIf="searchString == 'all'">Showing all images</h1>

@@ -20,6 +20,25 @@
 </div>
 
 <div class="frontPageContainer">
+    <h1 style="color: #ba005c;">Latest comics</h1>
+    <div class="comic" *ngFor="let meta of comicCatalog" (click)="openComic(meta.id)">
+        <img src="{{getPageImageUrl(meta.id, 1)}}" class="comicThumbnail">
+        <div class="info">
+            <div class="topRowComic">
+                <h4 style="margin: 0">{{capitalize(meta.name)}}</h4>
+                <p style="margin: 0; margin-top: 5px; font-size: small;">{{capitalize(meta.artist)}}</p>
+            </div>
+            <div class="tags">
+                <p style="margin: 0; margin-right: 5px; margin-top: 5px; font-size: small;" *ngFor="let tag of meta.tags"><i>#{{capitalize(tag)}}</i></p>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="comicCatalog.length == 0">
+        It doesn't seem like there are any comics yet...
+    </div>
+</div>
+
+<div class="frontPageContainer">
     <h1 style="color: #ba005c;">Latest images</h1>
     <div class="imageRecommendation">
         <div class="imgContainer" *ngFor="let meta of imageCatalog; let i = index" (click)="openImage(i)">

@@ -1,0 +1,45 @@
+<div class="pageContent" *ngIf="comicMetadata">
+    <div class="thumnailRegion">
+        <img class="comicThumbnail" [src]="getPageImageUrl(1)" alt="">
+    </div>
+    <div class="nameRegion">
+        <div>
+            <h1 style="margin: 0; color: #ba005c;">{{comicMetadata.name}}</h1>
+            <h3 style="margin-top: 10px;">By {{comicMetadata.artist}}</h3>
+            <p>{{comicMetadata.description}}</p>
+            <div class="comicTags">
+                <a class="comicTag" href="/tags/{{tag}}" *ngFor="let tag of comicMetadata.tags">
+                    {{capitalize(tag)}}
+                </a>
+            </div>
+        </div>
+        <div class="buttons">
+            <a mat-stroked-button class="button" (click)="openReader()"><mat-icon class="ico">chrome_reader_mode</mat-icon>Open reader</a>
+            <a mat-stroked-button class="button" style="margin-left: 10px;" (click)="delete()"><mat-icon class="ico" style="margin: 0;">delete_forever</mat-icon></a>
+        </div>
+    </div>
+</div>
+<div class="pageSection">
+    <hr style="width: 100%; margin-bottom: 40px;">
+    <div class="pages">
+        <div class="page" *ngFor="let i of pageArray; let idx = index">
+            <img class="page" [src]="getPageImageUrl(i)" alt="" (click)="openImageFullscreen(idx + 1)">
+        </div>
+    </div>
+</div>
+
+<div class="imageFullscreenOverlay" *ngIf="selectedImageUrl" (click)="closeImageFullscreen()" tabindex="0" (keydown.escape)="closeImageFullscreen()">
+    <button class="closeButton" (click)="closeImageFullscreen(); $event.stopPropagation()">✕</button>
+    <img [src]="selectedImageUrl" class="fullscreenImage" (click)="$event.stopPropagation()">
+</div>
+
+<div class="comicReaderOverlay" *ngIf="isReaderOpen" (scroll)="onReaderScroll($event)">
+  <div class="pageIndicator">{{ currentPageIndex + 1 }}/{{ pageArray.length }}</div>
+  <div class="comicReader" tabindex="0">
+    <img *ngFor="let i of pageArray; let index = index"
+         class="readerPage"
+         [src]="getPageImageUrl(i)"
+         [alt]="'Page ' + i">
+  </div>
+  <button class="closeButton" (click)="closeReader()">✕</button>
+</div>

@@ -5,6 +5,7 @@ import { VideoMetadata } from '../../Models/videoMetadata';
 import { ConfigServiceService } from '../../Services/config-service.service';
 import { FileServiceService } from '../../Services/file-service.service';
 import { ImageMetadata } from '../../Models/imageMetadata';
+import { Comic } from '../../Models/comic';
 
 @Component({
   selector: 'app-upload-page',
@@ -21,7 +22,15 @@ export class UploadPageComponent {
   isUploading = false
   isUploadingImage = false;
 
+  comicTitle: string = '';
+  comicDescription: string = '';
+  comicArtist: string = '';
+  selectedComicZipFile: File | null = null;
+  isUploadingComic = false;
+
   isVideo = true;
+  isComic = false;
+  isImage = false;
 
   _url: string;
 
@@ -83,11 +92,18 @@ export class UploadPageComponent {
     this.title = "";
     this.description = "";
     this.tagsString = "";
-    this.isVideo = !this.isVideo;
 
-    if(mode == "img"){
+    if(mode == "image") {
       this.isVideo = false;
+      this.isComic = false;
+      this.isImage = true;
+    } else if (mode == "comics") {
+      this.isVideo = false;
+      this.isImage = false;
+      this.isComic = true;
     } else {
+      this.isComic = false;
+      this.isImage = false;
       this.isVideo = true;
     }
   }
@@ -118,5 +134,49 @@ export class UploadPageComponent {
     this.isUploadingImage = false;
     this.selectedFile = null;
   }
+
+  onComicZipSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedComicZipFile = input.files[0];
+    }
+  }
+
+  async uploadComicZip(): Promise<void> {
+    if (!this.selectedComicZipFile || !this.comicTitle || !this.comicArtist) {
+      alert("Please fill out all fields and select a zip file.");
+      return;
+    }
+
+    const tags = this.tagsString.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
+    const metadata = new Comic(
+      '', // ID is assigned server-side
+      this.comicTitle,
+      this.comicDescription,
+      this.comicArtist,
+      0, // numberOfPages is determined by server
+      tags
+    );
+
+    this.isUploadingComic = true;
+
+    try {
+      const formData = new FormData();
+      formData.append("metadataJson", JSON.stringify(metadata));
+      formData.append("zipFile", this.selectedComicZipFile);
+
+      const result = await this.videoService.uploadComicZip(metadata, this.selectedComicZipFile);
+      console.log("Comic uploaded successfully. ID:", result);
+      var goTo = confirm("Upload sucessful, go to comic?")
+      if(goTo){
+        window.location.href = "/comic/" + result;
+      } 
+    } catch (error) {
+      console.error("Error uploading comic:", error);
+    } finally {
+      this.isUploadingComic = false;
+    }
+  }
+
 
 }

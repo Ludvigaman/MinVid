@@ -5,6 +5,7 @@ import { firstValueFrom, Observable } from 'rxjs';
 import { ConfigServiceService } from './config-service.service';
 import { ImageMetadata } from '../Models/imageMetadata';
 import { PasswordChangeObject } from '../Models/passwordChangeObject';
+import { Comic } from '../Models/comic';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +28,9 @@ export class FileServiceService {
     }
   }
 
+  //------------------- Auth stuff ----------------------
+
+
   //Please don't ever do it like this, this is STUPID and holy moly unsecure... But I don't really care at the moments, it's a private site with no public endpoints.
   async login(password: string): Promise<boolean> {
     try {
@@ -37,6 +41,17 @@ export class FileServiceService {
     }
   }
 
+  async changePassword(pwObj: PasswordChangeObject): Promise<boolean>{
+    try {
+      return await firstValueFrom(this._client.post<boolean>(`${this.API_URL}/resetPassword`, pwObj));
+    } catch (error) {
+      console.error('Could not change password!', error);
+      return false;
+    }
+  }
+  
+  //------------------- Library stuff ----------------------
+  
   async scanLibrary(): Promise<string[]> {
     try {
       return await firstValueFrom(this._client.get<string[]>(`${this.API_URL}/scanLibrary/`));
@@ -46,26 +61,69 @@ export class FileServiceService {
     }
   }
 
-  async delete(id: string): Promise<boolean> {
+  //------------------- Comic stuff ----------------------
+
+  async uploadComicZip(metadata: Comic, zipFile: File): Promise<string> {
+    const formData = new FormData();
+    formData.append("metadataJson", JSON.stringify(metadata));
+    formData.append("zipFile", zipFile);
+
     try {
-      return await firstValueFrom(this._client.get<boolean>(`${this.API_URL}/delete/${id}`));
+      const result = await firstValueFrom(this._client.post(`${this.API_URL}/uploadComicZip`, formData, { responseType: 'text' }));
+      return result;
+    } catch (err) {
+      console.error("Upload failed", err);
+      return "0";
+    }
+  }
+
+  async deleteComic(comicId: string): Promise<boolean> {
+    try {
+      const result = await firstValueFrom(this._client.get<boolean>(`${this.API_URL}/deleteComic/${comicId}`));
+      return result;
     } catch (error) {
-      console.error('Error deleting video', error);
+      console.error('Error deleting comic', error);
       return false;
     }
   }
 
-  getImageUrl(imageId: string): string {
-    return `${this.API_URL}/image/${imageId}`;
-  }
-  
-  async search(tags: string[]): Promise<VideoMetadata[]> {
+  async searchComics(tags: string[]): Promise<Comic[]> {
     try {
-      return await firstValueFrom(this._client.post<VideoMetadata[]>(`${this.API_URL}/search/`, tags));
+      return await firstValueFrom(this._client.post<Comic[]>(`${this.API_URL}/comicSearch/`, tags));
     } catch (error) {
       console.error('Error during search', error);
       return [];
     }
+  }
+
+  async getComicMetadata(comicId: string): Promise<Comic> {
+    try {
+      const result = await firstValueFrom(this._client.get<Comic>(`${this.API_URL}/comic/${comicId}`));
+      return result;
+    } catch (error) {
+      console.error('Error loading tag list', error);
+      return new Comic("0", "", "", "", 0, []);
+    }
+  }
+
+  getPageImageUrl(comicId: string, page: number): string {
+    return `${this.API_URL}/comicImage/${comicId}/${page}`;
+  }
+
+  async getCatalog(number: number): Promise<Comic[]> {
+    try {
+      const result = await firstValueFrom(this._client.get<Comic[]>(`${this.API_URL}/comicCatalog/${number}`));
+      return result;
+    } catch (error) {
+      console.error('Error loading tag list', error);
+      return [];
+    }
+  }
+
+  // ----------------- Image stuff --------------------------
+
+  getImageUrl(imageId: string): string {
+    return `${this.API_URL}/image/${imageId}`;
   }
 
   async searchImages(tags: string[]): Promise<ImageMetadata[]> {
@@ -95,6 +153,39 @@ export class FileServiceService {
       return { id: "0" };
     }
   }
+
+  async loadLatestImages(count: number): Promise<ImageMetadata[]> {
+    try {
+      const result = await firstValueFrom(this._client.get<ImageMetadata[]>(this.API_URL + "/getLatestImages/" + count));
+      return result;
+    } catch (error) {
+      console.error('Error loading catalog', error);
+      return [];
+    }
+  }
+
+
+  // ----------------- Video stuff --------------------------
+
+
+  async delete(id: string): Promise<boolean> {
+    try {
+      return await firstValueFrom(this._client.get<boolean>(`${this.API_URL}/delete/${id}`));
+    } catch (error) {
+      console.error('Error deleting video', error);
+      return false;
+    }
+  }
+  
+  async search(tags: string[]): Promise<VideoMetadata[]> {
+    try {
+      return await firstValueFrom(this._client.post<VideoMetadata[]>(`${this.API_URL}/search/`, tags));
+    } catch (error) {
+      console.error('Error during search', error);
+      return [];
+    }
+  }
+
 
   async updateVideoMetadata(metadata: VideoMetadata): Promise<boolean> {
     try {
@@ -147,16 +238,6 @@ export class FileServiceService {
     }
   }
 
-  async loadLatestImages(count: number): Promise<ImageMetadata[]> {
-    try {
-      const result = await firstValueFrom(this._client.get<ImageMetadata[]>(this.API_URL + "/getLatestImages/" + count));
-      return result;
-    } catch (error) {
-      console.error('Error loading catalog', error);
-      return [];
-    }
-  }
-
   async getRecommended(videoId: string): Promise<VideoMetadata[]> {
     try {
       const result = await firstValueFrom(this._client.get<VideoMetadata[]>(`${this.API_URL}/getRecommended/${videoId}`));
@@ -197,12 +278,5 @@ export class FileServiceService {
     }
   }
 
-  async changePassword(pwObj: PasswordChangeObject): Promise<boolean>{
-    try {
-      return await firstValueFrom(this._client.post<boolean>(`${this.API_URL}/resetPassword`, pwObj));
-    } catch (error) {
-      console.error('Could not change password!', error);
-      return false;
-    }
-  }
+
 }

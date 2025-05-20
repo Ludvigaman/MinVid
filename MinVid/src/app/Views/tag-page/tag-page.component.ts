@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { VideoMetadata } from '../../Models/videoMetadata';
 import { FileServiceService } from '../../Services/file-service.service';
 import { ImageMetadata } from '../../Models/imageMetadata';
+import { Comic } from '../../Models/comic';
 
 @Component({
   selector: 'app-tag-page',
@@ -14,12 +15,15 @@ export class TagPageComponent {
   
   catalog: VideoMetadata[] = [];
   imageCatalog: ImageMetadata[] = [];
+  comicCatalog: Comic[] = [];
   thumbnails: string[] = [];
   tag: string;
   allTags: string[];
   showTagList = false;
   groupedTags: { [key: string]: string[] } = {};
   isVideo = true;
+  isImages = false;
+  isComic = false;
   selectedImageIndex: number | null = null;
 
 
@@ -56,10 +60,7 @@ export class TagPageComponent {
 
       this.imageCatalog = await this.videoService.getImagesWithTag(tag)
       this.catalog = await this.videoService.getVideosWithTag(tag);
-
-      if(this.catalog.length == 0 && this.imageCatalog.length > 0){
-        this.isVideo = false;
-      }
+      this.comicCatalog = await this.videoService.searchComics([tag])
 
       if(this.catalog.length > 0){
         this.catalog.forEach(c => {
@@ -69,6 +70,39 @@ export class TagPageComponent {
       }
     }
 
+    if(this.catalog.length == 0 && this.comicCatalog.length > 0){
+      this.isVideo = false;
+      this.isComic = true;
+    } else if (this.catalog.length == 0 && this.imageCatalog.length > 0){
+      this.isVideo = false;
+      this.isImages = true;
+    }
+
+  }
+
+  setView(view: string){
+    if(view == "images") {
+      this.isVideo = false;
+      this.isComic = false;
+      this.isImages = true;
+    } else if (view == "comics") {
+      this.isVideo = false;
+      this.isImages = false;
+      this.isComic = true;
+    } else {
+      this.isComic = false;
+      this.isImages = false;
+      this.isVideo = true;
+    }
+  }
+
+  getPageImageUrl(comicId: string, page: number){
+    var url = this.videoService.getPageImageUrl(comicId, page);
+    return url;
+  }
+
+  openComic(id: string){
+    this.router.navigateByUrl("/comic/" + id)
   }
 
   createDurationString(duration: number): string {
