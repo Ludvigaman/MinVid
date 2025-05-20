@@ -21,15 +21,18 @@
 
 <div class="frontPageContainer">
     <h1 style="color: #ba005c;">Latest comics</h1>
-    <div class="comic" *ngFor="let meta of comicCatalog" (click)="openComic(meta.id)">
-        <img src="{{getPageImageUrl(meta.id, 1)}}" class="comicThumbnail">
-        <div class="info">
-            <div class="topRowComic">
-                <h4 style="margin: 0">{{capitalize(meta.name)}}</h4>
-                <p style="margin: 0; margin-top: 5px; font-size: small;">{{capitalize(meta.artist)}}</p>
-            </div>
-            <div class="tags">
-                <p style="margin: 0; margin-right: 5px; margin-top: 5px; font-size: small;" *ngFor="let tag of meta.tags"><i>#{{capitalize(tag)}}</i></p>
+    <div class="recommendations">
+        <div class="comic" *ngFor="let meta of comicCatalog" (click)="openComic(meta.id)">
+            <img src="{{getPageImageUrl(meta.id, 1)}}" class="comicThumbnail">
+            <div class="info">
+                <div class="topRowComic">
+                    <h4 style="margin: 0; color: #ba005c;">{{capitalize(meta.name)}}</h4>
+                    <p style="margin: 0; margin-top: 5px; font-size: small;"><b>By {{capitalize(meta.artist)}}</b></p>
+                    <p style="margin: 0; margin-top: 5px; font-size: small;">{{meta.description}}</p>
+                </div>
+                <div class="tagsComic">
+                    <p style="margin: 0; margin-right: 5px; margin-top: 5px; font-size: small;" *ngFor="let tag of meta.tags"><i>#{{capitalize(tag)}}</i></p>
+                </div>
             </div>
         </div>
     </div>

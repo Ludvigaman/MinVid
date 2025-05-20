@@ -66,12 +66,19 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   justify-content: space-between;
 }
 
+.tagsComic {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 5px;
+  border-top: 1px solid white;
+  flex-direction: row;
+  margin-left: 10px;
+}
 
 .topRowComic {
   display: flex;
   flex-direction: column;
-  margin-top: 10px;
-  width: 100%;
+  margin-left: 10px;
   justify-content: space-between;
 }
 
@@ -160,10 +167,21 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     justify-content: center;
 }
 
+.info {
+  width: 100%;
+}
+
 .comic {
     display: flex;
-    flex-direction: column;
-    max-width: 200px;
+    flex-direction: row;
+    width: 400px;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 20px;
+    background-color: rgba(128, 128, 128, 0.13);
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
 }
 
 .comicThumbnail {
