@@ -1,5 +1,8 @@
 .button {
     margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .video {
@@ -73,5 +76,9 @@
 
     .image {
         max-width: 100%;
+    }
+
+    .videoButton {
+        margin-top: 10px;
     }
 }

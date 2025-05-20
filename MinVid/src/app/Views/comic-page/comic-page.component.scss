@@ -1,4 +1,4 @@
-.pageContent {
+.pageContentComic {
     display: flex;
     width: 95%;
     justify-self: center;
@@ -18,13 +18,6 @@
     border-radius: 10px;
     max-width: 200px;
     margin-right: 20px;
-}
-
-.thumbnailRegion {
-    display: flex;
-    flex-direction: column;
-    width: 50%;
-    align-items: flex-start;
 }
 
 .comicTags {
@@ -165,5 +158,37 @@
         justify-content: center;
         flex-wrap: wrap;
         width: 100%; 
+    }
+
+    .pageContentComic {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .thumbnailRegion {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .nameRegion {
+        width: 95%;
+        display: flex;
+        align-items: center;
+        text-align: center;
+    }
+
+    .comicThumbnail {
+        margin: 0;
+    }
+
+    .comicTags {
+        justify-content: center;
+    }
+
+    .buttons {
+        display: flex;
+        flex-direction: column;
     }
 }

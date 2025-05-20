@@ -2,7 +2,7 @@
     <div class="button">
         <a mat-stroked-button (click)="setView('images')" style="margin-right: 20px; text-align: center;"><mat-icon class="ico">image</mat-icon>Show images</a>
         <a mat-stroked-button (click)="setView('comics')" style="margin-right: 20px; text-align: center;"><mat-icon class="ico">book</mat-icon>Show comics</a>
-        <a mat-stroked-button (click)="setView('videos')" style="text-align: center;"><mat-icon class="ico">subscriptions</mat-icon>Show videos</a>
+        <a mat-stroked-button (click)="setView('videos')" style="text-align: center;" class="videoButton"><mat-icon class="ico">subscriptions</mat-icon>Show videos</a>
         
     </div>
     <ng-container *ngIf="isComic">
