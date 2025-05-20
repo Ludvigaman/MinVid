@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using System.Text.Json;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json.Linq;
 
 namespace MinVid_API.Services
 {
@@ -16,6 +17,7 @@ namespace MinVid_API.Services
         private readonly ImageService _imageService;
         private readonly string _importPath;
         private readonly string _pw;
+        private readonly IConfiguration _conf;
 
         public VideoService(IConfiguration configuration, ImageService imgService)
         {
@@ -33,11 +35,32 @@ namespace MinVid_API.Services
             _imageService = imgService;
             _importPath = Path.Combine(_dataPath, "import");  // better cross-platform than string concat
             _pw = configuration.GetValue<string>("password");
+
+            _conf = configuration;
         }
 
         public bool Login(string password)
         {
             return (_pw == password);
+        }
+
+        public bool ChangePassword(PasswordChangeObject pwObj)
+        {
+            if (pwObj.currentPw != _pw)
+                return false;
+
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
+
+            // Load the JSON from the file
+            var json = JObject.Parse(File.ReadAllText(filePath));
+
+            // Update the password
+            json["password"] = pwObj.newPw;
+
+            // Save it back to the file
+            File.WriteAllText(filePath, json.ToString());
+
+            return true;
         }
 
         public bool Delete(string videoId)

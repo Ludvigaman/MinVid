@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
 import { ConfigServiceService } from './config-service.service';
 import { ImageMetadata } from '../Models/imageMetadata';
+import { PasswordChangeObject } from '../Models/passwordChangeObject';
 
 @Injectable({
   providedIn: 'root'
@@ -193,6 +194,15 @@ export class FileServiceService {
     } catch (error) {
       console.error('Error loading catalog', error);
       return [];
+    }
+  }
+
+  async changePassword(pwObj: PasswordChangeObject): Promise<boolean>{
+    try {
+      return await firstValueFrom(this._client.post<boolean>(`${this.API_URL}/resetPassword`, pwObj));
+    } catch (error) {
+      console.error('Could not change password!', error);
+      return false;
     }
   }
 }

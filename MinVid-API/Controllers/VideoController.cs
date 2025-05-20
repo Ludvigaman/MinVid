@@ -19,6 +19,12 @@ namespace MinVid_API.Controllers
             return _videoService.Login(password);
         }
 
+        [HttpPost("resetPassword")]
+        public bool ChangePassword([FromBody] PasswordChangeObject pwObj)
+        {
+            return _videoService.ChangePassword(pwObj);
+        }
+
         [HttpGet("delete/{videoId}")]
         public bool Delete(string videoId)
         {

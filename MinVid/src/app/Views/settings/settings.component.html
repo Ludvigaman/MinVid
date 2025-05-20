@@ -1,7 +1,21 @@
 <div class="uploadPageContainer">
-    <h1>Log out</h1>
+    <h1>Settings</h1>
     <a mat-stroked-button class="settingsBtn" (click)="logOut()">Log out</a>
-    <br><br>
+    <br>
+    <h3>Change password</h3>
+    <p style="margin-top: 0"><i>Default password is '123' <br>
+        You can also change your password in the appsettings.json file.</i></p>
+    <mat-form-field appearance="outline" class="inputField">
+        <input matInput style="color: white;" placeholder="Current password" [(ngModel)]="currentPw">
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="inputField">
+        <input matInput style="color: white;" placeholder="New password" [(ngModel)]="newPw">
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="inputField">
+        <input matInput style="color: white;" placeholder="New password again" [(ngModel)]="newPwAgain">
+    </mat-form-field>
+    <a mat-stroked-button class="settingsBtn" (click)="changePassword()">Change password</a>
+    <br>
     <h1>Library import</h1>
     <p>If you wish to import a batch of external videos directly, without uploading them manually; you can do that here.<br>
     Simply create a new folder inside your DATA folder; and name it "import". <br>
