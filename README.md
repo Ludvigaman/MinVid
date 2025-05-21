@@ -6,10 +6,12 @@ This tube-like application is super simple to set up and takes basically nothing
 https://github.com/Ludvigaman/MinVid/wiki
 
 **Recently added features**
+- Comics / Manga added!
+- Changing login password from the Settings page
 - Docker support!
 
 **Features**
-- Image support!
+- Image support
 - New upload UI
 - Mobile UI Enhanced
 - Video duration on the previews _(NOTE; this is a bit bugged because videos uploaded BEFORE this feature was added, will not display a duration)_
