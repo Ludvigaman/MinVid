@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MinVid_API.Models;
 using MinVid_API.Services;
+using System.Threading.Tasks;
 
 namespace MinVid_API.Controllers
 {
@@ -27,6 +28,12 @@ namespace MinVid_API.Controllers
             //Takelast to select the most recently added ones
             var returnImages = images.TakeLast(count).Reverse().ToList();
             return returnImages;
+        }
+
+        [HttpGet("deleteImage/{id}")]
+        public async Task<bool> GetCatalog(string id)
+        {
+            return await _imageService.DeleteImageAsync(id);
         }
 
         [HttpPost("searchImages")]

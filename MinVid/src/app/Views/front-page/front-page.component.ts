@@ -75,6 +75,19 @@ export class FrontPageComponent implements OnInit {
     this.router.navigateByUrl("/comic/" + id)
   }
 
+  async deleteImage(id: string){
+    var res = confirm("Are you sure you want to delete this image?")
+    if(res){
+      var deleteRes = await this.videoService.deleteImage(id);
+      if(deleteRes){
+        alert("Image deleted sucessfully")
+        this.closeImage();
+      } else {
+        alert("Could not delete image...")
+      }
+    }
+  }
+
   getPageImageUrl(comicId: string, page: number){
     var url = this.videoService.getPageImageUrl(comicId, page);
     return url;

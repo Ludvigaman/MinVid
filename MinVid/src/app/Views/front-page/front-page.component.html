@@ -73,5 +73,6 @@
         <span class="tag" *ngFor="let tag of imageCatalog[selectedImageIndex]?.tags" (click)="toTag(tag)">
             #{{ capitalize(tag) }}
         </span>
+        <mat-icon class="deleteImageIco" style="margin: 0;" (click)="deleteImage(imageCatalog[selectedImageIndex].id)">delete_forever</mat-icon>
     </div>
 </div>

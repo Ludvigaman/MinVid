@@ -36,6 +36,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   bottom: 20px;
   width: 100%;
   text-align: center;
+  align-items: center;
   z-index: 5;
   font-size: 1rem;
   color: white;
@@ -64,6 +65,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   width: 100%;
   align-items: center;
   justify-content: space-between;
+}
+
+.deleteImageIco {
+  cursor: pointer;
 }
 
 .tagsComic {

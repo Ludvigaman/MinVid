@@ -159,6 +159,39 @@ namespace MinVid_API.Services
             return metadata.id;
         }
 
+        public async Task<bool> DeleteImageAsync(string imageId)
+        {
+            var catalogPath = Path.Combine(_dataPath, "catalog.json");
+
+            if (!File.Exists(catalogPath))
+                return false;
+
+            // Load catalog
+            var catalogJson = await File.ReadAllTextAsync(catalogPath);
+            var catalog = JsonSerializer.Deserialize<List<ImageMetadata>>(catalogJson) ?? new List<ImageMetadata>();
+
+            // Find the image entry
+            var image = catalog.FirstOrDefault(img => img.id == imageId);
+            if (image == null)
+                return false;
+
+            // Delete the image file
+            var imageFileName = $"{image.id}.{image.format}";
+            var imagePath = Path.Combine(_dataPath, imageFileName);
+            if (File.Exists(imagePath))
+            {
+                File.Delete(imagePath);
+            }
+
+            // Remove from catalog and write updated catalog
+            catalog.Remove(image);
+            var updatedJson = JsonSerializer.Serialize(catalog, new JsonSerializerOptions { WriteIndented = true });
+            await File.WriteAllTextAsync(catalogPath, updatedJson);
+
+            return true;
+        }
+
+
 
     }
 }

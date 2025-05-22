@@ -164,6 +164,16 @@ export class FileServiceService {
     }
   }
 
+  async deleteImage(id: string): Promise<boolean> {
+    try {
+      const result = await firstValueFrom(this._client.get<boolean>(`${this.API_URL}/deleteImage/${id}`));
+      return result;
+    } catch (error) {
+      console.error('Error deleting image with id:' + id, error);
+      return false;
+    }
+  }
+
 
   // ----------------- Video stuff --------------------------
 

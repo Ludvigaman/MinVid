@@ -1,8 +1,8 @@
 <div class="uploadPageContainer">
     <div class="button">
-        <a mat-stroked-button (click)="switchMode('image')" style="margin-right: 20px; text-align: center;"><mat-icon class="ico">image</mat-icon>Upload image</a>
-        <a mat-stroked-button (click)="switchMode('comics')" style="margin-right: 20px; text-align: center;"><mat-icon class="ico">book</mat-icon>Upload comic</a>
-        <a mat-stroked-button (click)="switchMode('video')" style="text-align: center;"><mat-icon class="ico">subscriptions</mat-icon>Upload video</a>
+        <a mat-stroked-button (click)="switchMode('image')" class="selectionButton"><mat-icon class="ico">image</mat-icon>Upload image</a>
+        <a mat-stroked-button (click)="switchMode('comics')" class="selectionButton"><mat-icon class="ico">book</mat-icon>Upload comic</a>
+        <a mat-stroked-button (click)="switchMode('video')" class="selectionButton"><mat-icon class="ico">subscriptions</mat-icon>Upload video</a>
     </div>
 
     <ng-container *ngIf="isImage">

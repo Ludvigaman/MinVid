@@ -27,14 +27,25 @@ namespace MinVid_API.Services
 
         public FileStreamResult GetPageImage(string comicId, string pageNumber)
         {
-            // Look for any file that matches the page number with any extension
             var comicPath = Path.Combine(_dataPath, comicId);
-            var file = Directory.GetFiles(comicPath, $"{pageNumber}.*").FirstOrDefault();
 
-            if (file == null || !File.Exists(file))
+            if (!Directory.Exists(comicPath))
+                throw new DirectoryNotFoundException("Comic folder not found");
+
+            // Look for any file where the filename (without extension) ends with the given page number
+            var matchingFile = Directory
+                .GetFiles(comicPath)
+                .FirstOrDefault(file =>
+                {
+                    var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file);
+                    return fileNameWithoutExtension == pageNumber ||
+                           fileNameWithoutExtension.TrimStart('0') == pageNumber;
+                });
+
+            if (matchingFile == null || !File.Exists(matchingFile))
                 throw new FileNotFoundException("Image not found");
 
-            var extension = Path.GetExtension(file).TrimStart('.').ToLowerInvariant();
+            var extension = Path.GetExtension(matchingFile).TrimStart('.').ToLowerInvariant();
 
             var contentType = extension switch
             {
@@ -46,7 +57,7 @@ namespace MinVid_API.Services
                 _ => "application/octet-stream"
             };
 
-            var stream = new FileStream(file, FileMode.Open, FileAccess.Read);
+            var stream = new FileStream(matchingFile, FileMode.Open, FileAccess.Read);
             return new FileStreamResult(stream, contentType);
         }
 
