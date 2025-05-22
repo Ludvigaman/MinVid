@@ -158,6 +158,11 @@ namespace MinVid_API.Services
             return scoredComics;
         }
 
+        public int GetTotalComicCount()
+        {
+            return GetCatalog().Count();
+        }
+
         public List<Comic> GetCatalog()
         {
 

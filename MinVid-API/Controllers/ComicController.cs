@@ -49,15 +49,19 @@ namespace MinVid_API.Controllers
             }
         }
 
-        [HttpGet("comicCatalog/{number}")]
-        public List<Comic> GetCatalog(int number)
+        [HttpGet("comicCatalog/{page}")]
+        public List<Comic> GetCatalog(int page)
         {
+            const int pageSize = 16;
+
             return _comicService
                 .GetCatalog()
                 .OrderByDescending(c => c.uploadDate)
-                .Take(number)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToList();
         }
+
 
         [HttpPost("comicSearch")]
         public List<Comic> GetCatalog([FromBody] string[] tags)
@@ -65,6 +69,12 @@ namespace MinVid_API.Controllers
             var list = tags.ToList();
             var images = _comicService.Search(list);
             return images.Reverse<Comic>().ToList();
+        }
+
+        [HttpGet("getTotalComicCount")]
+        public int GetTotalVideoCount()
+        {
+            return _comicService.GetTotalComicCount();
         }
 
         [HttpGet("deleteComic/{comicId}")]

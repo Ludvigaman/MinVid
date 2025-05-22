@@ -201,6 +201,21 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     border-radius: 5px;
 }
 
+.pageinator {
+  margin-top: 20px;
+}
+
+.pageNumber {
+  display: inline-block;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.pageNumber.active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
 
 @media screen and (max-width: 900px) {
 

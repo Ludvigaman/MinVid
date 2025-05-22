@@ -21,19 +21,30 @@ namespace MinVid_API.Controllers
             return images;
         }
 
-        [HttpGet("getLatestImages/{count}")]
-        public List<ImageMetadata> GetCatalog(int count)
+        [HttpGet("getLatestImages/{page}")]
+        public List<ImageMetadata> GetCatalog(int page)
         {
-            var images = _imageService.GetImageCatalog();
-            //Takelast to select the most recently added ones
-            var returnImages = images.TakeLast(count).Reverse().ToList();
-            return returnImages;
+            const int pageSize = 16;
+
+            var images = _imageService.GetImageCatalog()
+                                      .Skip((page - 1) * pageSize)
+                                      .Take(pageSize)
+                                      .ToList();
+
+            return images;
         }
+
 
         [HttpGet("deleteImage/{id}")]
         public async Task<bool> GetCatalog(string id)
         {
             return await _imageService.DeleteImageAsync(id);
+        }
+
+        [HttpGet("getTotalImageCount")]
+        public int GetTotalVideoCount()
+        {
+            return _imageService.GetTotalImageCount();
         }
 
         [HttpPost("searchImages")]

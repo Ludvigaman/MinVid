@@ -76,6 +76,7 @@ namespace MinVid_API.Services
                 Console.WriteLine($"Error reading catalog file: {ex.Message}");
             }
 
+            catalog.Reverse();
             return catalog;
         }
 
@@ -98,6 +99,11 @@ namespace MinVid_API.Services
                 .ToList();
 
             return scoredImages;
+        }
+
+        public int GetTotalImageCount()
+        {
+            return GetImageCatalog().Count();
         }
 
         public List<ImageMetadata> GetWithTag(string tag)

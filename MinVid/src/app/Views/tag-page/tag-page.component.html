@@ -6,24 +6,36 @@
     </div>
 
     <ng-container *ngIf="isVideo">
-      <h1 style="color: #ba005c;">Videos tagged with : {{capitalize(tag)}}</h1>
-      <div class="recommendations">
-          <div class="video" *ngFor="let meta of catalog" (click)="navigate(meta.id)">
-              <img src="{{getThumbnail(meta.id)}}" class="thumbnail">
-              <div class="info">
-                <div class="topRow">
-                    <h4 style="margin: 0">{{capitalize(meta.title)}}</h4>
-                    <p style="margin: 0; font-size: small;">{{createDurationString(meta.duration)}}</p>
+        <h1 style="color: #ba005c;">Videos tagged with : {{capitalize(tag)}}</h1>
+        <div class="recommendations">
+            <div class="video" *ngFor="let meta of catalog" (click)="navigate(meta.id)">
+                <img src="{{getThumbnail(meta.id)}}" class="thumbnail">
+                <div class="info">
+                    <div class="topRow">
+                        <h4 style="margin: 0">{{capitalize(meta.title)}}</h4>
+                        <p style="margin: 0; font-size: small;">{{createDurationString(meta.duration)}}</p>
+                    </div>
+                    <div class="tags">
+                        <p style="margin: 0; margin-right: 5px; margin-top: 5px; font-size: small;" *ngFor="let tag of meta.tags"><i>#{{capitalize(tag)}}</i></p>
+                    </div>
                 </div>
-                  <div class="tags">
-                      <p style="margin: 0; margin-right: 5px; margin-top: 5px; font-size: small;" *ngFor="let tag of meta.tags"><i>#{{capitalize(tag)}}</i></p>
-                  </div>
-              </div>
-          </div>
-      </div>
-      <div *ngIf="catalog.length == 0">
-          It doesn't seem like any videos have this tag!
-      </div>
+            </div>
+        </div>
+        <div class="pageinator">
+            <div
+                class="pageNumber"
+                *ngFor="let page of visiblePageNumbersVideo"
+                [class.active]="page === currentPageVideo"
+                (click)="goToVideoPage(page)">
+                <ng-container *ngIf="page !== -1; else dots">
+                {{ page }}
+                </ng-container>
+                <ng-template #dots>...</ng-template>
+            </div>
+        </div>
+        <div *ngIf="catalog.length == 0">
+            It doesn't seem like any videos have this tag!
+        </div>
     </ng-container>
 
     <ng-container *ngIf="isComic">
@@ -42,6 +54,18 @@
                 </div>
             </div>
         </div>
+        <div class="pageinator">
+            <div
+                class="pageNumber"
+                *ngFor="let page of visiblePageNumbersComic"
+                [class.active]="page === currentPageComic"
+                (click)="goToComicPage(page)">
+                <ng-container *ngIf="page !== -1; else dots">
+                {{ page }}
+                </ng-container>
+                <ng-template #dots>...</ng-template>
+            </div>
+        </div>
         <div *ngIf="comicCatalog.length == 0">
             It doesn't seem like we found any comics!
         </div>
@@ -54,6 +78,18 @@
             <div class="imageRecommendation">
                 <div class="imgContainer" *ngFor="let meta of imageCatalog; let i = index" (click)="openImage(i)">
                     <img src="{{getImage(meta.id)}}" class="image">
+                </div>
+            </div>
+            <div class="pageinator">
+                <div
+                    class="pageNumber"
+                    *ngFor="let page of visiblePageNumbersImage"
+                    [class.active]="page === currentPageImage"
+                    (click)="goToImagePage(page)">
+                    <ng-container *ngIf="page !== -1; else dots">
+                    {{ page }}
+                    </ng-container>
+                    <ng-template #dots>...</ng-template>
                 </div>
             </div>
             <div *ngIf="imageCatalog.length == 0">

@@ -23,16 +23,42 @@ export class SearchPageComponent {
   isImages = false;
   selectedImageIndex: number | null = null;
 
+  videoPages: number[] = [];
+  imagePages: number[] = [];
+  comicPages: number[] = [];
+
+  currentPageComic = 1;
+  currentPageVideo = 1;
+  currentPageImage = 1;
+
+  visiblePageNumbersComic: number[] = [];
+  visiblePageNumbersVideo: number[] = [];
+  visiblePageNumbersImage: number[] = [];
+
   constructor(private videoService: FileServiceService, private router: Router, private route: ActivatedRoute){
 
   }
 
   async ngOnInit() {
+
     const searchString  = this.route.snapshot.paramMap.get('searchString') || ''; 
     if(searchString == "all"){
+
+      const videoPages = Math.ceil(await this.videoService.getTotalVideoCount() / 16);
+      this.videoPages = Array.from({ length: videoPages }, (_, i) => i + 1);
+
+      const imagePages = Math.ceil(await this.videoService.getTotalImageCount() / 16);
+      this.imagePages = Array.from({ length: imagePages }, (_, i) => i + 1);
+
+      const comicPages = Math.ceil(await this.videoService.getTotalComicCount() / 16);
+      this.comicPages = Array.from({ length: comicPages }, (_, i) => i + 1);
+
+      this.updateAllVisiblePageNumbers();
+
       this.searchString = "all"
 
-      this.catalog = await this.videoService.loadLatest(100);
+      this.catalog = await this.videoService.loadLatest(1);
+
       if(this.catalog.length > 0){
         this.catalog.forEach(c => {
           var thumbnail = this.videoService.getThumbnailUrl(c.id);
@@ -40,8 +66,8 @@ export class SearchPageComponent {
         });
       }
 
-      this.imageCatalog = await this.videoService.loadLatestImages(100);
-      this.comicCatalog = await this.videoService.getCatalog(100);
+      this.imageCatalog = await this.videoService.loadLatestImages(1);
+      this.comicCatalog = await this.videoService.getCatalog(1);
 
     } else {
       this.searchString = searchString;
@@ -51,9 +77,10 @@ export class SearchPageComponent {
           .map(t => t.trim())
           .filter(t => t.length > 0);
   
-      this.imageCatalog = await this.videoService.searchImages(searchArray);
+      this.imageCatalog = (await this.videoService.searchImages(searchArray)).reverse();
+      console.log(this.imageCatalog)
       this.catalog = await this.videoService.search(searchArray);
-      this.comicCatalog = await this.videoService.searchComics(searchArray);
+      this.comicCatalog = (await this.videoService.searchComics(searchArray)).reverse();
 
       if(this.catalog.length > 0){
         this.catalog.forEach(c => {
@@ -71,6 +98,71 @@ export class SearchPageComponent {
       this.isImages = true;
     }
   }
+
+  async goToVideoPage(page: number) {
+    if (page === -1 || page === this.currentPageVideo) return;
+
+    this.currentPageVideo = page;
+    this.updateAllVisiblePageNumbers();
+
+    this.catalog = await this.videoService.loadLatest(page);
+
+    this.thumbnails = this.catalog.map(c => this.videoService.getThumbnailUrl(c.id));
+  }
+
+  async goToImagePage(page: number) {
+    if (page === -1 || page === this.currentPageImage) return;
+
+    this.currentPageImage = page;
+    this.updateAllVisiblePageNumbers();
+
+    this.imageCatalog = await this.videoService.loadLatestImages(page);
+  }
+
+  async goToComicPage(page: number) {
+    if (page === -1 || page === this.currentPageComic) return;
+
+    this.currentPageComic = page;
+    this.updateAllVisiblePageNumbers();
+
+    this.comicCatalog = await this.videoService.getCatalog(page);
+  }
+
+  updateAllVisiblePageNumbers() {
+    this.visiblePageNumbersVideo = this.getVisiblePages(this.videoPages.length, this.currentPageVideo);
+    this.visiblePageNumbersImage = this.getVisiblePages(this.imagePages.length, this.currentPageImage);
+    this.visiblePageNumbersComic = this.getVisiblePages(this.comicPages.length, this.currentPageComic);
+  }
+
+  private getVisiblePages(totalPages: number, currentPage: number): number[] {
+    if (totalPages <= 10) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    const range: number[] = [];
+    range.push(1);
+
+    if (currentPage > 4) {
+      range.push(-1); // -1 represents "..."
+    }
+
+    const start = Math.max(2, currentPage - 2);
+    const end = Math.min(totalPages - 1, currentPage + 2);
+
+    for (let i = start; i <= end; i++) {
+      range.push(i);
+    }
+
+    if (currentPage < totalPages - 3) {
+      range.push(-1); // -1 represents "..."
+    }
+
+    range.push(totalPages);
+
+    return range;
+  }
+
+
 
   getPageImageUrl(comicId: string, page: number){
     var url = this.videoService.getPageImageUrl(comicId, page);

@@ -24,9 +24,9 @@ export class FrontPageComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.imageCatalog = await this.videoService.loadLatestImages(12);
-    this.comicCatalog = await this.videoService.getCatalog(12);
-    this.catalog = await this.videoService.loadLatest(12);
+    this.imageCatalog = await this.videoService.loadLatestImages(1);
+    this.comicCatalog = await this.videoService.getCatalog(1);
+    this.catalog = await this.videoService.loadLatest(1);
     if(this.catalog.length > 0){
       this.catalog.forEach(c => {
         var thumbnail = this.videoService.getThumbnailUrl(c.id);

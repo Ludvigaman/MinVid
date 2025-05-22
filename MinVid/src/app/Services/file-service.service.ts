@@ -77,6 +77,16 @@ export class FileServiceService {
     }
   }
 
+  async getTotalComicCount(): Promise<number> {
+    try {
+      const result = await firstValueFrom(this._client.get<number>(this.API_URL + "/getTotalComicCount/"));
+      return result;
+    } catch (error) {
+      console.error('Error loading catalog', error);
+      return 0;
+    }
+  }
+
   async deleteComic(comicId: string): Promise<boolean> {
     try {
       const result = await firstValueFrom(this._client.get<boolean>(`${this.API_URL}/deleteComic/${comicId}`));
@@ -124,6 +134,16 @@ export class FileServiceService {
 
   getImageUrl(imageId: string): string {
     return `${this.API_URL}/image/${imageId}`;
+  }
+
+  async getTotalImageCount(): Promise<number> {
+    try {
+      const result = await firstValueFrom(this._client.get<number>(this.API_URL + "/getTotalImageCount/"));
+      return result;
+    } catch (error) {
+      console.error('Error loading catalog', error);
+      return 0;
+    }
   }
 
   async searchImages(tags: string[]): Promise<ImageMetadata[]> {
@@ -238,13 +258,23 @@ export class FileServiceService {
     return `${this.API_URL}/video/${videoId}`;
   }
 
-  async loadLatest(count: number): Promise<VideoMetadata[]> {
+  async loadLatest(page: number): Promise<VideoMetadata[]> {
     try {
-      const result = await firstValueFrom(this._client.get<VideoMetadata[]>(this.API_URL + "/getLatestVideos/" + count));
+      const result = await firstValueFrom(this._client.get<VideoMetadata[]>(this.API_URL + "/getLatestVideos/" + page));
       return result;
     } catch (error) {
       console.error('Error loading catalog', error);
       return [];
+    }
+  }
+
+  async getTotalVideoCount(): Promise<number> {
+    try {
+      const result = await firstValueFrom(this._client.get<number>(this.API_URL + "/getTotalVideoCount/"));
+      return result;
+    } catch (error) {
+      console.error('Error loading catalog', error);
+      return 0;
     }
   }
 

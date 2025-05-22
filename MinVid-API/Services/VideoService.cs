@@ -300,16 +300,30 @@ namespace MinVid_API.Services
             return videos;
         }
 
-        public List<VideoMetadata> GetVideoMetadataCatalogCount(int amount)
+        public int GetTotalVideoCount()
         {
+            var videos = new List<VideoMetadata>();
+
+            if (!Directory.Exists(_dataPath))
+                return 0;
+
+            var jsonFiles = Directory.GetFiles(_dataPath, "*.json");
+
+            return jsonFiles.Length;
+        }
+
+        public List<VideoMetadata> GetVideoMetadataCatalogCount(int page)
+        {
+            const int pageSize = 16;
             var videos = new List<VideoMetadata>();
 
             if (!Directory.Exists(_dataPath))
                 return videos;
 
             var jsonFiles = Directory.GetFiles(_dataPath, "*.json")
-                                     .OrderByDescending(file => File.GetLastWriteTime(file)) 
-                                     .Take(amount); 
+                                     .OrderByDescending(file => File.GetLastWriteTime(file))
+                                     .Skip((page - 1) * pageSize)
+                                     .Take(pageSize);
 
             foreach (var file in jsonFiles)
             {
