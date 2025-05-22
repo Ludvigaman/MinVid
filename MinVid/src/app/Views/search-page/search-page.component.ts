@@ -153,4 +153,17 @@ export class SearchPageComponent {
     if (!input) return '';
     return input.toLowerCase().charAt(0).toUpperCase() + input.toLowerCase().slice(1);
   }
+
+  async deleteImage(id: string){
+    var res = confirm("Are you sure you want to delete this image?")
+    if(res){
+      var deleteRes = await this.videoService.deleteImage(id);
+      if(deleteRes){
+        alert("Image deleted sucessfully")
+        this.closeImage();
+      } else {
+        alert("Could not delete image...")
+      }
+    }
+  }
 }

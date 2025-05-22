@@ -136,7 +136,7 @@ export class TagPageComponent {
     return input.toLowerCase().charAt(0).toUpperCase() + input.toLowerCase().slice(1);
   }
 
-getImage(iamgeId: string){
+  getImage(iamgeId: string){
     return this.videoService.getImageUrl(iamgeId);
   }
 
@@ -164,5 +164,18 @@ getImage(iamgeId: string){
 
   closeImage() {
     this.selectedImageIndex = null;
+  }
+
+  async deleteImage(id: string){
+    var res = confirm("Are you sure you want to delete this image?")
+    if(res){
+      var deleteRes = await this.videoService.deleteImage(id);
+      if(deleteRes){
+        alert("Image deleted sucessfully")
+        this.closeImage();
+      } else {
+        alert("Could not delete image...")
+      }
+    }
   }
 }
