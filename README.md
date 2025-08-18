@@ -1,4 +1,4 @@
-**MinVid** - (Swedish "MyVid", or Minimalistic Video host), is a simple self hosted video website for those that want to keep your of videos and images on a self-hosted solution.
+**MinVid** - (Swedish "MyVid", or Minimalistic Video host), is a simple self hosted video website for those that want to keep your of videos, images and comics or books - on a resource-efficient, self-hosted solution.
 This tube-like application is super simple to set up and takes basically nothing to host. It's built with an Angular front end, and a .NET backend.
 
 **Installation and update guides!**
