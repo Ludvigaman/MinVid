@@ -115,6 +115,26 @@ namespace MinVid_API.Controllers
             return amountScanned;
         }
 
+        //[HttpGet("video/{videoId}")]
+        //public IActionResult GetVideo(string videoId)
+        //{
+        //    try
+        //    {
+        //        var metadata = _videoService.GetVideoMetadata(videoId);
+        //        if (metadata == null)
+        //            return NotFound("Metadata not found");
+
+        //        var stream = _videoService.GetVideo(videoId, metadata.format);
+        //        var mimeType = $"video/{metadata.format}"; 
+
+        //        return File(stream, mimeType, enableRangeProcessing: true);
+        //    }
+        //    catch (FileNotFoundException)
+        //    {
+        //        return NotFound("Video not found");
+        //    }
+        //}
+
         [HttpGet("video/{videoId}")]
         public IActionResult GetVideo(string videoId)
         {
@@ -124,10 +144,14 @@ namespace MinVid_API.Controllers
                 if (metadata == null)
                     return NotFound("Metadata not found");
 
-                var stream = _videoService.GetVideo(videoId, metadata.format);
-                var mimeType = $"video/{metadata.format}"; 
+                var mimeType = $"video/{metadata.format}";
 
-                return File(stream, mimeType, enableRangeProcessing: true);
+                var videoPath = _videoService.GetVideoPath(videoId, metadata.format);
+
+                Response.Headers["Cache-Control"] = "public, max-age=86400";
+                Response.Headers["Accept-Ranges"] = "bytes";
+
+                return PhysicalFile(videoPath, mimeType, enableRangeProcessing: true);
             }
             catch (FileNotFoundException)
             {

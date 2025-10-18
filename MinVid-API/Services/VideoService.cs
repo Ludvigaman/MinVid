@@ -101,6 +101,17 @@ namespace MinVid_API.Services
             return new FileStream(path, FileMode.Open, FileAccess.Read);
         }
 
+        public string GetVideoPath(string videoId, string format)
+        {
+            var fileName = $"{videoId}.{format}";
+            var path = Path.Combine(_dataPath, fileName);
+
+            if (!File.Exists(path))
+                throw new FileNotFoundException("Video not found");
+
+            return path;
+        }
+
         public FileStream GetVideoThumbnail(string videoId)
         {
             var fileName = $"{videoId}.jpg";
