@@ -232,44 +232,53 @@ namespace MinVid_API.Services
 
             var tagList = new List<string>();
 
-            foreach (var meta in catalog)
+            if(catalog != null)
             {
-                if (meta.tags == null) continue;
-
-                foreach (var tag in meta.tags)
+                foreach (var meta in catalog)
                 {
-                    var trimmedTag = tag.Trim();
-                    if (!tagList.Contains(trimmedTag, StringComparer.OrdinalIgnoreCase))
+                    if (meta.tags == null) continue;
+
+                    foreach (var tag in meta.tags)
                     {
-                        tagList.Add(trimmedTag);
+                        var trimmedTag = tag.Trim();
+                        if (!tagList.Contains(trimmedTag, StringComparer.OrdinalIgnoreCase))
+                        {
+                            tagList.Add(trimmedTag);
+                        }
                     }
                 }
             }
 
-            foreach (var meta in comicCatalog)
+            if(comicCatalog != null)
             {
-                if (meta.tags == null) continue;
-
-                foreach (var tag in meta.tags)
+                foreach (var meta in comicCatalog)
                 {
-                    var trimmedTag = tag.Trim();
-                    if (!tagList.Contains(trimmedTag, StringComparer.OrdinalIgnoreCase))
+                    if (meta.tags == null) continue;
+
+                    foreach (var tag in meta.tags)
                     {
-                        tagList.Add(trimmedTag);
+                        var trimmedTag = tag.Trim();
+                        if (!tagList.Contains(trimmedTag, StringComparer.OrdinalIgnoreCase))
+                        {
+                            tagList.Add(trimmedTag);
+                        }
                     }
                 }
             }
 
-            foreach (var img in imageCatalog)
+            if (imageCatalog != null)
             {
-                if(img.tags == null) continue;
-
-                foreach(var tag in img.tags)
+                foreach (var img in imageCatalog)
                 {
-                    var trimmedTag = tag.Trim();
-                    if (!tagList.Contains(trimmedTag, StringComparer.OrdinalIgnoreCase))
+                    if (img.tags == null) continue;
+
+                    foreach (var tag in img.tags)
                     {
-                        tagList.Add(trimmedTag);
+                        var trimmedTag = tag.Trim();
+                        if (!tagList.Contains(trimmedTag, StringComparer.OrdinalIgnoreCase))
+                        {
+                            tagList.Add(trimmedTag);
+                        }
                     }
                 }
             }

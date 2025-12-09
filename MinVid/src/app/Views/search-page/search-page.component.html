@@ -1,13 +1,13 @@
 <div class="frontPageContainer">
     <div class="button">
-        <a mat-stroked-button (click)="setView('images')" class="selectionButton"><mat-icon class="ico">image</mat-icon>Show images</a>
-        <a mat-stroked-button (click)="setView('comics')" class="selectionButton"><mat-icon class="ico">book</mat-icon>Show comics</a>
-        <a mat-stroked-button (click)="setView('videos')" class="selectionButton"><mat-icon class="ico">subscriptions</mat-icon>Show videos</a>
+        <a mat-stroked-button (click)="setView('images')" class="selectionButton"><mat-icon class="ico">image</mat-icon>Images</a>
+        <a mat-stroked-button (click)="setView('comics')" class="selectionButton"><mat-icon class="ico">book</mat-icon>Comics / Albums</a>
+        <a mat-stroked-button (click)="setView('videos')" class="selectionButton"><mat-icon class="ico">subscriptions</mat-icon>Videos</a>
         
     </div>
     <ng-container *ngIf="isComic">
         <h1 style="color: #ba005c;" *ngIf="searchString != 'all'">Comic results for : {{capitalize(searchString)}}</h1>
-        <h1 style="color: #ba005c;" *ngIf="searchString == 'all'">Showing all comics</h1>
+        <h1 style="color: #ba005c;" *ngIf="searchString == 'all'">Showing all comics and albums</h1>
         <div class="recommendations">
             <div class="comic" *ngFor="let meta of comicCatalog" (click)="openComic(meta.id)">
                 <img src="{{getPageImageUrl(meta.id, 1)}}" class="comicThumbnail">
@@ -35,7 +35,7 @@
             </div>
         </div>
         <div *ngIf="comicCatalog.length == 0">
-            It doesn't seem like we found any comics!
+            It doesn't seem like we found any comics or albums!
         </div>
     </ng-container>
     <ng-container *ngIf="isVideo">

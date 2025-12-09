@@ -1,7 +1,7 @@
 <div class="uploadPageContainer">
     <div class="button">
         <a mat-stroked-button (click)="switchMode('image')" class="selectionButton"><mat-icon class="ico">image</mat-icon>Upload image</a>
-        <a mat-stroked-button (click)="switchMode('comics')" class="selectionButton"><mat-icon class="ico">book</mat-icon>Upload comic</a>
+        <a mat-stroked-button (click)="switchMode('comics')" class="selectionButton"><mat-icon class="ico">book</mat-icon>Upload comic or album</a>
         <a mat-stroked-button (click)="switchMode('video')" class="selectionButton"><mat-icon class="ico">subscriptions</mat-icon>Upload video</a>
     </div>
 
@@ -20,14 +20,14 @@
         <h4 *ngIf="isUploading">Please wait while file uploads...</h4>
     </ng-container>
     <ng-container *ngIf="isComic">
-        <h1 style="color: #ba005c;">Upload comic</h1>
+        <h1 style="color: #ba005c;">Upload comic / album</h1>
 
         <div class="fileZone">
             <input type="file" accept=".zip" (change)="onComicZipSelected($event)">
             <p *ngIf="selectedComicZipFile">Selected file: {{ selectedComicZipFile.name }}</p>
         </div>
         <p style="text-align: center;"><i>Select a ZIP file containing all the pages. <br>Note that they MUST be numered i.e. "1.png", "2.png" etc. <br>
-            page number 1 will be used as the "cover" image.
+            page number 1 will be used as the "cover" image. <br>Allowed image formats: jpg, png, gif, bmp, webp.
         </i></p>
 
         <h3 style="margin-top: 20px;">Title</h3>

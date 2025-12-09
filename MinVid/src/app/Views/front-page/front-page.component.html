@@ -20,7 +20,7 @@
 </div>
 
 <div class="frontPageContainer">
-    <h1 style="color: #ba005c;">Latest comics</h1>
+    <h1 style="color: #ba005c;">Latest comics and albums</h1>
     <div class="recommendations">
         <div class="comic" *ngFor="let meta of comicCatalog" (click)="openComic(meta.id)">
             <img src="{{getPageImageUrl(meta.id, 1)}}" class="comicThumbnail">

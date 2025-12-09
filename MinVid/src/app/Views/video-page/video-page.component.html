@@ -1,7 +1,7 @@
 <div class="pageContent"  *ngIf="videoLoaded">
     <div class="mainVideo">
         <div class="videoContainer">
-            <video controls class="video" (click)="play()" #videoPlayer>
+            <video controls class="video" (click)="play()" poster={{videoThumbnailUrl}} #videoPlayer>
                 <source src="{{videoUrl}}" type="{{videoFormat}}">
                 Your browser does not support the video tag.
             </video>
