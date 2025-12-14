@@ -14,6 +14,7 @@ import { Comic } from '../../Models/comic';
 export class TagPageComponent {
   
   catalog: VideoMetadata[] = [];
+  shortsCatalog: VideoMetadata[] = [];
   imageCatalog: ImageMetadata[] = [];
   comicCatalog: Comic[] = [];
   thumbnails: string[] = [];
@@ -22,21 +23,27 @@ export class TagPageComponent {
   showTagList = false;
   groupedTags: { [key: string]: string[] } = {};
   isVideo = true;
-  isImages = false;
   isComic = false;
+  isImages = false;
+  isShorts = false;
+
+  selectedShortIndex: number | null = null;
   selectedImageIndex: number | null = null;
 
   videoPages: number[] = [];
   imagePages: number[] = [];
   comicPages: number[] = [];
+  shortsPages: number[] = [];
 
   currentPageComic = 1;
   currentPageVideo = 1;
   currentPageImage = 1;
+  currentPageShorts = 1;
 
   visiblePageNumbersComic: number[] = [];
   visiblePageNumbersVideo: number[] = [];
   visiblePageNumbersImage: number[] = [];
+  visiblePageNumbersShorts: number[] = [];
 
 
   alphabeticalSort = (a: { key: string }, b: { key: string }) => {
@@ -62,6 +69,9 @@ export class TagPageComponent {
       const comicPages = Math.ceil(await this.videoService.getTotalComicCount() / 16);
       this.comicPages = Array.from({ length: comicPages }, (_, i) => i + 1);
 
+      const shortsPages = Math.ceil(await this.videoService.getTotalShortsCount() / 16);
+      this.shortsPages = Array.from({ length: shortsPages }, (_, i) => i + 1);
+
       this.updateAllVisiblePageNumbers();
 
       this.tag = "all"
@@ -86,9 +96,17 @@ export class TagPageComponent {
       this.imageCatalog = await this.videoService.getImagesWithTag(tag)
       this.catalog = await this.videoService.getVideosWithTag(tag);
       this.comicCatalog = await this.videoService.searchComics([tag])
+      this.shortsCatalog = await this.videoService.getShortsWithTag(tag);
 
       if(this.catalog.length > 0){
         this.catalog.forEach(c => {
+          var thumbnail = this.videoService.getThumbnailUrl(c.id);
+          this.thumbnails.push(thumbnail);
+        });
+      }
+
+      if(this.shortsCatalog.length > 0){
+        this.shortsCatalog.forEach(c => {
           var thumbnail = this.videoService.getThumbnailUrl(c.id);
           this.thumbnails.push(thumbnail);
         });
@@ -101,6 +119,9 @@ export class TagPageComponent {
     } else if (this.catalog.length == 0 && this.imageCatalog.length > 0){
       this.isVideo = false;
       this.isImages = true;
+    } else if (this.imageCatalog.length == 0 && this.shortsCatalog.length > 0){
+      this.isVideo = false;
+      this.isShorts = true;
     }
 
   }
@@ -110,14 +131,22 @@ export class TagPageComponent {
       this.isVideo = false;
       this.isComic = false;
       this.isImages = true;
+      this.isShorts = false;
     } else if (view == "comics") {
       this.isVideo = false;
       this.isImages = false;
       this.isComic = true;
+      this.isShorts = false;
+    } else if (view == "shorts") {
+      this.isVideo = false;
+      this.isImages = false;
+      this.isComic = false;
+      this.isShorts = true;
     } else {
       this.isComic = false;
       this.isImages = false;
       this.isVideo = true;
+      this.isShorts = false;
     }
   }
 
@@ -150,10 +179,22 @@ async goToVideoPage(page: number) {
     this.comicCatalog = await this.videoService.getCatalog(page);
   }
 
+  async goToShortsPage(page: number) {
+    if (page === -1 || page === this.currentPageShorts) return;
+
+    this.currentPageShorts = page;
+    this.updateAllVisiblePageNumbers();
+
+    this.shortsCatalog = await this.videoService.loadLatestShorts(page);
+
+    this.thumbnails = this.catalog.map(c => this.videoService.getThumbnailUrl(c.id));
+  }
+
   updateAllVisiblePageNumbers() {
     this.visiblePageNumbersVideo = this.getVisiblePages(this.videoPages.length, this.currentPageVideo);
     this.visiblePageNumbersImage = this.getVisiblePages(this.imagePages.length, this.currentPageImage);
     this.visiblePageNumbersComic = this.getVisiblePages(this.comicPages.length, this.currentPageComic);
+    this.visiblePageNumbersShorts = this.getVisiblePages(this.shortsPages.length, this.currentPageShorts);
   }
 
   private getVisiblePages(totalPages: number, currentPage: number): number[] {
@@ -228,6 +269,10 @@ async goToVideoPage(page: number) {
     return this.videoService.getImageUrl(iamgeId);
   }
 
+  getVideo(videoId: string){
+    return this.videoService.getVideoUrl(videoId) + `?cb=${Date.now()}`;
+  }
+
   openImage(index: number): void {
     this.selectedImageIndex = index;
   }
@@ -263,6 +308,45 @@ async goToVideoPage(page: number) {
         this.closeImage();
       } else {
         alert("Could not delete image...")
+      }
+    }
+  }
+
+  // Shorts
+
+  openShort(index: number): void {
+    this.selectedShortIndex = index;
+  }
+
+  nextShort(event: MouseEvent) {
+    event.stopPropagation(); // prevent closing modal
+    if (this.selectedShortIndex !== null && this.selectedShortIndex < this.shortsCatalog.length - 1) {
+      this.selectedShortIndex++;
+    }
+  }
+
+  prevShort(event: MouseEvent) {
+    event.stopPropagation();
+    if (this.selectedShortIndex !== null && this.selectedShortIndex > 0) {
+      this.selectedShortIndex--;
+    }
+  }
+
+  async closeShort() {
+    this.selectedShortIndex = null;
+  }
+
+
+  async deleteShort(id: string){
+    var res = confirm("Are you sure you want to delete this short?")
+    if(res){
+      var deleteRes = await this.videoService.delete(id);
+      if(deleteRes){
+        alert("Short deleted sucessfully")
+        this.closeShort();
+        location.reload();
+      } else {
+        alert("Could not delete short...")
       }
     }
   }

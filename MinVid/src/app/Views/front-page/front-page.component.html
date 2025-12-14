@@ -20,6 +20,18 @@
 </div>
 
 <div class="frontPageContainer">
+    <h1 style="color: #ba005c;">Latest shorts</h1>
+    <div class="imageRecommendation">
+        <div class="imgContainer" *ngFor="let meta of shortsCatalog; let i = index" (click)="openShort(i)">
+            <img src="{{getThumbnail(meta.id)}}" class="image">
+        </div>
+    </div>
+    <div *ngIf="shortsCatalog.length == 0">
+        It doesn't seem like there are any shorts yet...
+    </div>
+</div>
+
+<div class="frontPageContainer">
     <h1 style="color: #ba005c;">Latest comics and albums</h1>
     <div class="recommendations">
         <div class="comic" *ngFor="let meta of comicCatalog" (click)="openComic(meta.id)">
@@ -74,5 +86,35 @@
             #{{ capitalize(tag) }}
         </span>
         <mat-icon class="deleteImageIco" style="margin: 0;" (click)="deleteImage(imageCatalog[selectedImageIndex].id)">delete_forever</mat-icon>
+    </div>
+</div>
+
+<div class="imageModal" *ngIf="selectedShortIndex !== null">
+  <div class="imageOverlay" (click)="closeShort()"></div>
+
+  <!-- Close button -->
+  <div class="closeButton" (click)="closeShort()">×</div>
+
+  <!-- Arrows -->
+  <div class="arrow left-arrow" (click)="prevShort($event)">&#10094;</div>
+  <div class="arrow right-arrow" (click)="nextShort($event)">&#10095;</div>
+
+  <!-- Video -->
+    <video
+        class="fullVideo"
+        [src]="getVideo(shortsCatalog[selectedShortIndex].id)"
+        autoplay
+        loop
+        playsinline
+        controls
+    >
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="tagRow" *ngIf="selectedShortIndex !== null">
+        <span class="tag" *ngFor="let tag of shortsCatalog[selectedShortIndex]?.tags" (click)="toTag(tag)">
+            #{{ capitalize(tag) }}
+        </span>
+        <mat-icon class="deleteImageIco" style="margin: 0;" (click)="deleteShort(shortsCatalog[selectedShortIndex].id)">delete_forever</mat-icon>
     </div>
 </div>

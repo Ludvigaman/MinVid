@@ -158,7 +158,32 @@ namespace MinVid_API.Services
             if (tags == null || tags.Count == 0)
                 return new List<VideoMetadata>();
 
-            var catalog = GetVideoMetadataCatalog();
+            var catalog = GetVideoMetadataCatalog(false);
+
+            var scoredVideos = catalog
+                .Select(video => new
+                {
+                    Video = video,
+                    // Match score: +1 for each tag match, +2 if title contains the term
+                    Score = video.tags.Intersect(tags, StringComparer.OrdinalIgnoreCase).Count()
+                            + tags.Count(tag => video.title != null &&
+                                                    video.title.IndexOf(tag, StringComparison.OrdinalIgnoreCase) >= 0) * 2
+                })
+                .Where(x => x.Score > 0)
+                .OrderByDescending(x => x.Score)
+                .Select(x => x.Video)
+                .ToList();
+
+            return scoredVideos;
+        }
+
+        public List<VideoMetadata> SearchShorts(List<string> tags)
+        {
+
+            if (tags == null || tags.Count == 0)
+                return new List<VideoMetadata>();
+
+            var catalog = GetVideoMetadataCatalog(true);
 
             var scoredVideos = catalog
                 .Select(video => new
@@ -188,7 +213,7 @@ namespace MinVid_API.Services
             if (tags == null || tags.Count == 0)
                 return new List<VideoMetadata>();
 
-            var catalog = GetVideoMetadataCatalog();
+            var catalog = GetVideoMetadataCatalog(false);
 
             var scoredVideos = catalog
                 .Where(video => !string.Equals(video.id, videoId, StringComparison.OrdinalIgnoreCase)) // Exclude self
@@ -211,7 +236,22 @@ namespace MinVid_API.Services
             if (string.IsNullOrWhiteSpace(tag))
                 return new List<VideoMetadata>();
 
-            var catalog = GetVideoMetadataCatalog();
+            var catalog = GetVideoMetadataCatalog(false);
+
+            var matchedVideos = catalog
+                .Where(video => video.tags.Any(t => string.Equals(t, tag, StringComparison.OrdinalIgnoreCase)))
+                .OrderByDescending(video => video.uploadDate) // Sort by upload date (newest first)
+                .ToList();
+
+            return matchedVideos;
+        }
+
+        public List<VideoMetadata> GetShortsWithTag(string tag)
+        {
+            if (string.IsNullOrWhiteSpace(tag))
+                return new List<VideoMetadata>();
+
+            var catalog = GetVideoMetadataCatalog(true);
 
             var matchedVideos = catalog
                 .Where(video => video.tags.Any(t => string.Equals(t, tag, StringComparison.OrdinalIgnoreCase)))
@@ -225,16 +265,17 @@ namespace MinVid_API.Services
         {
             var imageCatalog = _imageService.GetImageCatalog();
             var comicCatalog = _comicService.GetCatalog();
-            var catalog = GetVideoMetadataCatalog();
+            var videoCatalog = GetVideoMetadataCatalog(false);
+            var shortCatalog = GetVideoMetadataCatalog(true);
 
-            if (catalog.Count == 0 && imageCatalog.Count == 0 && comicCatalog.Count == 0)
+            if (videoCatalog.Count == 0 && imageCatalog.Count == 0 && comicCatalog.Count == 0)
                 return new List<string>();
 
             var tagList = new List<string>();
 
-            if(catalog != null)
+            if(videoCatalog != null)
             {
-                foreach (var meta in catalog)
+                foreach (var meta in videoCatalog)
                 {
                     if (meta.tags == null) continue;
 
@@ -249,7 +290,24 @@ namespace MinVid_API.Services
                 }
             }
 
-            if(comicCatalog != null)
+            if (shortCatalog != null)
+            {
+                foreach (var meta in shortCatalog)
+                {
+                    if (meta.tags == null) continue;
+
+                    foreach (var tag in meta.tags)
+                    {
+                        var trimmedTag = tag.Trim();
+                        if (!tagList.Contains(trimmedTag, StringComparer.OrdinalIgnoreCase))
+                        {
+                            tagList.Add(trimmedTag);
+                        }
+                    }
+                }
+            }
+
+            if (comicCatalog != null)
             {
                 foreach (var meta in comicCatalog)
                 {
@@ -286,8 +344,7 @@ namespace MinVid_API.Services
             return tagList;
         }
 
-
-        public List<VideoMetadata> GetVideoMetadataCatalog()
+        public List<VideoMetadata> GetVideoMetadataCatalog(bool getShorts)
         {
             var videos = new List<VideoMetadata>();
 
@@ -308,7 +365,20 @@ namespace MinVid_API.Services
                     };
                     var metadata = JsonSerializer.Deserialize<VideoMetadata>(json, options);
                     if (metadata != null)
-                        videos.Add(metadata);
+                    {
+                        if(getShorts && metadata.isShort == true)
+                        {
+                            videos.Add(metadata);
+                        }
+
+                        if(!getShorts)
+                        {
+                            if (metadata.isShort == false || metadata.isShort == null)
+                            {
+                                videos.Add(metadata);
+                            }
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -320,16 +390,54 @@ namespace MinVid_API.Services
             return videos;
         }
 
-        public int GetTotalVideoCount()
+        public int GetTotalVideoCount(bool getShorts)
         {
-            var videos = new List<VideoMetadata>();
-
             if (!Directory.Exists(_dataPath))
                 return 0;
 
+            var totalVideos = 0;
+            var totalShorts = 0;
+
             var jsonFiles = Directory.GetFiles(_dataPath, "*.json");
 
-            return jsonFiles.Length;
+            foreach (var file in jsonFiles)
+            {
+                try
+                {
+                    var json = File.ReadAllText(file);
+
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    };
+                    var metadata = JsonSerializer.Deserialize<VideoMetadata>(json, options);
+                    if (metadata != null)
+                    {
+                        if (metadata.isShort == false || metadata.isShort == null)
+                        {
+                            totalVideos++;
+                        }
+
+                        if(metadata.isShort == true)
+                        {
+                            totalShorts++;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Optional: log the error
+                    Console.WriteLine($"Error reading file {file}: {ex.Message}");
+                }
+            }
+
+            if (getShorts)
+            {
+                return totalShorts;
+            } else
+            {
+                return totalVideos;
+            }
         }
 
         public List<VideoMetadata> GetVideoMetadataCatalogCount(int page)
@@ -357,7 +465,10 @@ namespace MinVid_API.Services
                     };
                     var metadata = JsonSerializer.Deserialize<VideoMetadata>(json, options);
                     if (metadata != null)
-                        videos.Add(metadata);
+                        if (metadata.isShort == false || metadata.isShort == null)
+                        {
+                            videos.Add(metadata);
+                        }
                 }
                 catch (Exception ex)
                 {
@@ -367,6 +478,46 @@ namespace MinVid_API.Services
             }
 
             return videos;
+        }
+
+        public List<VideoMetadata> GetShortsMetadataCatalogCount(int page)
+        {
+            const int pageSize = 16;
+            var shorts = new List<VideoMetadata>();
+
+            if (!Directory.Exists(_dataPath))
+                return shorts;
+
+            var jsonFiles = Directory.GetFiles(_dataPath, "*.json")
+                                     .OrderByDescending(file => File.GetLastWriteTime(file))
+                                     .Skip((page - 1) * pageSize)
+                                     .Take(pageSize);
+
+            foreach (var file in jsonFiles)
+            {
+                try
+                {
+                    var json = File.ReadAllText(file);
+
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    };
+                    var metadata = JsonSerializer.Deserialize<VideoMetadata>(json, options);
+                    if (metadata != null)
+                        if (metadata.isShort == true)
+                        {
+                            shorts.Add(metadata);
+                        }
+                }
+                catch (Exception ex)
+                {
+                    // Optional: log the error
+                    Console.WriteLine($"Error reading file {file}: {ex.Message}");
+                }
+            }
+
+            return shorts;
         }
 
 

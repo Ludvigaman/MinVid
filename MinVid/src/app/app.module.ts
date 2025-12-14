@@ -19,6 +19,7 @@ import { SettingsComponent } from './Views/settings/settings.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { EditComponent } from './Views/video-page/edit/edit.component';
 import { ComicPageComponent } from './Views/comic-page/comic-page.component';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 
 @NgModule({
@@ -43,7 +44,8 @@ import { ComicPageComponent } from './Views/comic-page/comic-page.component';
     MatIconModule,
     HttpClientModule,
     FormsModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatCheckboxModule
   ],
   providers: [  ],
   bootstrap: [AppComponent]

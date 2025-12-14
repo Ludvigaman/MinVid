@@ -34,8 +34,15 @@ namespace MinVid_API.Controllers
         [HttpGet("getAllVideos")]
         public List<VideoMetadata> GetCatalog()
         {
-            var videos = _videoService.GetVideoMetadataCatalog();
+            var videos = _videoService.GetVideoMetadataCatalog(false);
             return videos;
+        }
+
+        [HttpGet("getAllShorts")]
+        public List<VideoMetadata> GetShortsCatalog()
+        {
+            var shorts = _videoService.GetVideoMetadataCatalog(true);
+            return shorts;
         }
 
         [HttpPost("search")]
@@ -43,6 +50,15 @@ namespace MinVid_API.Controllers
         {
             var list = tags.ToList();
             var videos = _videoService.Search(list);
+            return videos;
+        }
+
+
+        [HttpPost("searchShorts")]
+        public List<VideoMetadata> SearchShorts([FromBody] string[] tags)
+        {
+            var list = tags.ToList();
+            var videos = _videoService.SearchShorts(list);
             return videos;
         }
 
@@ -56,13 +72,27 @@ namespace MinVid_API.Controllers
         [HttpGet("getTotalVideoCount")]
         public int GetTotalVideoCount()
         {
-            return _videoService.GetTotalVideoCount();
+            return _videoService.GetTotalVideoCount(false);
         }
 
         [HttpGet("getLatestVideos/{page}")]
         public List<VideoMetadata> GetLatestCatalog(int page)
         {
             var videos = _videoService.GetVideoMetadataCatalogCount(page);
+            return videos;
+        }
+
+        [HttpGet("getTotalShortsCount")]
+        public int GetTotalShortsCount()
+        {
+            return _videoService.GetTotalVideoCount(true);
+        }
+
+
+        [HttpGet("getLatestShorts/{page}")]
+        public List<VideoMetadata> GetLatestShortsCatalog(int page)
+        {
+            var videos = _videoService.GetShortsMetadataCatalogCount(page);
             return videos;
         }
 
@@ -84,6 +114,13 @@ namespace MinVid_API.Controllers
         public List<VideoMetadata> GetVideosWithTag(string tag)
         {
             var videos = _videoService.GetWithTag(tag);
+            return videos;
+        }
+
+        [HttpGet("getShortsWithTag/{tag}")]
+        public List<VideoMetadata> GetShortsWithTag(string tag)
+        {
+            var videos = _videoService.GetShortsWithTag(tag);
             return videos;
         }
 
@@ -114,26 +151,6 @@ namespace MinVid_API.Controllers
             var amountScanned = await _videoService.InitializeUnprocessedVideos();
             return amountScanned;
         }
-
-        //[HttpGet("video/{videoId}")]
-        //public IActionResult GetVideo(string videoId)
-        //{
-        //    try
-        //    {
-        //        var metadata = _videoService.GetVideoMetadata(videoId);
-        //        if (metadata == null)
-        //            return NotFound("Metadata not found");
-
-        //        var stream = _videoService.GetVideo(videoId, metadata.format);
-        //        var mimeType = $"video/{metadata.format}"; 
-
-        //        return File(stream, mimeType, enableRangeProcessing: true);
-        //    }
-        //    catch (FileNotFoundException)
-        //    {
-        //        return NotFound("Video not found");
-        //    }
-        //}
 
         [HttpGet("video/{videoId}")]
         public IActionResult GetVideo(string videoId)

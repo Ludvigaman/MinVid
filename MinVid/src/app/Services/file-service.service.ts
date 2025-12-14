@@ -87,6 +87,16 @@ export class FileServiceService {
     }
   }
 
+  async getTotalShortsCount(): Promise<number> {
+    try {
+      const result = await firstValueFrom(this._client.get<number>(this.API_URL + "/getTotalShortsCount/"));
+      return result;
+    } catch (error) {
+      console.error('Error loading catalog', error);
+      return 0;
+    }
+  }
+
   async deleteComic(comicId: string): Promise<boolean> {
     try {
       const result = await firstValueFrom(this._client.get<boolean>(`${this.API_URL}/deleteComic/${comicId}`));
@@ -216,6 +226,14 @@ export class FileServiceService {
     }
   }
 
+  async searchShorts(tags: string[]): Promise<VideoMetadata[]> {
+    try {
+      return await firstValueFrom(this._client.post<VideoMetadata[]>(`${this.API_URL}/searchShorts/`, tags));
+    } catch (error) {
+      console.error('Error during search', error);
+      return [];
+    }
+  }
 
   async updateVideoMetadata(metadata: VideoMetadata): Promise<boolean> {
     try {
@@ -268,6 +286,16 @@ export class FileServiceService {
     }
   }
 
+  async loadLatestShorts(page: number): Promise<VideoMetadata[]> {
+    try {
+      const result = await firstValueFrom(this._client.get<VideoMetadata[]>(this.API_URL + "/getLatestShorts/" + page));
+      return result;
+    } catch (error) {
+      console.error('Error loading catalog', error);
+      return [];
+    }
+  }
+
   async getTotalVideoCount(): Promise<number> {
     try {
       const result = await firstValueFrom(this._client.get<number>(this.API_URL + "/getTotalVideoCount/"));
@@ -291,6 +319,16 @@ export class FileServiceService {
   async getVideosWithTag(tag: string): Promise<VideoMetadata[]> {
     try {
       const result = await firstValueFrom(this._client.get<VideoMetadata[]>(`${this.API_URL}/getVideosWithTag/${tag}`));
+      return result;
+    } catch (error) {
+      console.error('Error loading catalog', error);
+      return [];
+    }
+  }
+
+  async getShortsWithTag(tag: string): Promise<VideoMetadata[]> {
+    try {
+      const result = await firstValueFrom(this._client.get<VideoMetadata[]>(`${this.API_URL}/getShortsWithTag/${tag}`));
       return result;
     } catch (error) {
       console.error('Error loading catalog', error);

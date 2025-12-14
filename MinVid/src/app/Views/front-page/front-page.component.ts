@@ -14,10 +14,12 @@ import { Comic } from '../../Models/comic';
 export class FrontPageComponent implements OnInit {
 
   catalog: VideoMetadata[];
+  shortsCatalog: VideoMetadata[];
   imageCatalog: ImageMetadata[];
   comicCatalog: Comic[] = [];
   thumbnails: string[] = [];
   selectedImageIndex: number | null = null;
+  selectedShortIndex: number | null = null;
 
   constructor(private videoService: FileServiceService, private router: Router){
 
@@ -27,8 +29,17 @@ export class FrontPageComponent implements OnInit {
     this.imageCatalog = await this.videoService.loadLatestImages(1);
     this.comicCatalog = await this.videoService.getCatalog(1);
     this.catalog = await this.videoService.loadLatest(1);
+    this.shortsCatalog = await this.videoService.loadLatestShorts(1);
+    
     if(this.catalog.length > 0){
       this.catalog.forEach(c => {
+        var thumbnail = this.videoService.getThumbnailUrl(c.id);
+        this.thumbnails.push(thumbnail);
+      });
+    }
+
+    if(this.shortsCatalog.length > 0){
+      this.shortsCatalog.forEach(c => {
         var thumbnail = this.videoService.getThumbnailUrl(c.id);
         this.thumbnails.push(thumbnail);
       });
@@ -49,8 +60,14 @@ export class FrontPageComponent implements OnInit {
     }
   }
 
+  // Images
+
   openImage(index: number): void {
     this.selectedImageIndex = index;
+  }
+
+  getVideo(videoId: string){
+    return this.videoService.getVideoUrl(videoId) + `?cb=${Date.now()}`;
   }
 
   nextImage(event: MouseEvent) {
@@ -71,6 +88,32 @@ export class FrontPageComponent implements OnInit {
     this.selectedImageIndex = null;
   }
 
+  // Shorts
+
+  openShort(index: number): void {
+    this.selectedShortIndex = index;
+  }
+
+  nextShort(event: MouseEvent) {
+    event.stopPropagation(); // prevent closing modal
+    if (this.selectedShortIndex !== null && this.selectedShortIndex < this.shortsCatalog.length - 1) {
+      this.selectedShortIndex++;
+    }
+  }
+
+  prevShort(event: MouseEvent) {
+    event.stopPropagation();
+    if (this.selectedShortIndex !== null && this.selectedShortIndex > 0) {
+      this.selectedShortIndex--;
+    }
+  }
+
+  async closeShort() {
+    this.selectedShortIndex = null;
+  }
+
+  // Comics
+
   openComic(id: string){
     this.router.navigateByUrl("/comic/" + id)
   }
@@ -84,6 +127,20 @@ export class FrontPageComponent implements OnInit {
         this.closeImage();
       } else {
         alert("Could not delete image...")
+      }
+    }
+  }
+
+  async deleteShort(id: string){
+    var res = confirm("Are you sure you want to delete this short?")
+    if(res){
+      var deleteRes = await this.videoService.delete(id);
+      if(deleteRes){
+        alert("Short deleted sucessfully")
+        this.closeShort();
+        location.reload();
+      } else {
+        alert("Could not delete short...")
       }
     }
   }

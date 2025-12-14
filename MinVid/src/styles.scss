@@ -124,6 +124,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   right: 0;
 }
 
+.fullVideo {
+  max-height: 90%;
+}
+
 .arrow {
   position: absolute;
   top: 50%;
@@ -131,9 +135,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   color: white;
   opacity: 0.5;
   z-index: 4;
-  pointer-events: none;
   user-select: none;
   transform: translateY(-50%);
+  cursor: pointer;
 }
 
 .left-arrow {

@@ -3,6 +3,7 @@
         <a mat-stroked-button (click)="setView('images')" class="selectionButton"><mat-icon class="ico">image</mat-icon>Show images</a>
         <a mat-stroked-button (click)="setView('comics')" class="selectionButton"><mat-icon class="ico">book</mat-icon>Show comics</a>
         <a mat-stroked-button (click)="setView('videos')" class="selectionButton"><mat-icon class="ico">subscriptions</mat-icon>Show videos</a>
+        <a mat-stroked-button (click)="setView('shorts')" class="selectionButton"><mat-icon class="ico">stay_primary_portrait</mat-icon>Shorts</a>
     </div>
 
     <ng-container *ngIf="isVideo">
@@ -122,7 +123,64 @@
         </div>
 
     </ng-container>
+
+    <ng-container *ngIf="isShorts">
+        <div class="frontPageContainer">
+            <h1 style="color: #ba005c;">Shorts results for : {{capitalize(tag)}}</h1>
+            <div class="imageRecommendation">
+                <div class="imgContainer" *ngFor="let meta of shortsCatalog; let i = index" (click)="openShort(i)">
+                    <img src="{{getThumbnail(meta.id)}}" class="image">
+                </div>
+            </div>
+            <div class="pageinator">
+                <div
+                    class="pageNumber"
+                    *ngFor="let page of visiblePageNumbersShorts"
+                    [class.active]="page === currentPageShorts"
+                    (click)="goToShortsPage(page)">
+                    <ng-container *ngIf="page !== -1; else dots">
+                    {{ page }}
+                    </ng-container>
+                    <ng-template #dots>...</ng-template>
+                </div>
+            </div>
+            <div *ngIf="shortsCatalog.length == 0">
+                It doesn't seem like there are any shorts yet...
+            </div>
+        </div>
+
+        <div class="imageModal" *ngIf="selectedShortIndex !== null">
+        <div class="imageOverlay" (click)="closeShort()"></div>
+
+        <!-- Close button -->
+        <div class="closeButton" (click)="closeShort()">×</div>
+
+        <!-- Arrows -->
+        <div class="arrow left-arrow" (click)="prevShort($event)">&#10094;</div>
+        <div class="arrow right-arrow" (click)="nextShort($event)">&#10095;</div>
+
+        <!-- Video -->
+            <video
+                class="fullVideo"
+                [src]="getVideo(shortsCatalog[selectedShortIndex].id)"
+                autoplay
+                loop
+                playsinline
+                controls
+            >
+                Your browser does not support the video tag.
+            </video>
+
+            <div class="tagRow" *ngIf="selectedShortIndex !== null">
+                <span class="tag" *ngFor="let tag of shortsCatalog[selectedShortIndex]?.tags" (click)="toTag(tag)">
+                    #{{ capitalize(tag) }}
+                </span>
+                <mat-icon class="deleteImageIco" style="margin: 0;" (click)="deleteShort(shortsCatalog[selectedShortIndex].id)">delete_forever</mat-icon>
+            </div>
+    </div>
+    </ng-container>
 </div>
+
 
 <div class="frontPageContainer" *ngIf="showTagList">
     <h1 style="color: #ba005c;">Browse by tag</h1>

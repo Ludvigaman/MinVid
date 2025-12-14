@@ -16,24 +16,31 @@ export class SearchPageComponent {
   catalog: VideoMetadata[] = [];
   imageCatalog: ImageMetadata[] = [];
   comicCatalog: Comic[] = [];
+  shortsCatalog: VideoMetadata[] = [];
   thumbnails: string[] = [];
   searchString: string;
   isVideo = true;
   isComic = false;
   isImages = false;
+  isShorts = false;
+
+  selectedShortIndex: number | null = null;
   selectedImageIndex: number | null = null;
 
   videoPages: number[] = [];
   imagePages: number[] = [];
   comicPages: number[] = [];
+  shortsPages: number[] = [];
 
   currentPageComic = 1;
   currentPageVideo = 1;
   currentPageImage = 1;
+  currentPageShorts = 1;
 
   visiblePageNumbersComic: number[] = [];
   visiblePageNumbersVideo: number[] = [];
   visiblePageNumbersImage: number[] = [];
+  visiblePageNumbersShorts: number[] = [];
 
   constructor(private videoService: FileServiceService, private router: Router, private route: ActivatedRoute){
 
@@ -53,6 +60,9 @@ export class SearchPageComponent {
       const comicPages = Math.ceil(await this.videoService.getTotalComicCount() / 16);
       this.comicPages = Array.from({ length: comicPages }, (_, i) => i + 1);
 
+      const shortsPages = Math.ceil(await this.videoService.getTotalShortsCount() / 16);
+      this.shortsPages = Array.from({ length: shortsPages }, (_, i) => i + 1);
+
       this.updateAllVisiblePageNumbers();
 
       this.searchString = "all"
@@ -61,6 +71,15 @@ export class SearchPageComponent {
 
       if(this.catalog.length > 0){
         this.catalog.forEach(c => {
+          var thumbnail = this.videoService.getThumbnailUrl(c.id);
+          this.thumbnails.push(thumbnail);
+        });
+      }
+
+      this.shortsCatalog = await this.videoService.loadLatestShorts(1);
+
+      if(this.shortsCatalog.length > 0){
+        this.shortsCatalog.forEach(c => {
           var thumbnail = this.videoService.getThumbnailUrl(c.id);
           this.thumbnails.push(thumbnail);
         });
@@ -78,12 +97,21 @@ export class SearchPageComponent {
           .filter(t => t.length > 0);
   
       this.imageCatalog = (await this.videoService.searchImages(searchArray)).reverse();
-      console.log(this.imageCatalog)
-      this.catalog = await this.videoService.search(searchArray);
       this.comicCatalog = (await this.videoService.searchComics(searchArray)).reverse();
+      
+      this.catalog = await this.videoService.search(searchArray);
 
       if(this.catalog.length > 0){
         this.catalog.forEach(c => {
+          var thumbnail = this.videoService.getThumbnailUrl(c.id);
+          this.thumbnails.push(thumbnail);
+        });
+      }
+
+      this.shortsCatalog = await this.videoService.searchShorts(searchArray);
+
+      if(this.shortsCatalog.length > 0){
+        this.shortsCatalog.forEach(c => {
           var thumbnail = this.videoService.getThumbnailUrl(c.id);
           this.thumbnails.push(thumbnail);
         });
@@ -96,6 +124,9 @@ export class SearchPageComponent {
     } else if (this.catalog.length == 0 && this.imageCatalog.length > 0){
       this.isVideo = false;
       this.isImages = true;
+    } else if (this.imageCatalog.length == 0 && this.shortsCatalog.length > 0){
+      this.isVideo = false;
+      this.isShorts = true;
     }
   }
 
@@ -106,6 +137,17 @@ export class SearchPageComponent {
     this.updateAllVisiblePageNumbers();
 
     this.catalog = await this.videoService.loadLatest(page);
+
+    this.thumbnails = this.catalog.map(c => this.videoService.getThumbnailUrl(c.id));
+  }
+
+  async goToShortsPage(page: number) {
+    if (page === -1 || page === this.currentPageShorts) return;
+
+    this.currentPageShorts = page;
+    this.updateAllVisiblePageNumbers();
+
+    this.shortsCatalog = await this.videoService.loadLatestShorts(page);
 
     this.thumbnails = this.catalog.map(c => this.videoService.getThumbnailUrl(c.id));
   }
@@ -132,6 +174,7 @@ export class SearchPageComponent {
     this.visiblePageNumbersVideo = this.getVisiblePages(this.videoPages.length, this.currentPageVideo);
     this.visiblePageNumbersImage = this.getVisiblePages(this.imagePages.length, this.currentPageImage);
     this.visiblePageNumbersComic = this.getVisiblePages(this.comicPages.length, this.currentPageComic);
+    this.visiblePageNumbersShorts = this.getVisiblePages(this.shortsPages.length, this.currentPageShorts);
   }
 
   private getVisiblePages(totalPages: number, currentPage: number): number[] {
@@ -162,8 +205,6 @@ export class SearchPageComponent {
     return range;
   }
 
-
-
   getPageImageUrl(comicId: string, page: number){
     var url = this.videoService.getPageImageUrl(comicId, page);
     return url;
@@ -174,19 +215,31 @@ export class SearchPageComponent {
       this.isVideo = false;
       this.isComic = false;
       this.isImages = true;
+      this.isShorts = false;
     } else if (view == "comics") {
       this.isVideo = false;
       this.isImages = false;
       this.isComic = true;
+      this.isShorts = false;
+    } else if (view == "shorts") {
+      this.isVideo = false;
+      this.isImages = false;
+      this.isComic = false;
+      this.isShorts = true;
     } else {
       this.isComic = false;
       this.isImages = false;
       this.isVideo = true;
+      this.isShorts = false;
     }
   }
 
   getImage(iamgeId: string){
     return this.videoService.getImageUrl(iamgeId);
+  }
+
+  getVideo(videoId: string){
+    return this.videoService.getVideoUrl(videoId) + `?cb=${Date.now()}`;
   }
 
   openImage(index: number): void {
@@ -255,6 +308,45 @@ export class SearchPageComponent {
         this.closeImage();
       } else {
         alert("Could not delete image...")
+      }
+    }
+  }
+
+  // Shorts
+
+  openShort(index: number): void {
+    this.selectedShortIndex = index;
+  }
+
+  nextShort(event: MouseEvent) {
+    event.stopPropagation(); // prevent closing modal
+    if (this.selectedShortIndex !== null && this.selectedShortIndex < this.shortsCatalog.length - 1) {
+      this.selectedShortIndex++;
+    }
+  }
+
+  prevShort(event: MouseEvent) {
+    event.stopPropagation();
+    if (this.selectedShortIndex !== null && this.selectedShortIndex > 0) {
+      this.selectedShortIndex--;
+    }
+  }
+
+  async closeShort() {
+    this.selectedShortIndex = null;
+  }
+
+
+  async deleteShort(id: string){
+    var res = confirm("Are you sure you want to delete this short?")
+    if(res){
+      var deleteRes = await this.videoService.delete(id);
+      if(deleteRes){
+        alert("Short deleted sucessfully")
+        this.closeShort();
+        location.reload();
+      } else {
+        alert("Could not delete short...")
       }
     }
   }

@@ -27,7 +27,8 @@ export class UploadPageComponent {
   comicArtist: string = '';
   selectedComicZipFile: File | null = null;
   isUploadingComic = false;
-
+  
+  isShort: boolean;
   isVideo = true;
   isComic = false;
   isImage = false;
@@ -69,8 +70,11 @@ export class UploadPageComponent {
       uploadDate: new Date(),
       tags: this.tagsString.split(',').map(t => t.trim()),
       format: this.selectedFile.name.split('.').pop() || 'mp4',
-      duration: 0
+      duration: 0,
+      isShort: this.isShort
     };
+
+    console.log(metadata);
 
     const formData = new FormData();
     formData.append('videoFile', this.selectedFile);
@@ -79,10 +83,19 @@ export class UploadPageComponent {
     this.isUploading = true;
     var res = await this.videoService.uploadVideo(formData)
     console.log('Upload success', res);
-    var goTo = confirm("Upload sucessful, go to video?")
-    if(goTo){
-      window.location.href = "/video/" + res.id;
-    } 
+
+    if(this.isShort == false || this.isShort == undefined){
+      var goTo = confirm("Upload sucessful, go to video?")
+      if(goTo){
+        window.location.href = "/video/" + res.id;
+      } 
+    }
+
+    if(this.isShort == true){
+      console.log('Upload success', res);
+      alert("Upload sucessful!")
+    }
+
     this.isUploading = false;
     this.selectedFile = null;
   }

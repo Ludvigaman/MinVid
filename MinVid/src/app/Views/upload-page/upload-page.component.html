@@ -2,7 +2,7 @@
     <div class="button">
         <a mat-stroked-button (click)="switchMode('image')" class="selectionButton"><mat-icon class="ico">image</mat-icon>Upload image</a>
         <a mat-stroked-button (click)="switchMode('comics')" class="selectionButton"><mat-icon class="ico">book</mat-icon>Upload comic or album</a>
-        <a mat-stroked-button (click)="switchMode('video')" class="selectionButton"><mat-icon class="ico">subscriptions</mat-icon>Upload video</a>
+        <a mat-stroked-button (click)="switchMode('video')" class="selectionButton"><mat-icon class="ico">subscriptions</mat-icon>Upload video or short</a>
     </div>
 
     <ng-container *ngIf="isImage">
@@ -56,10 +56,13 @@
     </ng-container>
 
     <ng-container *ngIf="isVideo">
-        <h1 style="color: #ba005c;">Upload Video</h1>
+        <h1 style="color: #ba005c;">Upload Video or Short</h1>
         <div class="fileZone">
             <input type="file" accept="video/*" (change)="onFileSelected($event)">
         </div>
+
+        <mat-checkbox style="margin-left: -15px;" [(ngModel)]="isShort"><p style="color: white;">Upload video as Short?</p></mat-checkbox>
+
         <h3>Title</h3>
         <mat-form-field appearance="outline" class="inputField">
             <input matInput style="color: white;" placeholder="Title" [(ngModel)]="title">
