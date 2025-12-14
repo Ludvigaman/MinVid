@@ -439,7 +439,6 @@ namespace MinVid_API.Services
                 return totalVideos;
             }
         }
-
         public List<VideoMetadata> GetVideoMetadataCatalogCount(int page)
         {
             const int pageSize = 16;
@@ -448,34 +447,40 @@ namespace MinVid_API.Services
             if (!Directory.Exists(_dataPath))
                 return videos;
 
-            var jsonFiles = Directory.GetFiles(_dataPath, "*.json")
-                                     .OrderByDescending(file => File.GetLastWriteTime(file))
-                                     .Skip((page - 1) * pageSize)
-                                     .Take(pageSize);
+            // Get all JSON files, ordered by last write time
+            var allFiles = Directory.GetFiles(_dataPath, "*.json")
+                                    .OrderByDescending(file => File.GetLastWriteTime(file));
 
-            foreach (var file in jsonFiles)
+            var filteredVideos = new List<VideoMetadata>();
+
+            foreach (var file in allFiles)
             {
                 try
                 {
                     var json = File.ReadAllText(file);
-
                     var options = new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
                     };
                     var metadata = JsonSerializer.Deserialize<VideoMetadata>(json, options);
-                    if (metadata != null)
-                        if (metadata.isShort == false || metadata.isShort == null)
-                        {
-                            videos.Add(metadata);
-                        }
+
+                    // Only include non-shorts
+                    if (metadata != null && (metadata.isShort == false || metadata.isShort == null))
+                    {
+                        filteredVideos.Add(metadata);
+                    }
                 }
                 catch (Exception ex)
                 {
-                    // Optional: log the error
                     Console.WriteLine($"Error reading file {file}: {ex.Message}");
                 }
             }
+
+            // Paginate the filtered list
+            videos = filteredVideos
+                        .Skip((page - 1) * pageSize)
+                        .Take(pageSize)
+                        .ToList();
 
             return videos;
         }
@@ -488,34 +493,40 @@ namespace MinVid_API.Services
             if (!Directory.Exists(_dataPath))
                 return shorts;
 
-            var jsonFiles = Directory.GetFiles(_dataPath, "*.json")
-                                     .OrderByDescending(file => File.GetLastWriteTime(file))
-                                     .Skip((page - 1) * pageSize)
-                                     .Take(pageSize);
+            // Get all JSON files, ordered by last write time
+            var allFiles = Directory.GetFiles(_dataPath, "*.json")
+                                    .OrderByDescending(file => File.GetLastWriteTime(file));
 
-            foreach (var file in jsonFiles)
+            var filteredShorts = new List<VideoMetadata>();
+
+            foreach (var file in allFiles)
             {
                 try
                 {
                     var json = File.ReadAllText(file);
-
                     var options = new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
                     };
                     var metadata = JsonSerializer.Deserialize<VideoMetadata>(json, options);
-                    if (metadata != null)
-                        if (metadata.isShort == true)
-                        {
-                            shorts.Add(metadata);
-                        }
+
+                    // Only include shorts
+                    if (metadata != null && metadata.isShort == true)
+                    {
+                        filteredShorts.Add(metadata);
+                    }
                 }
                 catch (Exception ex)
                 {
-                    // Optional: log the error
                     Console.WriteLine($"Error reading file {file}: {ex.Message}");
                 }
             }
+
+            // Paginate the filtered list
+            shorts = filteredShorts
+                        .Skip((page - 1) * pageSize)
+                        .Take(pageSize)
+                        .ToList();
 
             return shorts;
         }
