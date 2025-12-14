@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FileServiceService } from '../../Services/file-service.service';
 import { VideoMetadata } from '../../Models/videoMetadata';
-import { Router } from '@angular/router';
+import { NavigationStart, Router } from '@angular/router';
 import { ImageMetadata } from '../../Models/imageMetadata';
 import { Comic } from '../../Models/comic';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-front-page',
@@ -11,7 +12,7 @@ import { Comic } from '../../Models/comic';
   templateUrl: './front-page.component.html',
   styleUrl: './front-page.component.scss'
 })
-export class FrontPageComponent implements OnInit {
+export class FrontPageComponent implements OnInit, OnDestroy {
 
   catalog: VideoMetadata[];
   shortsCatalog: VideoMetadata[];
@@ -20,12 +21,20 @@ export class FrontPageComponent implements OnInit {
   thumbnails: string[] = [];
   selectedImageIndex: number | null = null;
   selectedShortIndex: number | null = null;
+  routerSub!: Subscription;
 
   constructor(private videoService: FileServiceService, private router: Router){
 
   }
 
   async ngOnInit() {
+
+    this.routerSub = this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        document.body.style.overflow = '';
+      }
+    });
+
     this.imageCatalog = await this.videoService.loadLatestImages(1);
     this.comicCatalog = await this.videoService.getCatalog(1);
     this.catalog = await this.videoService.loadLatest(1);
@@ -44,6 +53,11 @@ export class FrontPageComponent implements OnInit {
         this.thumbnails.push(thumbnail);
       });
     }
+  }
+
+  ngOnDestroy() {
+    document.body.style.overflow = ''; // Restore scroll on destroy
+    this.routerSub?.unsubscribe();
   }
 
   createDurationString(duration: number): string {

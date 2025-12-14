@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
 import { VideoMetadata } from '../../Models/videoMetadata';
 import { FileServiceService } from '../../Services/file-service.service';
 import { ImageMetadata } from '../../Models/imageMetadata';
 import { Comic } from '../../Models/comic';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-search-page',
@@ -11,7 +12,7 @@ import { Comic } from '../../Models/comic';
   templateUrl: './search-page.component.html',
   styleUrl: './search-page.component.scss'
 })
-export class SearchPageComponent {
+export class SearchPageComponent implements OnInit, OnDestroy{
   
   catalog: VideoMetadata[] = [];
   imageCatalog: ImageMetadata[] = [];
@@ -42,11 +43,19 @@ export class SearchPageComponent {
   visiblePageNumbersImage: number[] = [];
   visiblePageNumbersShorts: number[] = [];
 
+  routerSub!: Subscription;
+
   constructor(private videoService: FileServiceService, private router: Router, private route: ActivatedRoute){
 
   }
 
   async ngOnInit() {
+
+    this.routerSub = this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        document.body.style.overflow = ''; // Restore scroll on navigation
+      }
+    });
 
     const searchString  = this.route.snapshot.paramMap.get('searchString') || ''; 
     if(searchString == "all"){
@@ -128,6 +137,11 @@ export class SearchPageComponent {
       this.isVideo = false;
       this.isShorts = true;
     }
+  }
+
+  ngOnDestroy() {
+    document.body.style.overflow = ''; // Restore scroll on destroy
+    this.routerSub?.unsubscribe();
   }
 
   async goToVideoPage(page: number) {

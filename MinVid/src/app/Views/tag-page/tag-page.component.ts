@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { VideoMetadata } from '../../Models/videoMetadata';
 import { FileServiceService } from '../../Services/file-service.service';
 import { ImageMetadata } from '../../Models/imageMetadata';
 import { Comic } from '../../Models/comic';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-tag-page',
@@ -11,7 +12,7 @@ import { Comic } from '../../Models/comic';
   templateUrl: './tag-page.component.html',
   styleUrl: './tag-page.component.scss'
 })
-export class TagPageComponent {
+export class TagPageComponent implements OnInit, OnDestroy{
   
   catalog: VideoMetadata[] = [];
   shortsCatalog: VideoMetadata[] = [];
@@ -45,6 +46,7 @@ export class TagPageComponent {
   visiblePageNumbersImage: number[] = [];
   visiblePageNumbersShorts: number[] = [];
 
+  routerSub!: Subscription;
 
   alphabeticalSort = (a: { key: string }, b: { key: string }) => {
     return a.key.localeCompare(b.key);
@@ -55,6 +57,12 @@ export class TagPageComponent {
   }
 
   async ngOnInit() {
+
+    this.routerSub = this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        document.body.style.overflow = ''; // Restore scroll on navigation
+      }
+    });
 
     const tag  = this.route.snapshot.paramMap.get('tag') || ''; 
 
@@ -124,6 +132,11 @@ export class TagPageComponent {
       this.isShorts = true;
     }
 
+  }
+
+  ngOnDestroy() {
+    document.body.style.overflow = ''; // Restore scroll on destroy
+    this.routerSub?.unsubscribe();
   }
 
   setView(view: string){
