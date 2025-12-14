@@ -64,6 +64,7 @@ export class FrontPageComponent implements OnInit {
 
   openImage(index: number): void {
     this.selectedImageIndex = index;
+    document.body.style.overflow = 'hidden';
   }
 
   getVideo(videoId: string){
@@ -86,12 +87,14 @@ export class FrontPageComponent implements OnInit {
 
   closeImage() {
     this.selectedImageIndex = null;
+    document.body.style.overflow = '';
   }
 
   // Shorts
 
   openShort(index: number): void {
     this.selectedShortIndex = index;
+    document.body.style.overflow = 'hidden';
   }
 
   nextShort(event: MouseEvent) {
@@ -110,6 +113,7 @@ export class FrontPageComponent implements OnInit {
 
   async closeShort() {
     this.selectedShortIndex = null;
+    document.body.style.overflow = '';
   }
 
   // Comics

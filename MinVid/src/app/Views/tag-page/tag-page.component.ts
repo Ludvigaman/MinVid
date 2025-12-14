@@ -275,6 +275,7 @@ async goToVideoPage(page: number) {
 
   openImage(index: number): void {
     this.selectedImageIndex = index;
+    document.body.style.overflow = 'hidden';
   }
 
   nextImage(event: MouseEvent) {
@@ -297,6 +298,7 @@ async goToVideoPage(page: number) {
 
   closeImage() {
     this.selectedImageIndex = null;
+    document.body.style.overflow = '';
   }
 
   async deleteImage(id: string){
@@ -316,6 +318,7 @@ async goToVideoPage(page: number) {
 
   openShort(index: number): void {
     this.selectedShortIndex = index;
+    document.body.style.overflow = 'hidden';
   }
 
   nextShort(event: MouseEvent) {
@@ -334,6 +337,7 @@ async goToVideoPage(page: number) {
 
   async closeShort() {
     this.selectedShortIndex = null;
+    document.body.style.overflow = '';
   }
 
 

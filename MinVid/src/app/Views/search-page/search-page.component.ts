@@ -244,6 +244,7 @@ export class SearchPageComponent {
 
   openImage(index: number): void {
     this.selectedImageIndex = index;
+    document.body.style.overflow = 'hidden';
   }
 
   nextImage(event: MouseEvent) {
@@ -280,6 +281,7 @@ export class SearchPageComponent {
 
   closeImage() {
     this.selectedImageIndex = null;
+    document.body.style.overflow = '';
   }
 
   getThumbnail(id: string){
@@ -316,6 +318,7 @@ export class SearchPageComponent {
 
   openShort(index: number): void {
     this.selectedShortIndex = index;
+    document.body.style.overflow = 'hidden';
   }
 
   nextShort(event: MouseEvent) {
@@ -334,6 +337,7 @@ export class SearchPageComponent {
 
   async closeShort() {
     this.selectedShortIndex = null;
+    document.body.style.overflow = '';
   }
 
 

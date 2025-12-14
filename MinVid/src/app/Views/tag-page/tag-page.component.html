@@ -150,16 +150,16 @@
         </div>
 
         <div class="imageModal" *ngIf="selectedShortIndex !== null">
-        <div class="imageOverlay" (click)="closeShort()"></div>
+            <div class="imageOverlay" (click)="closeShort()"></div>
 
-        <!-- Close button -->
-        <div class="closeButton" (click)="closeShort()">×</div>
+            <!-- Close button -->
+            <div class="closeButton" (click)="closeShort()">×</div>
 
-        <!-- Arrows -->
-        <div class="arrow left-arrow" (click)="prevShort($event)">&#10094;</div>
-        <div class="arrow right-arrow" (click)="nextShort($event)">&#10095;</div>
+            <!-- Arrows -->
+            <div class="arrow left-arrow" (click)="prevShort($event)">&#10094;</div>
+            <div class="arrow right-arrow" (click)="nextShort($event)">&#10095;</div>
 
-        <!-- Video -->
+            <!-- Video -->
             <video
                 class="fullVideo"
                 [src]="getVideo(shortsCatalog[selectedShortIndex].id)"
@@ -177,7 +177,7 @@
                 </span>
                 <mat-icon class="deleteImageIco" style="margin: 0;" (click)="deleteShort(shortsCatalog[selectedShortIndex].id)">delete_forever</mat-icon>
             </div>
-    </div>
+        </div>
     </ng-container>
 </div>
 
