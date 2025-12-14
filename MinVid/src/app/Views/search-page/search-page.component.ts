@@ -19,6 +19,7 @@ export class SearchPageComponent implements OnInit, OnDestroy{
   comicCatalog: Comic[] = [];
   shortsCatalog: VideoMetadata[] = [];
   thumbnails: string[] = [];
+  thumbnailsShorts: string[] = [];
   searchString: string;
   isVideo = true;
   isComic = false;
@@ -90,7 +91,7 @@ export class SearchPageComponent implements OnInit, OnDestroy{
       if(this.shortsCatalog.length > 0){
         this.shortsCatalog.forEach(c => {
           var thumbnail = this.videoService.getThumbnailUrl(c.id);
-          this.thumbnails.push(thumbnail);
+          this.thumbnailsShorts.push(thumbnail);
         });
       }
 
@@ -122,7 +123,7 @@ export class SearchPageComponent implements OnInit, OnDestroy{
       if(this.shortsCatalog.length > 0){
         this.shortsCatalog.forEach(c => {
           var thumbnail = this.videoService.getThumbnailUrl(c.id);
-          this.thumbnails.push(thumbnail);
+          this.thumbnailsShorts.push(thumbnail);
         });
       }
     }
@@ -163,7 +164,7 @@ export class SearchPageComponent implements OnInit, OnDestroy{
 
     this.shortsCatalog = await this.videoService.loadLatestShorts(page);
 
-    this.thumbnails = this.catalog.map(c => this.videoService.getThumbnailUrl(c.id));
+    this.thumbnailsShorts = this.shortsCatalog.map(c => this.videoService.getThumbnailUrl(c.id));
   }
 
   async goToImagePage(page: number) {
@@ -302,6 +303,11 @@ export class SearchPageComponent implements OnInit, OnDestroy{
     return this.thumbnails.find(t => t.includes(id))
   }
 
+  getThumbnailsShort(id: string){
+    return this.thumbnailsShorts.find(t => t.includes(id))
+  }
+
+
   navigate(id: string){
     this.router.navigateByUrl("/video/" + id)
   }
@@ -353,7 +359,6 @@ export class SearchPageComponent implements OnInit, OnDestroy{
     this.selectedShortIndex = null;
     document.body.style.overflow = '';
   }
-
 
   async deleteShort(id: string){
     var res = confirm("Are you sure you want to delete this short?")

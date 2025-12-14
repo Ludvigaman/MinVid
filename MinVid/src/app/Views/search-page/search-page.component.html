@@ -128,7 +128,7 @@
             <h1 style="color: #ba005c;" *ngIf="searchString == 'all'">Showing all shorts</h1>
             <div class="imageRecommendation">
                 <div class="imgContainer" *ngFor="let meta of shortsCatalog; let i = index" (click)="openShort(i)">
-                    <img src="{{getThumbnail(meta.id)}}" class="image">
+                    <img src="{{getThumbnailsShort(meta.id)}}" class="image">
                 </div>
             </div>
             <div class="pageinator">
