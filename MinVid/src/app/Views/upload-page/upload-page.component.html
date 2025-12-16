@@ -1,24 +1,48 @@
 <div class="uploadPageContainer">
     <div class="button">
-        <a mat-stroked-button (click)="switchMode('image')" class="selectionButton"><mat-icon class="ico">image</mat-icon>Upload image</a>
+        <a mat-stroked-button (click)="switchMode('image')" class="selectionButton"><mat-icon class="ico">image</mat-icon>Upload images</a>
         <a mat-stroked-button (click)="switchMode('comics')" class="selectionButton"><mat-icon class="ico">book</mat-icon>Upload comic or album</a>
         <a mat-stroked-button (click)="switchMode('video')" class="selectionButton"><mat-icon class="ico">subscriptions</mat-icon>Upload video or short</a>
     </div>
 
     <ng-container *ngIf="isImage">
-        <h1 style="color: #ba005c;">Upload image</h1>
+        <h1 style="color: #ba005c;">Upload images</h1>
         <div class="fileZone">
             <input type="file" multiple accept="image/*" (change)="onFileSelected($event)">
         </div>
             
-        <h3 style="margin-top: 20px;">Tags</h3>
-        <p style="margin-top: 0">Separate each tag with a comma sign</p>
-        <mat-form-field appearance="outline" class="inputField">
-            <textarea matInput style="color: white;" maxlength="256" placeholder="Tags - separate with comma" [(ngModel)]="tagsString"></textarea>
+        <h3 style="margin-bottom: 5px;">Selected tags</h3>
+        <i style="margin-bottom: 16px;">Use Enter to select a suggested tag, or Tab to accept your manual input.</i>
+        <p style="margin-top: 0; color: #ba005c;" *ngIf="selectedTags.length == 0"><b>No tags selected</b></p>
+
+        <div class="selected-tags">
+            <span class="tag" *ngFor="let tag of selectedTags">
+                {{ capitalize(tag) }}
+                <button type="button" (click)="removeTag(tag)">×</button>
+            </span>
+        </div>
+        
+        <mat-form-field class="inputField" appearance="outline">
+            <input
+                style="color: white;"
+                placeholder="Search or enter tags"
+                matInput
+                [formControl]="tagCtrl"
+                [matAutocomplete]="auto"
+                (keydown)="handleKeydown($event)"
+            >
         </mat-form-field>
+
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectTag($event)">
+            <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+                {{ capitalize(tag) }}
+            </mat-option>
+        </mat-autocomplete>
+
         <a mat-stroked-button (click)="uploadImage()" *ngIf="!isUploadingImage">Upload</a>
         <h4 *ngIf="isUploading">Please wait while file uploads...</h4>
     </ng-container>
+
     <ng-container *ngIf="isComic">
         <h1 style="color: #ba005c;">Upload comic / album</h1>
 
@@ -45,11 +69,33 @@
             <input matInput style="color: white;" placeholder="Artist name" [(ngModel)]="comicArtist">
         </mat-form-field>
 
-        <h3 style="margin-top: 0;">Tags</h3>
-        <p style="margin-top: 0">Separate each tag with a comma sign</p>
-        <mat-form-field appearance="outline" class="inputField">
-            <textarea matInput style="color: white;" maxlength="256" placeholder="Tags - separate with comma" [(ngModel)]="tagsString"></textarea>
+        <h3 style="margin-bottom: 5px;">Selected tags</h3>
+        <i style="margin-bottom: 16px;">Use Enter to select a suggested tag, or Tab to accept your manual input.</i>
+        <p style="margin-top: 0; color: #ba005c;" *ngIf="selectedTags.length == 0"><b>No tags selected</b></p>
+
+        <div class="selected-tags">
+            <span class="tag" *ngFor="let tag of selectedTags">
+                {{ capitalize(tag) }}
+                <button type="button" (click)="removeTag(tag)">×</button>
+            </span>
+        </div>
+        
+        <mat-form-field class="inputField" appearance="outline">
+            <input
+                style="color: white;"
+                placeholder="Search or enter tags"
+                matInput
+                [formControl]="tagCtrl"
+                [matAutocomplete]="auto"
+                (keydown)="handleKeydown($event)"
+            >
         </mat-form-field>
+
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectTag($event)">
+            <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+                {{ capitalize(tag) }}
+            </mat-option>
+        </mat-autocomplete>
 
         <a mat-stroked-button (click)="uploadComicZip()" *ngIf="!isUploadingComic">Upload</a>
         <h4 *ngIf="isUploadingComic">Please wait while comic uploads...</h4>
@@ -73,11 +119,34 @@
             <textarea matInput style="color: white;" maxlength="256" placeholder="Description" [(ngModel)]="description"></textarea>
         </mat-form-field>
             
-        <h3 style="margin-top: 0;">Tags</h3>
-        <p style="margin-top: 0">Separate each tag with a comma sign</p>
-        <mat-form-field appearance="outline" class="inputField">
-            <textarea matInput style="color: white;" maxlength="256" placeholder="Tags - separate with comma" [(ngModel)]="tagsString"></textarea>
+        <h3 style="margin-bottom: 5px;">Selected tags</h3>
+        <i style="margin-bottom: 16px;">Use Enter to select a suggested tag, or Tab to accept your manual input.</i>
+        <p style="margin-top: 0; color: #ba005c;" *ngIf="selectedTags.length == 0"><b>No tags selected</b></p>
+
+        <div class="selected-tags">
+            <span class="tag" *ngFor="let tag of selectedTags">
+                {{ capitalize(tag) }}
+                <button type="button" (click)="removeTag(tag)">×</button>
+            </span>
+        </div>
+        
+        <mat-form-field class="inputField" appearance="outline">
+            <input
+                style="color: white;"
+                placeholder="Search or enter tags"
+                matInput
+                [formControl]="tagCtrl"
+                [matAutocomplete]="auto"
+                (keydown)="handleKeydown($event)"
+            >
         </mat-form-field>
+
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectTag($event)">
+            <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+                {{ capitalize(tag) }}
+            </mat-option>
+        </mat-autocomplete>
+
         <p style="margin-top: 0">Adding a thumbnail is possible after upload.</p>
         <a mat-stroked-button (click)="upload()" *ngIf="!isUploading">Upload</a>
         <h4 *ngIf="isUploading">Please wait while file uploads...</h4>

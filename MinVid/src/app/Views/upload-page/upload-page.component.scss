@@ -37,4 +37,35 @@
     .selectionButton {
         margin-top: 5px;
     }
+
+    .selected-tags {
+        width: 100% !important;
+    }
+}
+
+.selected-tags {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 21%;
+  gap: 6px;
+}
+
+.selected-tags .tag {
+  background-color: #ba005c;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.selected-tags .tag button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-weight: bold;
+  margin-left: 4px;
+  cursor: pointer;
 }

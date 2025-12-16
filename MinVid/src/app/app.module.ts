@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FrontPageComponent } from './Views/front-page/front-page.component';
@@ -13,13 +12,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { UploadPageComponent } from './Views/upload-page/upload-page.component';
 import { TagPageComponent } from './Views/tag-page/tag-page.component';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SearchPageComponent } from './Views/search-page/search-page.component';
 import { SettingsComponent } from './Views/settings/settings.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { EditComponent } from './Views/video-page/edit/edit.component';
 import { ComicPageComponent } from './Views/comic-page/comic-page.component';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 
 @NgModule({
@@ -45,9 +47,13 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     HttpClientModule,
     FormsModule,
     MatProgressSpinnerModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatChipsModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
   ],
-  providers: [  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
