@@ -127,8 +127,16 @@ namespace MinVid_API.Controllers
         [HttpGet("getTagList")]
         public List<string> GetTagList()
         {
-            var videos = _videoService.GetTagList();
-            return videos;
+            var tags = _videoService.GetTagList();
+            return tags;
+        }
+
+
+        [HttpGet("getTagListCount")]
+        public Dictionary<string, int> GetTagListCount()
+        {
+            var tagCount = _videoService.GetTagListCount();
+            return tagCount;
         }
 
         [HttpGet("getThumbnail/{videoId}")]

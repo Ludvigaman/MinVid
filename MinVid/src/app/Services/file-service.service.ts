@@ -346,6 +346,16 @@ export class FileServiceService {
     }
   }
 
+  async getTagListCount(): Promise<Record<string, number>> {
+    try {
+      const result = await firstValueFrom(this._client.get<Record<string, number>>(`${this.API_URL}/getTagListCount/`));
+      return result;
+    } catch (error) {
+      console.error('Error loading catalog', error);
+      return {};
+    }
+  }
+
   async loadCatalog(): Promise<VideoMetadata[]> {
     try {
       const result = await firstValueFrom(this._client.get<VideoMetadata[]>(this.API_URL + "/getAllVideos"));

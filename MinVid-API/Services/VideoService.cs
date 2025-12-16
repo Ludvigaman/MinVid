@@ -273,7 +273,7 @@ namespace MinVid_API.Services
 
             var tagList = new List<string>();
 
-            if(videoCatalog != null)
+            if (videoCatalog != null)
             {
                 foreach (var meta in videoCatalog)
                 {
@@ -343,6 +343,56 @@ namespace MinVid_API.Services
 
             return tagList;
         }
+
+        public Dictionary<string, int> GetTagListCount()
+        {
+            var tagCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+            var imageCatalog = _imageService.GetImageCatalog();
+            var comicCatalog = _comicService.GetCatalog();
+            var videoCatalog = GetVideoMetadataCatalog(false);
+            var shortCatalog = GetVideoMetadataCatalog(true);
+
+            void ProcessTags(IEnumerable<string> tags)
+            {
+                foreach (var tag in tags)
+                {
+                    var trimmedTag = tag.Trim();
+
+                    if (tagCounts.TryGetValue(trimmedTag, out var count))
+                    {
+                        tagCounts[trimmedTag] = count + 1;
+                    }
+                    else
+                    {
+                        tagCounts[trimmedTag] = 1;
+                    }
+                }
+            }
+
+            if (videoCatalog != null)
+                foreach (var meta in videoCatalog)
+                    if (meta.tags != null)
+                        ProcessTags(meta.tags);
+
+            if (shortCatalog != null)
+                foreach (var meta in shortCatalog)
+                    if (meta.tags != null)
+                        ProcessTags(meta.tags);
+
+            if (comicCatalog != null)
+                foreach (var meta in comicCatalog)
+                    if (meta.tags != null)
+                        ProcessTags(meta.tags);
+
+            if (imageCatalog != null)
+                foreach (var img in imageCatalog)
+                    if (img.tags != null)
+                        ProcessTags(img.tags);
+
+            return tagCounts;
+        }
+
 
         public List<VideoMetadata> GetVideoMetadataCatalog(bool getShorts)
         {

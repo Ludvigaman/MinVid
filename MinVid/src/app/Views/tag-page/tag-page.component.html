@@ -190,7 +190,7 @@
             <h2>{{ group.key }}</h2>
             <ul class="tag-list">
               <li *ngFor="let tag of group.value">
-                <a (click)="navigateToTag(tag)">#{{ capitalize(tag) }}</a>
+                <a (click)="navigateToTag(tag)">#{{ capitalize(tag) }}&nbsp;<i>({{getTagCount(tag)}})</i></a>
               </li>
             </ul>
           </div>
