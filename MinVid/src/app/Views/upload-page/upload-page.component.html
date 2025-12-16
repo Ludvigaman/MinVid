@@ -8,7 +8,7 @@
     <ng-container *ngIf="isImage">
         <h1 style="color: #ba005c;">Upload image</h1>
         <div class="fileZone">
-            <input type="file" accept="image/*" (change)="onFileSelected($event)">
+            <input type="file" multiple accept="image/*" (change)="onFileSelected($event)">
         </div>
             
         <h3 style="margin-top: 20px;">Tags</h3>

@@ -18,7 +18,10 @@ export class UploadPageComponent {
   title: string = '';
   description: string = '';
   tagsString: string = '';
+
   selectedFile: File | null = null;
+  selectedFiles: File[] = [];
+
   isUploading = false
   isUploadingImage = false;
 
@@ -41,10 +44,19 @@ export class UploadPageComponent {
     })
   }
 
-  onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (file) {
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+
+    if (input.files.length === 1) {
+      const file = input.files[0];
       this.selectedFile = file;
+    } else {
+      const files = Array.from(input.files);
+      this.selectedFiles = files;
     }
   }
   
@@ -122,31 +134,52 @@ export class UploadPageComponent {
   }
 
   async uploadImage() {
-    if (!this.selectedFile) {
-      alert('Please select a image file.');
+    const files: File[] =
+      this.selectedFiles.length > 0
+        ? this.selectedFiles
+        : this.selectedFile
+          ? [this.selectedFile]
+          : [];
+
+    if (files.length === 0) {
+      alert('Please select an image file.');
       return;
-    } else if(this.tagsString == "" || this.tagsString == undefined){
+    }
+
+    if (!this.tagsString) {
       alert('Please enter at least one tag.');
       return;
     }
 
-    var metadata: ImageMetadata = {
-      id: 'no-id',
-      tags: this.tagsString.split(',').map(t => t.trim()),
-      format: this.selectedFile.name.split('.').pop() || 'jpg'
-    };
-
-    const formData = new FormData();
-    formData.append('imageFile', this.selectedFile);
-    formData.append('metadataJson', JSON.stringify(metadata));
-
     this.isUploadingImage = true;
-    var res = await this.videoService.uploadImage(formData)
-    console.log('Upload success', res);
-    alert("Upload sucessful!")
-    this.isUploadingImage = false;
-    this.selectedFile = null;
+
+    try {
+      for (const file of files) {
+        const metadata: ImageMetadata = {
+          id: 'no-id',
+          tags: this.tagsString.split(',').map(t => t.trim()),
+          format: file.name.split('.').pop() || 'jpg'
+        };
+
+        const formData = new FormData();
+        formData.append('imageFile', file);
+        formData.append('metadataJson', JSON.stringify(metadata));
+
+        const res = await this.videoService.uploadImage(formData);
+        console.log('Upload success:', file.name, res);
+      }
+
+      alert('Upload successful!');
+    } catch (err) {
+      console.error('Upload failed', err);
+      alert('Upload failed.');
+    } finally {
+      this.isUploadingImage = false;
+      this.selectedFile = null;
+      this.selectedFiles = [];
+    }
   }
+
 
   onComicZipSelected(event: Event): void {
     const input = event.target as HTMLInputElement;

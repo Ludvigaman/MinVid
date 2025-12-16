@@ -1,8 +1,8 @@
 <div class="frontPageContainer" *ngIf="!showTagList">
     <div class="button">
-        <a mat-stroked-button (click)="setView('images')" class="selectionButton"><mat-icon class="ico">image</mat-icon>Show images</a>
-        <a mat-stroked-button (click)="setView('comics')" class="selectionButton"><mat-icon class="ico">book</mat-icon>Show comics</a>
-        <a mat-stroked-button (click)="setView('videos')" class="selectionButton"><mat-icon class="ico">subscriptions</mat-icon>Show videos</a>
+        <a mat-stroked-button (click)="setView('images')" class="selectionButton"><mat-icon class="ico">image</mat-icon>Images</a>
+        <a mat-stroked-button (click)="setView('comics')" class="selectionButton"><mat-icon class="ico">book</mat-icon>Comics / Albums</a>
+        <a mat-stroked-button (click)="setView('videos')" class="selectionButton"><mat-icon class="ico">subscriptions</mat-icon>Videos</a>
         <a mat-stroked-button (click)="setView('shorts')" class="selectionButton"><mat-icon class="ico">stay_primary_portrait</mat-icon>Shorts</a>
     </div>
 
@@ -40,7 +40,7 @@
     </ng-container>
 
     <ng-container *ngIf="isComic">
-          <h1 style="color: #ba005c;">Comics tagged with : {{capitalize(tag)}}</h1>
+          <h1 style="color: #ba005c;">Comics and albums tagged with : {{capitalize(tag)}}</h1>
         <div class="recommendations">
             <div class="comic" *ngFor="let meta of comicCatalog" (click)="openComic(meta.id)">
                 <img src="{{getPageImageUrl(meta.id, 1)}}" class="comicThumbnail">
@@ -126,7 +126,7 @@
 
     <ng-container *ngIf="isShorts">
         <div class="frontPageContainer">
-            <h1 style="color: #ba005c;">Shorts results for : {{capitalize(tag)}}</h1>
+            <h1 style="color: #ba005c;">Shorts tagged with : {{capitalize(tag)}}</h1>
             <div class="imageRecommendation">
                 <div class="imgContainer" *ngFor="let meta of shortsCatalog; let i = index" (click)="openShort(i)">
                     <img src="{{getThumbnail(meta.id)}}" class="image">
