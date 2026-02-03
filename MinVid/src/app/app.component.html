@@ -10,11 +10,12 @@
   <div class="outlet" style="margin-top: 50px">
     <div class="content">
       <img src="/assets/images/logo.png" style="width: 20%; margin-bottom: 50px;" alt="">
-      <h2>Login</h2>
+      <h2>Log in</h2>
       <mat-form-field appearance="outline" class="inputField">
-        <input matInput style="color: white;" placeholder="Password" type="password" [(ngModel)]="password">
+        <input matInput style="color: white;" placeholder="Password" type="password" [(ngModel)]="password" (keyup.enter)="login()">
       </mat-form-field>
-      <a mat-stroked-button (click)="login()">Go!</a>
+      <a mat-stroked-button (click)="login()" *ngIf="!loading">Log in</a>
+      <h4 *ngIf="loading">Logging in...</h4>
       <h4 *ngIf="pwFailed">Wrong password...</h4>
     </div>
   </div>

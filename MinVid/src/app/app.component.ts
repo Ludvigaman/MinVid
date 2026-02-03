@@ -11,6 +11,7 @@ export class AppComponent implements OnInit {
   title = 'MinVid';
   isLoggedin = false;
   pwFailed = false;
+  loading = false;
   password = "";
 
   constructor(private videoService: FileServiceService){
@@ -31,8 +32,10 @@ export class AppComponent implements OnInit {
 
   async login(){
     this.pwFailed = false;
+    this.loading = true;
     var res = await this.videoService.login(this.password);
     console.log(res);
+    this.loading = false;
     if(res == true){
       sessionStorage.setItem("login", this.password);
       this.isLoggedin = true;
