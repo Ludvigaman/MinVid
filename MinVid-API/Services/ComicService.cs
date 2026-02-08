@@ -137,12 +137,12 @@ namespace MinVid_API.Services
             }
         }
 
-        public List<Comic> Search(List<string> tags)
+        public List<Comic> Search(List<string> tags, bool unrestricted)
         {
             if (tags == null || tags.Count == 0)
                 return new List<Comic>();
 
-            var catalog = GetCatalog();
+            var catalog = GetCatalog(unrestricted);
 
             var scoredComics = catalog
                 .Select(comic => new
@@ -158,12 +158,12 @@ namespace MinVid_API.Services
             return scoredComics;
         }
 
-        public int GetTotalComicCount()
+        public int GetTotalComicCount(bool unrestricted)
         {
-            return GetCatalog().Count();
+            return GetCatalog(unrestricted).Count();
         }
 
-        public List<Comic> GetCatalog()
+        public List<Comic> GetCatalog(bool unrestricted)
         {
 
             var comics = new List<Comic>();
@@ -188,8 +188,20 @@ namespace MinVid_API.Services
                         PropertyNameCaseInsensitive = true
                     });
 
-                    if (comic != null)
-                        comics.Add(comic);
+                    if (unrestricted)
+                    {
+                        if (comic != null)
+                        {
+                            comics.Add(comic);
+                        }
+                    } else
+                    {
+                        if (comic != null
+                            && comic.tags.Any(tag => tag.Equals("unrestricted", StringComparison.OrdinalIgnoreCase)))
+                        {
+                            comics.Add(comic);
+                        }
+                    }
                 }
                 catch
                 {

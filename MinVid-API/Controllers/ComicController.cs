@@ -50,31 +50,30 @@ namespace MinVid_API.Controllers
         }
 
         [HttpGet("comicCatalog/{page}")]
-        public List<Comic> GetCatalog(int page)
+        public List<Comic> GetCatalog(int page, bool unrestricted)
         {
             const int pageSize = 16;
 
             return _comicService
-                .GetCatalog()
-                .OrderByDescending(c => c.uploadDate)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
+                        .GetCatalog(unrestricted)
+                        .OrderByDescending(c => c.uploadDate)
+                        .Skip((page - 1) * pageSize)
+                        .Take(pageSize)
+                        .ToList();
         }
 
-
         [HttpPost("comicSearch")]
-        public List<Comic> GetCatalog([FromBody] string[] tags)
+        public List<Comic> GetCatalog([FromBody] string[] tags, bool unrestricted)
         {
             var list = tags.ToList();
-            var images = _comicService.Search(list);
+            var images = _comicService.Search(list, unrestricted);
             return images.Reverse<Comic>().ToList();
         }
 
         [HttpGet("getTotalComicCount")]
-        public int GetTotalVideoCount()
+        public int GetTotalVideoCount(bool unrestricted)
         {
-            return _comicService.GetTotalComicCount();
+            return _comicService.GetTotalComicCount(unrestricted);
         }
 
         [HttpGet("deleteComic/{comicId}")]

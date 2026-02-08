@@ -14,6 +14,10 @@
       <mat-form-field appearance="outline" class="inputField">
         <input matInput style="color: white;" placeholder="Password" type="password" [(ngModel)]="password" (keyup.enter)="login()">
       </mat-form-field>
+      <mat-checkbox
+        [(ngModel)]="rememberLogin" style="margin-left: -13px; margin-bottom: 10px;">
+        <label style="color: white;">Keep me signed in?</label>
+      </mat-checkbox>
       <a mat-stroked-button (click)="login()" *ngIf="!loading">Log in</a>
       <h4 *ngIf="loading">Logging in...</h4>
       <h4 *ngIf="pwFailed">Wrong password...</h4>

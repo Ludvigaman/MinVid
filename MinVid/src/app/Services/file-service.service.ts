@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { VideoMetadata } from '../Models/videoMetadata';
 import { HttpClient } from '@angular/common/http';
-import { firstValueFrom, Observable } from 'rxjs';
+import { firstValueFrom, map, Observable, shareReplay } from 'rxjs';
 import { ConfigServiceService } from './config-service.service';
 import { ImageMetadata } from '../Models/imageMetadata';
 import { PasswordChangeObject } from '../Models/passwordChangeObject';
@@ -22,19 +22,19 @@ export class FileServiceService {
       this.API_URL = config.API_URL;
       sessionStorage.setItem("API_URL", config.API_URL);
     })
-
-    if(this.API_URL == undefined){
-      this.API_URL = sessionStorage.getItem("API_URL")!;
-    }
   }
 
   //------------------- Auth stuff ----------------------
 
-
   //Please don't ever do it like this, this is STUPID and holy moly unsecure... But I don't really care at the moments, it's a private site with no public endpoints.
   async login(password: string): Promise<boolean> {
     try {
-      return await firstValueFrom(this._client.get<boolean>(`${this.API_URL}/login/${password}`));
+      const config = await firstValueFrom(this.config.getConfig());
+      if (!config.API_URL) throw new Error('API_URL missing in config');
+
+      return await firstValueFrom(
+        this.httpClient.get<boolean>(`${config.API_URL}/login/${password}`)
+      );
     } catch (error) {
       console.error('Error during login', error);
       return false;
@@ -77,9 +77,9 @@ export class FileServiceService {
     }
   }
 
-  async getTotalComicCount(): Promise<number> {
+  async getTotalComicCount(unrestricted: boolean): Promise<number> {
     try {
-      const result = await firstValueFrom(this._client.get<number>(this.API_URL + "/getTotalComicCount/"));
+      const result = await firstValueFrom(this._client.get<number>(`${this.API_URL}/getTotalComicCount?unrestricted=${unrestricted}`));
       return result;
     } catch (error) {
       console.error('Error loading catalog', error);
@@ -87,9 +87,9 @@ export class FileServiceService {
     }
   }
 
-  async getTotalShortsCount(): Promise<number> {
+  async getTotalShortsCount(unrestricted: boolean): Promise<number> {
     try {
-      const result = await firstValueFrom(this._client.get<number>(this.API_URL + "/getTotalShortsCount/"));
+      const result = await firstValueFrom(this._client.get<number>(`${this.API_URL}/getTotalShortsCount?unrestricted=${unrestricted}`));
       return result;
     } catch (error) {
       console.error('Error loading catalog', error);
@@ -107,9 +107,9 @@ export class FileServiceService {
     }
   }
 
-  async searchComics(tags: string[]): Promise<Comic[]> {
+  async searchComics(tags: string[], unrestricted: boolean): Promise<Comic[]> {
     try {
-      return await firstValueFrom(this._client.post<Comic[]>(`${this.API_URL}/comicSearch/`, tags));
+      return await firstValueFrom(this._client.post<Comic[]>(`${this.API_URL}/comicSearch?unrestricted=${unrestricted}`, tags));
     } catch (error) {
       console.error('Error during search', error);
       return [];
@@ -130,9 +130,9 @@ export class FileServiceService {
     return `${this.API_URL}/comicImage/${comicId}/${page}`;
   }
 
-  async getCatalog(number: number): Promise<Comic[]> {
+  async getCatalog(number: number, unrestricted: boolean): Promise<Comic[]> {
     try {
-      const result = await firstValueFrom(this._client.get<Comic[]>(`${this.API_URL}/comicCatalog/${number}`));
+      const result = await firstValueFrom(this._client.get<Comic[]>(`${this.API_URL}/comicCatalog/${number}?unrestricted=${unrestricted}`));
       return result;
     } catch (error) {
       console.error('Error loading tag list', error);
@@ -146,9 +146,9 @@ export class FileServiceService {
     return `${this.API_URL}/image/${imageId}`;
   }
 
-  async getTotalImageCount(): Promise<number> {
+  async getTotalImageCount(unrestricted: boolean): Promise<number> {
     try {
-      const result = await firstValueFrom(this._client.get<number>(this.API_URL + "/getTotalImageCount/"));
+      const result = await firstValueFrom(this._client.get<number>(`${this.API_URL}/getTotalImageCount?unrestricted=${unrestricted}`));
       return result;
     } catch (error) {
       console.error('Error loading catalog', error);
@@ -156,18 +156,18 @@ export class FileServiceService {
     }
   }
 
-  async searchImages(tags: string[]): Promise<ImageMetadata[]> {
+  async searchImages(tags: string[], unrestricted: boolean): Promise<ImageMetadata[]> {
     try {
-      return await firstValueFrom(this._client.post<ImageMetadata[]>(`${this.API_URL}/searchImages/`, tags));
+      return await firstValueFrom(this._client.post<ImageMetadata[]>(`${this.API_URL}/searchImages?unrestricted=${unrestricted}`, tags));
     } catch (error) {
       console.error('Error during search', error);
       return [];
     }
   }
 
-  async getImagesWithTag(tag: string): Promise<ImageMetadata[]> {
+  async getImagesWithTag(tag: string, unrestricted: boolean): Promise<ImageMetadata[]> {
     try {
-      const result = await firstValueFrom(this._client.get<ImageMetadata[]>(`${this.API_URL}/getImagesWithTag/${tag}`));
+      const result = await firstValueFrom(this._client.get<ImageMetadata[]>(`${this.API_URL}/getImagesWithTag/${tag}?unrestricted=${unrestricted}`));
       return result;
     } catch (error) {
       console.error('Error loading tag list', error);
@@ -184,14 +184,18 @@ export class FileServiceService {
     }
   }
 
-  async loadLatestImages(count: number): Promise<ImageMetadata[]> {
-    try {
-      const result = await firstValueFrom(this._client.get<ImageMetadata[]>(this.API_URL + "/getLatestImages/" + count));
-      return result;
-    } catch (error) {
-      console.error('Error loading catalog', error);
-      return [];
-    }
+  async loadLatestImages(count: number, unrestricted: boolean): Promise<ImageMetadata[]> {
+  try {
+    const result = await firstValueFrom(
+      this._client.get<ImageMetadata[]>(
+        `${this.API_URL}/getLatestImages/${count}?unrestricted=${unrestricted}`
+      )
+    );
+    return result;
+  } catch (error) {
+    console.error('Error loading catalog', error);
+    return [];
+  }
   }
 
   async deleteImage(id: string): Promise<boolean> {
@@ -217,18 +221,18 @@ export class FileServiceService {
     }
   }
   
-  async search(tags: string[]): Promise<VideoMetadata[]> {
+  async search(tags: string[], unrestricted: boolean): Promise<VideoMetadata[]> {
     try {
-      return await firstValueFrom(this._client.post<VideoMetadata[]>(`${this.API_URL}/search/`, tags));
+      return await firstValueFrom(this._client.post<VideoMetadata[]>(`${this.API_URL}/search?unrestricted=${unrestricted}`, tags));
     } catch (error) {
       console.error('Error during search', error);
       return [];
     }
   }
 
-  async searchShorts(tags: string[]): Promise<VideoMetadata[]> {
+  async searchShorts(tags: string[], unrestricted: boolean): Promise<VideoMetadata[]> {
     try {
-      return await firstValueFrom(this._client.post<VideoMetadata[]>(`${this.API_URL}/searchShorts/`, tags));
+      return await firstValueFrom(this._client.post<VideoMetadata[]>(`${this.API_URL}/searchShorts?unrestricted=${unrestricted}`, tags));
     } catch (error) {
       console.error('Error during search', error);
       return [];
@@ -276,9 +280,9 @@ export class FileServiceService {
     return `${this.API_URL}/video/${videoId}`;
   }
 
-  async loadLatest(page: number): Promise<VideoMetadata[]> {
+  async loadLatest(page: number, unrestricted: boolean): Promise<VideoMetadata[]> {
     try {
-      const result = await firstValueFrom(this._client.get<VideoMetadata[]>(this.API_URL + "/getLatestVideos/" + page));
+      const result = await firstValueFrom(this._client.get<VideoMetadata[]>(`${this.API_URL}/getLatestVideos/${page}?unrestricted=${unrestricted}`));
       return result;
     } catch (error) {
       console.error('Error loading catalog', error);
@@ -286,9 +290,9 @@ export class FileServiceService {
     }
   }
 
-  async loadLatestShorts(page: number): Promise<VideoMetadata[]> {
+  async loadLatestShorts(page: number, unrestricted: boolean): Promise<VideoMetadata[]> {
     try {
-      const result = await firstValueFrom(this._client.get<VideoMetadata[]>(this.API_URL + "/getLatestShorts/" + page));
+      const result = await firstValueFrom(this._client.get<VideoMetadata[]>(`${this.API_URL}/getLatestShorts/${page}?unrestricted=${unrestricted}`));
       return result;
     } catch (error) {
       console.error('Error loading catalog', error);
@@ -296,9 +300,9 @@ export class FileServiceService {
     }
   }
 
-  async getTotalVideoCount(): Promise<number> {
+  async getTotalVideoCount(unrestricted: boolean): Promise<number> {
     try {
-      const result = await firstValueFrom(this._client.get<number>(this.API_URL + "/getTotalVideoCount/"));
+      const result = await firstValueFrom(this._client.get<number>(`${this.API_URL}/getTotalVideoCount?unrestricted=${unrestricted}`));
       return result;
     } catch (error) {
       console.error('Error loading catalog', error);
@@ -306,9 +310,9 @@ export class FileServiceService {
     }
   }
 
-  async getRecommended(videoId: string): Promise<VideoMetadata[]> {
+  async getRecommended(videoId: string, unrestricted: boolean): Promise<VideoMetadata[]> {
     try {
-      const result = await firstValueFrom(this._client.get<VideoMetadata[]>(`${this.API_URL}/getRecommended/${videoId}`));
+      const result = await firstValueFrom(this._client.get<VideoMetadata[]>(`${this.API_URL}/getRecommended/${videoId}?unrestricted=${unrestricted}`));
       return result;
     } catch (error) {
       console.error('Error loading catalog', error);
@@ -316,9 +320,9 @@ export class FileServiceService {
     }
   }
 
-  async getVideosWithTag(tag: string): Promise<VideoMetadata[]> {
+  async getVideosWithTag(tag: string, unrestricted: boolean): Promise<VideoMetadata[]> {
     try {
-      const result = await firstValueFrom(this._client.get<VideoMetadata[]>(`${this.API_URL}/getVideosWithTag/${tag}`));
+      const result = await firstValueFrom(this._client.get<VideoMetadata[]>(`${this.API_URL}/getVideosWithTag/${tag}?unrestricted=${unrestricted}`));
       return result;
     } catch (error) {
       console.error('Error loading catalog', error);
@@ -326,9 +330,9 @@ export class FileServiceService {
     }
   }
 
-  async getShortsWithTag(tag: string): Promise<VideoMetadata[]> {
+  async getShortsWithTag(tag: string, unrestricted: boolean): Promise<VideoMetadata[]> {
     try {
-      const result = await firstValueFrom(this._client.get<VideoMetadata[]>(`${this.API_URL}/getShortsWithTag/${tag}`));
+      const result = await firstValueFrom(this._client.get<VideoMetadata[]>(`${this.API_URL}/getShortsWithTag/${tag}?unrestricted=${unrestricted}`));
       return result;
     } catch (error) {
       console.error('Error loading catalog', error);
@@ -336,9 +340,9 @@ export class FileServiceService {
     }
   }
 
-  async getTagList(): Promise<string[]> {
+  async getTagList(unrestricted: boolean): Promise<string[]> {
     try {
-      const result = await firstValueFrom(this._client.get<string[]>(`${this.API_URL}/getTagList/`));
+      const result = await firstValueFrom(this._client.get<string[]>(`${this.API_URL}/getTagList?unrestricted=${unrestricted}`));
       return result;
     } catch (error) {
       console.error('Error loading catalog', error);
@@ -346,9 +350,9 @@ export class FileServiceService {
     }
   }
 
-  async getTagListCount(): Promise<Record<string, number>> {
+  async getTagListCount(unrestricted: boolean): Promise<Record<string, number>> {
     try {
-      const result = await firstValueFrom(this._client.get<Record<string, number>>(`${this.API_URL}/getTagListCount/`));
+      const result = await firstValueFrom(this._client.get<Record<string, number>>(`${this.API_URL}/getTagListCount?unrestricted=${unrestricted}`));
       return result;
     } catch (error) {
       console.error('Error loading catalog', error);
@@ -356,9 +360,9 @@ export class FileServiceService {
     }
   }
 
-  async loadCatalog(): Promise<VideoMetadata[]> {
+  async loadCatalog(unrestricted: boolean): Promise<VideoMetadata[]> {
     try {
-      const result = await firstValueFrom(this._client.get<VideoMetadata[]>(this.API_URL + "/getAllVideos"));
+      const result = await firstValueFrom(this._client.get<VideoMetadata[]>(`${this.API_URL}/getAllVideos?unrestricted=${unrestricted}`));
       return result;
     } catch (error) {
       console.error('Error loading catalog', error);

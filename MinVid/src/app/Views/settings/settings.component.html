@@ -28,5 +28,7 @@
     you don't have to stay and wait on this page; you can come back later. <br>
     Just use the button below to go to the import page. You can change the title, description and tags on the corresponding video page.</p>
     <a mat-stroked-button class="settingsBtn" href="/tags/non-indexed">Non-indexed videos</a>
-
+    <h1>Other settings</h1>
+    <a mat-stroked-button class="settingsBtn" (click)="showAll()" *ngIf="!unrestricted">Disable restrictions</a>
+    <a mat-stroked-button class="settingsBtn" (click)="hideAll()" *ngIf="unrestricted">Enable restrictions</a>
 </div>

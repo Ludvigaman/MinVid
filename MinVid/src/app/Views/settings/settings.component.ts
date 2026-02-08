@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FileServiceService } from '../../Services/file-service.service';
 import { PasswordChangeObject } from '../../Models/passwordChangeObject';
 
@@ -8,7 +8,7 @@ import { PasswordChangeObject } from '../../Models/passwordChangeObject';
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'
 })
-export class SettingsComponent {
+export class SettingsComponent implements OnInit {
 
   scanning = false;
   result: number;
@@ -16,8 +16,16 @@ export class SettingsComponent {
   newPw: string = "";
   newPwAgain: string = "";
 
+  unrestricted = false;
+
   constructor(private videoService: FileServiceService){
     
+  }
+
+  ngOnInit(): void {
+    if(localStorage.getItem("unrestricted") == "true"){
+      this.unrestricted = true;
+    }
   }
 
   async scan(){
@@ -29,6 +37,16 @@ export class SettingsComponent {
     }
     console.log(result)
     this.scanning = false;
+  }
+
+  async showAll(){
+    localStorage.setItem("unrestricted", "true");
+    this.unrestricted = true;
+  }
+
+  async hideAll(){
+    localStorage.removeItem("unrestricted");
+    this.unrestricted = false;
   }
 
   async changePassword(){

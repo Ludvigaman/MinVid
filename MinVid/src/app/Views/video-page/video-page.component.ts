@@ -23,6 +23,8 @@ export class VideoPageComponent implements OnInit {
   recommendedVideos: VideoMetadata[];
   recommendedThumbnails: string[];
 
+  unrestricted: boolean = false;
+
   videoLoaded = false;
 
   constructor(private videoService: FileServiceService, private route: ActivatedRoute, private router: Router, private dialog: MatDialog){
@@ -31,6 +33,8 @@ export class VideoPageComponent implements OnInit {
 
   async ngOnInit(){
     const videoId = this.route.snapshot.paramMap.get('videoId') || ''; 
+    this.unrestricted = (localStorage.getItem("unrestricted") == "true")
+
 
     if (videoId) {
       this.videoService.getVideoMetadata(videoId).subscribe((videoData: VideoMetadata) => {
@@ -44,7 +48,7 @@ export class VideoPageComponent implements OnInit {
         this.videoLoaded = true;
       });
 
-      this.recommendedVideos = await this.videoService.getRecommended(videoId);
+      this.recommendedVideos = await this.videoService.getRecommended(videoId, this.unrestricted);
 
       this.recommendedThumbnails = [];
       this.recommendedVideos.forEach(v => {

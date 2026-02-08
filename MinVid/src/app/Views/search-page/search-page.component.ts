@@ -44,6 +44,8 @@ export class SearchPageComponent implements OnInit, OnDestroy{
   visiblePageNumbersImage: number[] = [];
   visiblePageNumbersShorts: number[] = [];
 
+  unrestricted: boolean = false;
+
   routerSub!: Subscription;
 
   constructor(private videoService: FileServiceService, private router: Router, private route: ActivatedRoute){
@@ -58,26 +60,28 @@ export class SearchPageComponent implements OnInit, OnDestroy{
       }
     });
 
+    this.unrestricted = (localStorage.getItem("unrestricted") == "true")
+
     const searchString  = this.route.snapshot.paramMap.get('searchString') || ''; 
     if(searchString == "all"){
 
-      const videoPages = Math.ceil(await this.videoService.getTotalVideoCount() / 16);
+      const videoPages = Math.ceil(await this.videoService.getTotalVideoCount(this.unrestricted) / 16);
       this.videoPages = Array.from({ length: videoPages }, (_, i) => i + 1);
 
-      const imagePages = Math.ceil(await this.videoService.getTotalImageCount() / 16);
+      const imagePages = Math.ceil(await this.videoService.getTotalImageCount(this.unrestricted) / 16);
       this.imagePages = Array.from({ length: imagePages }, (_, i) => i + 1);
 
-      const comicPages = Math.ceil(await this.videoService.getTotalComicCount() / 16);
+      const comicPages = Math.ceil(await this.videoService.getTotalComicCount(this.unrestricted) / 16);
       this.comicPages = Array.from({ length: comicPages }, (_, i) => i + 1);
 
-      const shortsPages = Math.ceil(await this.videoService.getTotalShortsCount() / 16);
+      const shortsPages = Math.ceil(await this.videoService.getTotalShortsCount(this.unrestricted) / 16);
       this.shortsPages = Array.from({ length: shortsPages }, (_, i) => i + 1);
 
       this.updateAllVisiblePageNumbers();
 
       this.searchString = "all"
 
-      this.catalog = await this.videoService.loadLatest(1);
+      this.catalog = await this.videoService.loadLatest(1, this.unrestricted);
 
       if(this.catalog.length > 0){
         this.catalog.forEach(c => {
@@ -86,7 +90,7 @@ export class SearchPageComponent implements OnInit, OnDestroy{
         });
       }
 
-      this.shortsCatalog = await this.videoService.loadLatestShorts(1);
+      this.shortsCatalog = await this.videoService.loadLatestShorts(1, this.unrestricted);
 
       if(this.shortsCatalog.length > 0){
         this.shortsCatalog.forEach(c => {
@@ -95,8 +99,8 @@ export class SearchPageComponent implements OnInit, OnDestroy{
         });
       }
 
-      this.imageCatalog = await this.videoService.loadLatestImages(1);
-      this.comicCatalog = await this.videoService.getCatalog(1);
+      this.imageCatalog = await this.videoService.loadLatestImages(1, this.unrestricted);
+      this.comicCatalog = await this.videoService.getCatalog(1, this.unrestricted);
 
     } else {
       this.searchString = searchString;
@@ -106,10 +110,10 @@ export class SearchPageComponent implements OnInit, OnDestroy{
           .map(t => t.trim())
           .filter(t => t.length > 0);
   
-      this.imageCatalog = (await this.videoService.searchImages(searchArray)).reverse();
-      this.comicCatalog = (await this.videoService.searchComics(searchArray)).reverse();
+      this.imageCatalog = (await this.videoService.searchImages(searchArray, this.unrestricted)).reverse();
+      this.comicCatalog = (await this.videoService.searchComics(searchArray, this.unrestricted)).reverse();
       
-      this.catalog = await this.videoService.search(searchArray);
+      this.catalog = await this.videoService.search(searchArray, this.unrestricted);
 
       if(this.catalog.length > 0){
         this.catalog.forEach(c => {
@@ -118,7 +122,7 @@ export class SearchPageComponent implements OnInit, OnDestroy{
         });
       }
 
-      this.shortsCatalog = await this.videoService.searchShorts(searchArray);
+      this.shortsCatalog = await this.videoService.searchShorts(searchArray, this.unrestricted);
 
       if(this.shortsCatalog.length > 0){
         this.shortsCatalog.forEach(c => {
@@ -151,7 +155,7 @@ export class SearchPageComponent implements OnInit, OnDestroy{
     this.currentPageVideo = page;
     this.updateAllVisiblePageNumbers();
 
-    this.catalog = await this.videoService.loadLatest(page);
+    this.catalog = await this.videoService.loadLatest(page, this.unrestricted);
 
     this.thumbnails = this.catalog.map(c => this.videoService.getThumbnailUrl(c.id));
   }
@@ -162,7 +166,7 @@ export class SearchPageComponent implements OnInit, OnDestroy{
     this.currentPageShorts = page;
     this.updateAllVisiblePageNumbers();
 
-    this.shortsCatalog = await this.videoService.loadLatestShorts(page);
+    this.shortsCatalog = await this.videoService.loadLatestShorts(page, this.unrestricted);
 
     this.thumbnailsShorts = this.shortsCatalog.map(c => this.videoService.getThumbnailUrl(c.id));
   }
@@ -173,7 +177,7 @@ export class SearchPageComponent implements OnInit, OnDestroy{
     this.currentPageImage = page;
     this.updateAllVisiblePageNumbers();
 
-    this.imageCatalog = await this.videoService.loadLatestImages(page);
+    this.imageCatalog = await this.videoService.loadLatestImages(page, this.unrestricted);
   }
 
   async goToComicPage(page: number) {
@@ -182,7 +186,7 @@ export class SearchPageComponent implements OnInit, OnDestroy{
     this.currentPageComic = page;
     this.updateAllVisiblePageNumbers();
 
-    this.comicCatalog = await this.videoService.getCatalog(page);
+    this.comicCatalog = await this.videoService.getCatalog(page, this.unrestricted);
   }
 
   updateAllVisiblePageNumbers() {

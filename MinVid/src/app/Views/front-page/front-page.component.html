@@ -1,4 +1,8 @@
 <div class="frontPageContainer">
+    <h1 style="color: #ba005c;">Most popular tags</h1>
+    <div class="topTags">
+        <a mat-stroked-button (click)="navigateToTag(tag)" class="tag" *ngFor="let tag of topTags">{{ capitalize(tag) }} ({{ getTagCount(tag) }})</a>
+    </div>
     <h1 style="color: #ba005c;">Latest videos</h1>
     <div class="recommendations">
         <div class="video" *ngFor="let meta of catalog" (click)="navigate(meta.id)">

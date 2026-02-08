@@ -14,58 +14,49 @@ namespace MinVid_API.Controllers
             _imageService = imgService;
         }
 
-        [HttpGet("getImageCatalog")]
-        public List<ImageMetadata> GetCatalog()
-        {
-            var images = _imageService.GetImageCatalog();
-            return images;
-        }
-
         [HttpGet("getLatestImages/{page}")]
-        public List<ImageMetadata> GetCatalog(int page)
+        public List<ImageMetadata> GetLatestImages(int page, bool unrestricted)
         {
             const int pageSize = 16;
 
-            var images = _imageService.GetImageCatalog()
-                                      .Skip((page - 1) * pageSize)
-                                      .Take(pageSize)
-                                      .ToList();
-
-            return images;
+            return _imageService.GetImageCatalog(unrestricted)
+                          .Skip((page - 1) * pageSize)
+                          .Take(pageSize)
+                          .ToList();
         }
 
 
         [HttpGet("deleteImage/{id}")]
-        public async Task<bool> GetCatalog(string id)
+        public async Task<bool> DeleteImage(string id)
         {
             return await _imageService.DeleteImageAsync(id);
         }
 
         [HttpGet("getTotalImageCount")]
-        public int GetTotalVideoCount()
+        public int GetTotalImageCount(bool unrestricted)
         {
-            return _imageService.GetTotalImageCount();
+            return _imageService.GetTotalImageCount(unrestricted);
         }
 
         [HttpPost("searchImages")]
-        public List<ImageMetadata> Search([FromBody] string[] tags)
+        public List<ImageMetadata> Search([FromBody] string[] tags, bool unrestricted)
         {
             var list = tags.ToList();
-            var images = _imageService.Search(list);
+            var images = _imageService.Search(list, unrestricted);
             return images.Reverse<ImageMetadata>().ToList();
         }
 
         [HttpGet("getImagesWithTag/{tag}")]
-        public List<ImageMetadata> GetImagesWithTag(string tag)
+        public List<ImageMetadata> GetImagesWithTag(string tag, bool unrestricted)
         {
-            var images = _imageService.GetWithTag(tag);
+            var images = _imageService.GetWithTag(tag, unrestricted);
             return images;
         }
 
         [HttpGet("image/{imageId}")]
         public IActionResult GetImage(string imageId)
         {
-            var images = _imageService.GetImageCatalog();
+            var images = _imageService.GetImageCatalog(true);
             var metadata = images.FirstOrDefault(img => img.id == imageId);
 
             if (metadata == null)

@@ -5,6 +5,17 @@
     cursor: pointer;
 }
 
+.topTags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.tag {
+    text-align: center;
+    margin: 5px;
+}
+
 .thumbnail {
     width: 100%;
     aspect-ratio: 16 / 9;

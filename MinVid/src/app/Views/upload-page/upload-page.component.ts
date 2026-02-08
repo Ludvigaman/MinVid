@@ -50,16 +50,21 @@ export class UploadPageComponent implements OnInit {
   isComic = false;
   isImage = false;
 
+  unrestricted: boolean = false;
+
   _url: string;
 
   constructor(private http: HttpClient, private config: ConfigServiceService, private videoService: FileServiceService){
     this.config.getConfig().subscribe(config => {
       this._url = config.API_URL;
     })
+
+    this.unrestricted = (localStorage.getItem("unrestricted") == "true")
+
   }
 
   async ngOnInit() {
-    this.allTags = await this.videoService.getTagList();
+    this.allTags = await this.videoService.getTagList(this.unrestricted);
     
     this.filteredTags = this.tagCtrl.valueChanges.pipe(
       startWith(null),

@@ -48,6 +48,8 @@ export class TagPageComponent implements OnInit, OnDestroy{
   visiblePageNumbersImage: number[] = [];
   visiblePageNumbersShorts: number[] = [];
 
+  unrestricted: boolean = false;
+
   routerSub!: Subscription;
 
   alphabeticalSort = (a: { key: string }, b: { key: string }) => {
@@ -66,20 +68,22 @@ export class TagPageComponent implements OnInit, OnDestroy{
       }
     });
 
+    this.unrestricted = (localStorage.getItem("unrestricted") == "true")
+
     const tag  = this.route.snapshot.paramMap.get('tag') || ''; 
 
     if(tag == "all"){
 
-      const videoPages = Math.ceil(await this.videoService.getTotalVideoCount() / 16);
+      const videoPages = Math.ceil(await this.videoService.getTotalVideoCount(this.unrestricted) / 16);
       this.videoPages = Array.from({ length: videoPages }, (_, i) => i + 1);
 
-      const imagePages = Math.ceil(await this.videoService.getTotalImageCount() / 16);
+      const imagePages = Math.ceil(await this.videoService.getTotalImageCount(this.unrestricted) / 16);
       this.imagePages = Array.from({ length: imagePages }, (_, i) => i + 1);
 
-      const comicPages = Math.ceil(await this.videoService.getTotalComicCount() / 16);
+      const comicPages = Math.ceil(await this.videoService.getTotalComicCount(this.unrestricted) / 16);
       this.comicPages = Array.from({ length: comicPages }, (_, i) => i + 1);
 
-      const shortsPages = Math.ceil(await this.videoService.getTotalShortsCount() / 16);
+      const shortsPages = Math.ceil(await this.videoService.getTotalShortsCount(this.unrestricted) / 16);
       this.shortsPages = Array.from({ length: shortsPages }, (_, i) => i + 1);
 
       this.updateAllVisiblePageNumbers();
@@ -87,8 +91,8 @@ export class TagPageComponent implements OnInit, OnDestroy{
       this.tag = "all"
       this.showTagList = true;
       
-      this.allTags = await this.videoService.getTagList();
-      this.allTagsCount = await this.videoService.getTagListCount();
+      this.allTags = await this.videoService.getTagList(this.unrestricted);
+      this.allTagsCount = await this.videoService.getTagListCount(this.unrestricted);
 
       this.groupedTags = this.allTags.reduce((groups, tag) => {
         const key = tag.trim().charAt(0).toUpperCase();
@@ -104,10 +108,10 @@ export class TagPageComponent implements OnInit, OnDestroy{
     } else {
       this.tag = tag;
 
-      this.imageCatalog = await this.videoService.getImagesWithTag(tag)
-      this.catalog = await this.videoService.getVideosWithTag(tag);
-      this.comicCatalog = await this.videoService.searchComics([tag])
-      this.shortsCatalog = await this.videoService.getShortsWithTag(tag);
+      this.imageCatalog = await this.videoService.getImagesWithTag(tag, this.unrestricted)
+      this.catalog = await this.videoService.getVideosWithTag(tag, this.unrestricted);
+      this.comicCatalog = await this.videoService.searchComics([tag], this.unrestricted)
+      this.shortsCatalog = await this.videoService.getShortsWithTag(tag, this.unrestricted);
 
       if(this.catalog.length > 0){
         this.catalog.forEach(c => {
@@ -176,7 +180,7 @@ export class TagPageComponent implements OnInit, OnDestroy{
     this.currentPageVideo = page;
     this.updateAllVisiblePageNumbers();
 
-    this.catalog = await this.videoService.loadLatest(page);
+    this.catalog = await this.videoService.loadLatest(page, this.unrestricted);
 
     this.thumbnails = this.catalog.map(c => this.videoService.getThumbnailUrl(c.id));
   }
@@ -187,7 +191,7 @@ export class TagPageComponent implements OnInit, OnDestroy{
     this.currentPageImage = page;
     this.updateAllVisiblePageNumbers();
 
-    this.imageCatalog = await this.videoService.loadLatestImages(page);
+    this.imageCatalog = await this.videoService.loadLatestImages(page, this.unrestricted);
   }
 
   async goToComicPage(page: number) {
@@ -196,7 +200,7 @@ export class TagPageComponent implements OnInit, OnDestroy{
     this.currentPageComic = page;
     this.updateAllVisiblePageNumbers();
 
-    this.comicCatalog = await this.videoService.getCatalog(page);
+    this.comicCatalog = await this.videoService.getCatalog(page, this.unrestricted);
   }
 
   async goToShortsPage(page: number) {
@@ -205,7 +209,7 @@ export class TagPageComponent implements OnInit, OnDestroy{
     this.currentPageShorts = page;
     this.updateAllVisiblePageNumbers();
 
-    this.shortsCatalog = await this.videoService.loadLatestShorts(page);
+    this.shortsCatalog = await this.videoService.loadLatestShorts(page, this.unrestricted);
 
     this.thumbnails = this.catalog.map(c => this.videoService.getThumbnailUrl(c.id));
   }

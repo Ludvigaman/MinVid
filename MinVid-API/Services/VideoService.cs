@@ -152,13 +152,13 @@ namespace MinVid_API.Services
             }
         }
 
-        public List<VideoMetadata> Search(List<string> tags)
+        public List<VideoMetadata> Search(List<string> tags, bool unrestricted)
         {
 
             if (tags == null || tags.Count == 0)
                 return new List<VideoMetadata>();
 
-            var catalog = GetVideoMetadataCatalog(false);
+            var catalog = GetVideoMetadataCatalog(false, unrestricted);
 
             var scoredVideos = catalog
                 .Select(video => new
@@ -177,13 +177,13 @@ namespace MinVid_API.Services
             return scoredVideos;
         }
 
-        public List<VideoMetadata> SearchShorts(List<string> tags)
+        public List<VideoMetadata> SearchShorts(List<string> tags, bool unrestricted)
         {
 
             if (tags == null || tags.Count == 0)
                 return new List<VideoMetadata>();
 
-            var catalog = GetVideoMetadataCatalog(true);
+            var catalog = GetVideoMetadataCatalog(true, unrestricted);
 
             var scoredVideos = catalog
                 .Select(video => new
@@ -202,7 +202,7 @@ namespace MinVid_API.Services
             return scoredVideos;
         }
 
-        public List<VideoMetadata> GetSimilar(string videoId)
+        public List<VideoMetadata> GetSimilar(string videoId, bool unrestricted)
         {
             var metadata = GetVideoMetadata(videoId);
             if (metadata == null)
@@ -213,7 +213,7 @@ namespace MinVid_API.Services
             if (tags == null || tags.Count == 0)
                 return new List<VideoMetadata>();
 
-            var catalog = GetVideoMetadataCatalog(false);
+            var catalog = GetVideoMetadataCatalog(false, unrestricted);
 
             var scoredVideos = catalog
                 .Where(video => !string.Equals(video.id, videoId, StringComparison.OrdinalIgnoreCase)) // Exclude self
@@ -231,12 +231,12 @@ namespace MinVid_API.Services
             return scoredVideos;
         }
 
-        public List<VideoMetadata> GetWithTag(string tag)
+        public List<VideoMetadata> GetWithTag(string tag, bool unrestricted)
         {
             if (string.IsNullOrWhiteSpace(tag))
                 return new List<VideoMetadata>();
 
-            var catalog = GetVideoMetadataCatalog(false);
+            var catalog = GetVideoMetadataCatalog(false, unrestricted);
 
             var matchedVideos = catalog
                 .Where(video => video.tags.Any(t => string.Equals(t, tag, StringComparison.OrdinalIgnoreCase)))
@@ -246,12 +246,12 @@ namespace MinVid_API.Services
             return matchedVideos;
         }
 
-        public List<VideoMetadata> GetShortsWithTag(string tag)
+        public List<VideoMetadata> GetShortsWithTag(string tag, bool unrestricted)
         {
             if (string.IsNullOrWhiteSpace(tag))
                 return new List<VideoMetadata>();
 
-            var catalog = GetVideoMetadataCatalog(true);
+            var catalog = GetVideoMetadataCatalog(true, unrestricted);
 
             var matchedVideos = catalog
                 .Where(video => video.tags.Any(t => string.Equals(t, tag, StringComparison.OrdinalIgnoreCase)))
@@ -261,12 +261,12 @@ namespace MinVid_API.Services
             return matchedVideos;
         }
 
-        public List<string> GetTagList()
+        public List<string> GetTagList(bool unrestricted)
         {
-            var imageCatalog = _imageService.GetImageCatalog();
-            var comicCatalog = _comicService.GetCatalog();
-            var videoCatalog = GetVideoMetadataCatalog(false);
-            var shortCatalog = GetVideoMetadataCatalog(true);
+            List<ImageMetadata> imageCatalog = _imageService.GetImageCatalog(unrestricted);
+            List<Comic> comicCatalog = _comicService.GetCatalog(unrestricted);
+            List<VideoMetadata> videoCatalog = GetVideoMetadataCatalog(false, unrestricted);
+            List<VideoMetadata> shortCatalog = GetVideoMetadataCatalog(true, unrestricted);
 
             if (videoCatalog.Count == 0 && imageCatalog.Count == 0 && comicCatalog.Count == 0)
                 return new List<string>();
@@ -344,14 +344,14 @@ namespace MinVid_API.Services
             return tagList;
         }
 
-        public Dictionary<string, int> GetTagListCount()
+        public Dictionary<string, int> GetTagListCount(bool unrestricted)
         {
             var tagCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
-            var imageCatalog = _imageService.GetImageCatalog();
-            var comicCatalog = _comicService.GetCatalog();
-            var videoCatalog = GetVideoMetadataCatalog(false);
-            var shortCatalog = GetVideoMetadataCatalog(true);
+            List<ImageMetadata> imageCatalog = _imageService.GetImageCatalog(unrestricted);
+            List<Comic> comicCatalog = _comicService.GetCatalog(unrestricted);
+            List<VideoMetadata> videoCatalog = GetVideoMetadataCatalog(false, unrestricted);
+            List<VideoMetadata> shortCatalog = GetVideoMetadataCatalog(true, unrestricted);
 
             void ProcessTags(IEnumerable<string> tags)
             {
@@ -394,7 +394,7 @@ namespace MinVid_API.Services
         }
 
 
-        public List<VideoMetadata> GetVideoMetadataCatalog(bool getShorts)
+        public List<VideoMetadata> GetVideoMetadataCatalog(bool getShorts, bool unrestricted)
         {
             var videos = new List<VideoMetadata>();
 
@@ -414,18 +414,39 @@ namespace MinVid_API.Services
                         PropertyNameCaseInsensitive = true
                     };
                     var metadata = JsonSerializer.Deserialize<VideoMetadata>(json, options);
+
                     if (metadata != null)
                     {
-                        if(getShorts && metadata.isShort == true)
+                        if (unrestricted)
                         {
-                            videos.Add(metadata);
-                        }
-
-                        if(!getShorts)
-                        {
-                            if (metadata.isShort == false || metadata.isShort == null)
+                            if (getShorts && metadata.isShort == true)
                             {
                                 videos.Add(metadata);
+                            }
+
+                            if (!getShorts)
+                            {
+                                if (metadata.isShort == false || metadata.isShort == null)
+                                {
+                                    videos.Add(metadata);
+                                }
+                            }
+                        } else
+                        {
+                            if (getShorts 
+                                && metadata.isShort == true
+                                && !metadata.tags.Any(tag => tag.Equals("unrestricted", StringComparison.OrdinalIgnoreCase)))
+                            {
+                                videos.Add(metadata);
+                            }
+
+                            if (!getShorts)
+                            {
+                                if ((metadata.isShort == false || metadata.isShort == null)
+                                    && !metadata.tags.Any(tag => tag.Equals("unrestricted", StringComparison.OrdinalIgnoreCase)))
+                                {
+                                    videos.Add(metadata);
+                                }
                             }
                         }
                     }
@@ -440,7 +461,7 @@ namespace MinVid_API.Services
             return videos;
         }
 
-        public int GetTotalVideoCount(bool getShorts)
+        public int GetTotalVideoCount(bool getShorts, bool unrestricted)
         {
             if (!Directory.Exists(_dataPath))
                 return 0;
@@ -463,14 +484,30 @@ namespace MinVid_API.Services
                     var metadata = JsonSerializer.Deserialize<VideoMetadata>(json, options);
                     if (metadata != null)
                     {
-                        if (metadata.isShort == false || metadata.isShort == null)
+                        if (unrestricted)
                         {
-                            totalVideos++;
-                        }
+                            if (metadata.isShort == false || metadata.isShort == null)
+                            {
+                                totalVideos++;
+                            }
 
-                        if(metadata.isShort == true)
+                            if (metadata.isShort == true)
+                            {
+                                totalShorts++;
+                            }
+                        } else
                         {
-                            totalShorts++;
+                            if ((metadata.isShort == false || metadata.isShort == null)
+                                && !metadata.tags.Any(tag => tag.Equals("unrestricted", StringComparison.OrdinalIgnoreCase)))
+                            {
+                                totalVideos++;
+                            }
+
+                            if (metadata.isShort == true
+                                && !metadata.tags.Any(tag => tag.Equals("unrestricted", StringComparison.OrdinalIgnoreCase)))
+                            {
+                                totalShorts++;
+                            }
                         }
                     }
                 }
@@ -489,7 +526,7 @@ namespace MinVid_API.Services
                 return totalVideos;
             }
         }
-        public List<VideoMetadata> GetVideoMetadataCatalogCount(int page)
+        public List<VideoMetadata> GetVideoMetadataCatalogCount(int page, bool unrestricted)
         {
             const int pageSize = 16;
             var videos = new List<VideoMetadata>();
@@ -514,11 +551,25 @@ namespace MinVid_API.Services
                     };
                     var metadata = JsonSerializer.Deserialize<VideoMetadata>(json, options);
 
-                    // Only include non-shorts
-                    if (metadata != null && (metadata.isShort == false || metadata.isShort == null))
+                    if (unrestricted)
                     {
-                        filteredVideos.Add(metadata);
+                        // Only include non-shorts
+                        if (metadata != null 
+                            && (metadata.isShort == false || metadata.isShort == null))
+                        {
+                            filteredVideos.Add(metadata);
+                        }
+                    } else
+                    {
+                        // Only include non-shorts
+                        if (metadata != null
+                            && (metadata.isShort == false || metadata.isShort == null)
+                            && !metadata.tags.Any(tag => tag.Equals("unrestricted", StringComparison.OrdinalIgnoreCase)))
+                        {
+                            filteredVideos.Add(metadata);
+                        }
                     }
+
                 }
                 catch (Exception ex)
                 {
@@ -535,7 +586,7 @@ namespace MinVid_API.Services
             return videos;
         }
 
-        public List<VideoMetadata> GetShortsMetadataCatalogCount(int page)
+        public List<VideoMetadata> GetShortsMetadataCatalogCount(int page, bool unrestricted)
         {
             const int pageSize = 16;
             var shorts = new List<VideoMetadata>();
@@ -560,10 +611,24 @@ namespace MinVid_API.Services
                     };
                     var metadata = JsonSerializer.Deserialize<VideoMetadata>(json, options);
 
-                    // Only include shorts
-                    if (metadata != null && metadata.isShort == true)
+                    if (unrestricted)
                     {
-                        filteredShorts.Add(metadata);
+                        // Only include non-shorts
+                        if (metadata != null 
+                            && metadata.isShort == true)
+                        {
+                            filteredShorts.Add(metadata);
+                        }
+                    }
+                    else
+                    {
+                        // Only include non-shorts
+                        if (metadata != null
+                            && metadata.isShort == true
+                            && !metadata.tags.Any(tag => tag.Equals("unrestricted", StringComparison.OrdinalIgnoreCase)))
+                        {
+                            filteredShorts.Add(metadata);
+                        }
                     }
                 }
                 catch (Exception ex)

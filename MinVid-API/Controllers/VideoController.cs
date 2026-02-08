@@ -32,33 +32,26 @@ namespace MinVid_API.Controllers
         }
 
         [HttpGet("getAllVideos")]
-        public List<VideoMetadata> GetCatalog()
+        public List<VideoMetadata> GetCatalog(bool unrestricted)
         {
-            var videos = _videoService.GetVideoMetadataCatalog(false);
+            var videos = _videoService.GetVideoMetadataCatalog(false, unrestricted);
             return videos;
         }
 
-        [HttpGet("getAllShorts")]
-        public List<VideoMetadata> GetShortsCatalog()
-        {
-            var shorts = _videoService.GetVideoMetadataCatalog(true);
-            return shorts;
-        }
-
         [HttpPost("search")]
-        public List<VideoMetadata> Search([FromBody] string[] tags)
+        public List<VideoMetadata> Search([FromBody] string[] tags, bool unrestricted)
         {
             var list = tags.ToList();
-            var videos = _videoService.Search(list);
+            var videos = _videoService.Search(list, unrestricted);
             return videos;
         }
 
 
         [HttpPost("searchShorts")]
-        public List<VideoMetadata> SearchShorts([FromBody] string[] tags)
+        public List<VideoMetadata> SearchShorts([FromBody] string[] tags, bool unrestricted)
         {
             var list = tags.ToList();
-            var videos = _videoService.SearchShorts(list);
+            var videos = _videoService.SearchShorts(list, unrestricted);
             return videos;
         }
 
@@ -70,29 +63,29 @@ namespace MinVid_API.Controllers
         }
 
         [HttpGet("getTotalVideoCount")]
-        public int GetTotalVideoCount()
+        public int GetTotalVideoCount(bool unrestricted)
         {
-            return _videoService.GetTotalVideoCount(false);
+            return _videoService.GetTotalVideoCount(false, unrestricted);
         }
 
         [HttpGet("getLatestVideos/{page}")]
-        public List<VideoMetadata> GetLatestCatalog(int page)
+        public List<VideoMetadata> GetLatestCatalog(int page, bool unrestricted)
         {
-            var videos = _videoService.GetVideoMetadataCatalogCount(page);
+            var videos = _videoService.GetVideoMetadataCatalogCount(page, unrestricted);
             return videos;
         }
 
         [HttpGet("getTotalShortsCount")]
-        public int GetTotalShortsCount()
+        public int GetTotalShortsCount(bool unrestricted)
         {
-            return _videoService.GetTotalVideoCount(true);
+            return _videoService.GetTotalVideoCount(true, unrestricted);
         }
 
 
         [HttpGet("getLatestShorts/{page}")]
-        public List<VideoMetadata> GetLatestShortsCatalog(int page)
+        public List<VideoMetadata> GetLatestShortsCatalog(int page, bool unrestricted)
         {
-            var videos = _videoService.GetShortsMetadataCatalogCount(page);
+            var videos = _videoService.GetShortsMetadataCatalogCount(page, unrestricted);
             return videos;
         }
 
@@ -104,38 +97,38 @@ namespace MinVid_API.Controllers
         }
 
         [HttpGet("getRecommended/{videoId}")]
-        public List<VideoMetadata> GetRecommended(string videoId)
+        public List<VideoMetadata> GetRecommended(string videoId, bool unrestricted)
         {
-            var videos = _videoService.GetSimilar(videoId);
+            var videos = _videoService.GetSimilar(videoId, unrestricted);
             return videos;
         }
 
         [HttpGet("getVideosWithTag/{tag}")]
-        public List<VideoMetadata> GetVideosWithTag(string tag)
+        public List<VideoMetadata> GetVideosWithTag(string tag, bool unrestricted)
         {
-            var videos = _videoService.GetWithTag(tag);
+            var videos = _videoService.GetWithTag(tag, unrestricted);
             return videos;
         }
 
         [HttpGet("getShortsWithTag/{tag}")]
-        public List<VideoMetadata> GetShortsWithTag(string tag)
+        public List<VideoMetadata> GetShortsWithTag(string tag, bool unrestricted)
         {
-            var videos = _videoService.GetShortsWithTag(tag);
+            var videos = _videoService.GetShortsWithTag(tag, unrestricted);
             return videos;
         }
 
         [HttpGet("getTagList")]
-        public List<string> GetTagList()
+        public List<string> GetTagList(bool unrestricted)
         {
-            var tags = _videoService.GetTagList();
+            var tags = _videoService.GetTagList(unrestricted);
             return tags;
         }
 
 
         [HttpGet("getTagListCount")]
-        public Dictionary<string, int> GetTagListCount()
+        public Dictionary<string, int> GetTagListCount(bool unrestricted)
         {
-            var tagCount = _videoService.GetTagListCount();
+            var tagCount = _videoService.GetTagListCount(unrestricted);
             return tagCount;
         }
 

@@ -44,7 +44,7 @@ namespace MinVid_API.Services
             return new FileStreamResult(stream, contentType);
         }
 
-        public List<ImageMetadata> GetImageCatalog()
+        public List<ImageMetadata> GetImageCatalog(bool unrestricted)
         {
             var catalog = new List<ImageMetadata>();
 
@@ -68,7 +68,16 @@ namespace MinVid_API.Services
                 var metadataList = JsonSerializer.Deserialize<List<ImageMetadata>>(json, options);
 
                 if (metadataList != null)
-                    catalog = metadataList;
+                {
+                    if (unrestricted)
+                    {
+                        catalog = metadataList;
+                    } else
+                    {
+                        catalog = metadataList.Where(metadata => !metadata.tags.Any(tag => tag.Equals("unrestricted", StringComparison.OrdinalIgnoreCase))).ToList();
+                    }
+
+                }
             }
             catch (Exception ex)
             {
@@ -80,12 +89,12 @@ namespace MinVid_API.Services
             return catalog;
         }
 
-        public List<ImageMetadata> Search(List<string> tags)
+        public List<ImageMetadata> Search(List<string> tags, bool unrestricted)
         {
             if (tags == null || tags.Count == 0)
                 return new List<ImageMetadata>();
 
-            var catalog = GetImageCatalog();
+            var catalog = GetImageCatalog(unrestricted);
 
             var scoredImages = catalog
                 .Select(image => new
@@ -101,20 +110,20 @@ namespace MinVid_API.Services
             return scoredImages;
         }
 
-        public int GetTotalImageCount()
+        public int GetTotalImageCount(bool unrestricted)
         {
-            return GetImageCatalog().Count();
+            return GetImageCatalog(unrestricted).Count();
         }
 
-        public List<ImageMetadata> GetWithTag(string tag)
+        public List<ImageMetadata> GetWithTag(string tag, bool unrestricted)
         {
             if (string.IsNullOrWhiteSpace(tag))
                 return new List<ImageMetadata>();
 
-            var catalog = GetImageCatalog();
+            var catalog = GetImageCatalog(unrestricted);
 
             var matchedImages = catalog
-                .Where(video => video.tags.Any(t => string.Equals(t, tag, StringComparison.OrdinalIgnoreCase))).Reverse()
+                .Where(image => image.tags.Any(t => string.Equals(t, tag, StringComparison.OrdinalIgnoreCase))).Reverse()
                 .ToList();
 
             return matchedImages;

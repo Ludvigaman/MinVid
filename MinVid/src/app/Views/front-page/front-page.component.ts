@@ -23,6 +23,17 @@ export class FrontPageComponent implements OnInit, OnDestroy {
   selectedShortIndex: number | null = null;
   routerSub!: Subscription;
 
+  allTags: string[];
+  topTags: string[];
+  allTagsCount: Record<string, number>;
+  groupedTags: { [key: string]: string[] } = {};
+
+  unrestricted: boolean = false;
+
+  alphabeticalSort = (a: { key: string }, b: { key: string }) => {
+    return a.key.localeCompare(b.key);
+  };
+
   constructor(private videoService: FileServiceService, private router: Router){
 
   }
@@ -35,10 +46,12 @@ export class FrontPageComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.imageCatalog = await this.videoService.loadLatestImages(1);
-    this.comicCatalog = await this.videoService.getCatalog(1);
-    this.catalog = await this.videoService.loadLatest(1);
-    this.shortsCatalog = await this.videoService.loadLatestShorts(1);
+    this.unrestricted = (localStorage.getItem("unrestricted") == "true")
+
+    this.imageCatalog = await this.videoService.loadLatestImages(1, this.unrestricted);
+    this.comicCatalog = await this.videoService.getCatalog(1, this.unrestricted);
+    this.catalog = await this.videoService.loadLatest(1, this.unrestricted);
+    this.shortsCatalog = await this.videoService.loadLatestShorts(1, this.unrestricted);
     
     if(this.catalog.length > 0){
       this.catalog.forEach(c => {
@@ -53,7 +66,24 @@ export class FrontPageComponent implements OnInit, OnDestroy {
         this.thumbnails.push(thumbnail);
       });
     }
+
+    this.allTags = await this.videoService.getTagList(this.unrestricted);
+    this.allTagsCount = await this.videoService.getTagListCount(this.unrestricted);
+
+    this.topTags = [...this.allTags]
+      .sort((a, b) => this.getTagCount(b) - this.getTagCount(a))
+      .slice(0, 10);
+
   }
+
+  getTagCount(tag: string): number {
+    return this.allTagsCount?.[tag] ?? 0;
+  }
+
+  navigateToTag(tag: string) {
+    window.location.href = "/tags/" + tag;
+  }
+
 
   ngOnDestroy() {
     document.body.style.overflow = ''; // Restore scroll on destroy

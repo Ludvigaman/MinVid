@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, shareReplay } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -8,9 +8,21 @@ import { environment } from '../../environments/environment';
 })
 export class ConfigServiceService {
 
-  constructor(private http: HttpClient) {} // Inject HttpClient in the constructor
+  private config$?: Observable<AppConfig>;
 
-  getConfig(): Observable<any> {
-    return this.http.get(environment.configFilePath);
+  constructor(private http: HttpClient) {}
+
+  getConfig(): Observable<AppConfig> {
+    if (!this.config$) {
+      this.config$ = this.http
+        .get<AppConfig>(environment.configFilePath)
+        .pipe(shareReplay(1)); // cache for everyone
+    }
+    return this.config$;
   }
+
+}
+
+export interface AppConfig {
+  API_URL: string;
 }
