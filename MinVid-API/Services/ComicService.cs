@@ -197,7 +197,7 @@ namespace MinVid_API.Services
                     } else
                     {
                         if (comic != null
-                            && comic.tags.Any(tag => tag.Equals("unrestricted", StringComparison.OrdinalIgnoreCase)))
+                            && !comic.tags.Any(tag => tag.Equals("unrestricted", StringComparison.OrdinalIgnoreCase)))
                         {
                             comics.Add(comic);
                         }
