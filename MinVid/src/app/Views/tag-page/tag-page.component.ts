@@ -22,6 +22,7 @@ export class TagPageComponent implements OnInit, OnDestroy{
   tag: string;
   allTags: string[];
   allTagsCount: Record<string, number>;
+  topTags: string[];
 
   showTagList = false;
   groupedTags: { [key: string]: string[] } = {};
@@ -93,6 +94,9 @@ export class TagPageComponent implements OnInit, OnDestroy{
       
       this.allTags = await this.videoService.getTagList(this.unrestricted);
       this.allTagsCount = await this.videoService.getTagListCount(this.unrestricted);
+      this.topTags = [...this.allTags]
+        .sort((a, b) => this.getTagCount(b) - this.getTagCount(a))
+        .slice(0, 10);
 
       this.groupedTags = this.allTags.reduce((groups, tag) => {
         const key = tag.trim().charAt(0).toUpperCase();

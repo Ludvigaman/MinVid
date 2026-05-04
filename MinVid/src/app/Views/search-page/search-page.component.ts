@@ -47,6 +47,7 @@ export class SearchPageComponent implements OnInit, OnDestroy{
   unrestricted: boolean = false;
 
   routerSub!: Subscription;
+  queryParamSub!: Subscription;
 
   constructor(private videoService: FileServiceService, private router: Router, private route: ActivatedRoute){
 
@@ -56,13 +57,14 @@ export class SearchPageComponent implements OnInit, OnDestroy{
 
     this.routerSub = this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
-        document.body.style.overflow = ''; // Restore scroll on navigation
+        document.body.style.overflow = '';
       }
     });
 
-    this.unrestricted = (localStorage.getItem("unrestricted") == "true")
+    this.unrestricted = (localStorage.getItem("unrestricted") == "true");
 
     const searchString  = this.route.snapshot.paramMap.get('searchString') || ''; 
+
     if(searchString == "all"){
 
       const videoPages = Math.ceil(await this.videoService.getTotalVideoCount(this.unrestricted) / 16);
@@ -79,24 +81,18 @@ export class SearchPageComponent implements OnInit, OnDestroy{
 
       this.updateAllVisiblePageNumbers();
 
-      this.searchString = "all"
+      this.searchString = "all";
 
       this.catalog = await this.videoService.loadLatest(1, this.unrestricted);
 
       if(this.catalog.length > 0){
-        this.catalog.forEach(c => {
-          var thumbnail = this.videoService.getThumbnailUrl(c.id);
-          this.thumbnails.push(thumbnail);
-        });
+        this.thumbnails = this.catalog.map(c => this.videoService.getThumbnailUrl(c.id));
       }
 
       this.shortsCatalog = await this.videoService.loadLatestShorts(1, this.unrestricted);
 
       if(this.shortsCatalog.length > 0){
-        this.shortsCatalog.forEach(c => {
-          var thumbnail = this.videoService.getThumbnailUrl(c.id);
-          this.thumbnailsShorts.push(thumbnail);
-        });
+        this.thumbnailsShorts = this.shortsCatalog.map(c => this.videoService.getThumbnailUrl(c.id));
       }
 
       this.imageCatalog = await this.videoService.loadLatestImages(1, this.unrestricted);
@@ -105,7 +101,7 @@ export class SearchPageComponent implements OnInit, OnDestroy{
     } else {
       this.searchString = searchString;
 
-      var searchArray = this.searchString
+      const searchArray = this.searchString
           .split(' ')
           .map(t => t.trim())
           .filter(t => t.length > 0);
@@ -116,37 +112,41 @@ export class SearchPageComponent implements OnInit, OnDestroy{
       this.catalog = await this.videoService.search(searchArray, this.unrestricted);
 
       if(this.catalog.length > 0){
-        this.catalog.forEach(c => {
-          var thumbnail = this.videoService.getThumbnailUrl(c.id);
-          this.thumbnails.push(thumbnail);
-        });
+        this.thumbnails = this.catalog.map(c => this.videoService.getThumbnailUrl(c.id));
       }
 
       this.shortsCatalog = await this.videoService.searchShorts(searchArray, this.unrestricted);
 
       if(this.shortsCatalog.length > 0){
-        this.shortsCatalog.forEach(c => {
-          var thumbnail = this.videoService.getThumbnailUrl(c.id);
-          this.thumbnailsShorts.push(thumbnail);
-        });
+        this.thumbnailsShorts = this.shortsCatalog.map(c => this.videoService.getThumbnailUrl(c.id));
       }
     }
 
-    if(this.catalog.length == 0 && this.comicCatalog.length > 0){
-      this.isVideo = false;
-      this.isComic = true;
-    } else if (this.catalog.length == 0 && this.imageCatalog.length > 0){
-      this.isVideo = false;
-      this.isImages = true;
-    } else if (this.imageCatalog.length == 0 && this.shortsCatalog.length > 0){
-      this.isVideo = false;
-      this.isShorts = true;
-    }
+    // ✅ NEW: Listen to query param changes
+    this.queryParamSub = this.route.queryParamMap.subscribe(params => {
+      const type = params.get('type');
+
+      if (type) {
+        this.setView(type);
+      } else {
+        // fallback to your original logic
+        if(this.catalog.length == 0 && this.comicCatalog.length > 0){
+          this.setView("comics");
+        } else if (this.catalog.length == 0 && this.imageCatalog.length > 0){
+          this.setView("images");
+        } else if (this.imageCatalog.length == 0 && this.shortsCatalog.length > 0){
+          this.setView("shorts");
+        } else {
+          this.setView("video");
+        }
+      }
+    });
   }
 
   ngOnDestroy() {
-    document.body.style.overflow = ''; // Restore scroll on destroy
+    document.body.style.overflow = '';
     this.routerSub?.unsubscribe();
+    this.queryParamSub?.unsubscribe(); // ✅ NEW
   }
 
   async goToVideoPage(page: number) {
@@ -230,31 +230,40 @@ export class SearchPageComponent implements OnInit, OnDestroy{
   }
 
   setView(view: string){
-    if(view == "images") {
-      this.isVideo = false;
-      this.isComic = false;
-      this.isImages = true;
-      this.isShorts = false;
-    } else if (view == "comics") {
-      this.isVideo = false;
-      this.isImages = false;
-      this.isComic = true;
-      this.isShorts = false;
-    } else if (view == "shorts") {
-      this.isVideo = false;
-      this.isImages = false;
-      this.isComic = false;
-      this.isShorts = true;
-    } else {
-      this.isComic = false;
-      this.isImages = false;
-      this.isVideo = true;
-      this.isShorts = false;
-    }
-  }
 
-  getImage(iamgeId: string){
-    return this.videoService.getImageUrl(iamgeId);
+      if(view == "images") {
+        this.isVideo = false;
+        this.isComic = false;
+        this.isImages = true;
+        this.isShorts = false;
+      } else if (view == "comics") {
+        this.isVideo = false;
+        this.isImages = false;
+        this.isComic = true;
+        this.isShorts = false;
+      } else if (view == "shorts") {
+        this.isVideo = false;
+        this.isImages = false;
+        this.isComic = false;
+        this.isShorts = true;
+      } else {
+        this.isComic = false;
+        this.isImages = false;
+        this.isVideo = true;
+        this.isShorts = false;
+        view = "video"; // normalize
+      }
+
+      // ✅ NEW: Sync URL with current view
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { type: view },
+        queryParamsHandling: 'merge'
+      });
+    }
+
+  getImage(imageId: string){
+    return this.videoService.getImageUrl(imageId);
   }
 
   getVideo(videoId: string){

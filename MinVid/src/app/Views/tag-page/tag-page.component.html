@@ -184,6 +184,9 @@
 
 <div class="frontPageContainer" *ngIf="showTagList">
     <h1 style="color: #ba005c;">Browse by tag</h1>
+    <div class="topTags">
+        <a mat-stroked-button (click)="navigateToTag(tag)" class="tag" *ngFor="let tag of topTags">{{ capitalize(tag) }} ({{ getTagCount(tag) }})</a>
+    </div>
     <div class="tag-groups">
         <ng-container *ngFor="let group of groupedTags | keyvalue: alphabeticalSort">
           <div class="tag-group">

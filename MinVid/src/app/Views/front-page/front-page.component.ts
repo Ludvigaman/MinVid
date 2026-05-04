@@ -69,11 +69,6 @@ export class FrontPageComponent implements OnInit, OnDestroy {
 
     this.allTags = await this.videoService.getTagList(this.unrestricted);
     this.allTagsCount = await this.videoService.getTagListCount(this.unrestricted);
-
-    this.topTags = [...this.allTags]
-      .sort((a, b) => this.getTagCount(b) - this.getTagCount(a))
-      .slice(0, 10);
-
   }
 
   getTagCount(tag: string): number {
@@ -83,7 +78,6 @@ export class FrontPageComponent implements OnInit, OnDestroy {
   navigateToTag(tag: string) {
     window.location.href = "/tags/" + tag;
   }
-
 
   ngOnDestroy() {
     document.body.style.overflow = ''; // Restore scroll on destroy
@@ -212,6 +206,10 @@ export class FrontPageComponent implements OnInit, OnDestroy {
 
   navigate(id: string){
     this.router.navigateByUrl("/video/" + id)
+  }
+
+  goToCatalog(type: string){
+    this.router.navigateByUrl(`/search/all?type=${type}`)
   }
 
   toTag(tag: string){

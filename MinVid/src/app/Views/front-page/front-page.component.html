@@ -1,7 +1,10 @@
 <div class="frontPageContainer">
-    <h1 style="color: #ba005c;">Most popular tags</h1>
-    <div class="topTags">
-        <a mat-stroked-button (click)="navigateToTag(tag)" class="tag" *ngFor="let tag of topTags">{{ capitalize(tag) }} ({{ getTagCount(tag) }})</a>
+    <h1 style="color: #ba005c;">Filter content</h1>
+    <div class="button">
+        <a mat-stroked-button (click)="goToCatalog('images')" class="selectionButton"><mat-icon class="ico">image</mat-icon>Images</a>
+        <a mat-stroked-button (click)="goToCatalog('comics')" class="selectionButton"><mat-icon class="ico">book</mat-icon>Comics / Albums</a>
+        <a mat-stroked-button (click)="goToCatalog('videos')" class="selectionButton"><mat-icon class="ico">subscriptions</mat-icon>Videos</a>
+        <a mat-stroked-button (click)="goToCatalog('shorts')" class="selectionButton"><mat-icon class="ico">stay_primary_portrait</mat-icon>Shorts</a>
     </div>
     <h1 style="color: #ba005c;">Latest videos</h1>
     <div class="recommendations">

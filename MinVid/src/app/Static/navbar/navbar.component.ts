@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { FileServiceService } from '../../Services/file-service.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -10,28 +9,24 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class NavbarComponent {
 
-  input: string;
-  
-  constructor(private router: Router, private route: ActivatedRoute){
+  input: string = '';
 
-  }
+  constructor(private router: Router, private route: ActivatedRoute){}
 
   search(){
-    if(this.input == undefined || this.input == "" || this.input == " ") {
-      window.location.href = "search/all";
+    const value = this.input?.trim();
+
+    if(!value){
+      this.router.navigate(['/search', 'all']);
     } else {
-      window.location.href = "search/" + this.input;
+      this.router.navigate(['/search', value]);
     }
   }
 
   navigate(url: string){
-    var path = window.location.pathname.split("/");
-    console.log(path, url)
-    if(url.includes(path[1])){
-      window.location.href = url;
-    } else {
-      this.router.navigateByUrl(url)
+    if (this.router.url === '/' + url) {
+      return;
     }
+    this.router.navigateByUrl(url);
   }
-
 }

@@ -1,10 +1,10 @@
 <div class="frontPageContainer">
-    <div class="button">
+    <h1 style="color: #ba005c;">Filter content</h1>
+    <div>
         <a mat-stroked-button (click)="setView('images')" class="selectionButton"><mat-icon class="ico">image</mat-icon>Images</a>
         <a mat-stroked-button (click)="setView('comics')" class="selectionButton"><mat-icon class="ico">book</mat-icon>Comics / Albums</a>
         <a mat-stroked-button (click)="setView('videos')" class="selectionButton"><mat-icon class="ico">subscriptions</mat-icon>Videos</a>
         <a mat-stroked-button (click)="setView('shorts')" class="selectionButton"><mat-icon class="ico">stay_primary_portrait</mat-icon>Shorts</a>
-        
     </div>
     <ng-container *ngIf="isComic">
         <h1 style="color: #ba005c;" *ngIf="searchString != 'all'">Comic results for : {{capitalize(searchString)}}</h1>
