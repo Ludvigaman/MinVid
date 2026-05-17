@@ -107,17 +107,20 @@
             <input type="file" accept="video/*" (change)="onFileSelected($event)">
         </div>
 
-        <mat-checkbox style="margin-left: -15px;" [(ngModel)]="isShort"><p style="color: white;">Upload video as Short?</p></mat-checkbox>
-
-        <h3>Title</h3>
-        <mat-form-field appearance="outline" class="inputField">
-            <input matInput style="color: white;" placeholder="Title" [(ngModel)]="title">
-        </mat-form-field>
+        <mat-checkbox style="margin-left: -15px;" [(ngModel)]="isShort"><p style="color: white; margin: 0">Upload video as Short?</p></mat-checkbox>
+        <mat-checkbox style="margin-left: -15px;" [(ngModel)]="is360" *ngIf="!isShort"><p style="color: white; margin: 0">Use 360 / VR player for video?</p></mat-checkbox>
         
-        <h3 style="margin-top: 0;">Description</h3>
-        <mat-form-field appearance="outline" class="inputField">
-            <textarea matInput style="color: white;" maxlength="256" placeholder="Description" [(ngModel)]="description"></textarea>
-        </mat-form-field>
+        <ng-container *ngIf="!isShort">
+            <h3>Title</h3>
+            <mat-form-field appearance="outline" class="inputField">
+                <input matInput style="color: white;" placeholder="Title" [(ngModel)]="title">
+            </mat-form-field>
+
+            <h3 style="margin-top: 0;">Description</h3>
+            <mat-form-field appearance="outline" class="inputField">
+                <textarea matInput style="color: white;" maxlength="256" placeholder="Description" [(ngModel)]="description"></textarea>
+            </mat-form-field>
+        </ng-container>
             
         <h3 style="margin-bottom: 5px;">Selected tags</h3>
         <i style="margin-bottom: 16px;">Use Enter to select a suggested tag, or Tab to accept your manual input.</i>

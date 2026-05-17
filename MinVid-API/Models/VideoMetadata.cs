@@ -10,5 +10,6 @@
         public DateTime uploadDate { get; set; }
         public int duration { get; set; }
         public bool? isShort { get; set; }
+        public bool? is360 { get; set; }
     }
 }

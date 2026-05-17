@@ -742,6 +742,8 @@ namespace MinVid_API.Services
                 existingMetadata.description = updatedData.description ?? existingMetadata.description;
                 existingMetadata.tags = updatedData.tags ?? existingMetadata.tags;
                 existingMetadata.format = updatedData.format ?? existingMetadata.format;
+                existingMetadata.isShort = updatedData.isShort ?? existingMetadata.isShort;
+                existingMetadata.is360 = updatedData.is360 ?? existingMetadata.is360;
 
                 var newJson = JsonSerializer.Serialize(existingMetadata, new JsonSerializerOptions { WriteIndented = true });
                 await File.WriteAllTextAsync(metadataPath, newJson);

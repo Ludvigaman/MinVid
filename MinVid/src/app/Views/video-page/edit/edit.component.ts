@@ -18,6 +18,8 @@ export class EditComponent {
   tagString: string;
   newVideoMetadata: VideoMetadata;
   selectedFile: File | null = null;
+  isShort: boolean;
+  is360: boolean;
   
   constructor(public dialogRef: MatDialogRef<VideoPageComponent>, @Inject(MAT_DIALOG_DATA) public data: VideoMetadata, private videoService: FileServiceService) 
   { 

@@ -46,6 +46,7 @@ export class UploadPageComponent implements OnInit {
   isUploadingComic = false;
   
   isShort: boolean;
+  is360: boolean;
   isVideo = true;
   isComic = false;
   isImage = false;
@@ -158,30 +159,57 @@ export class UploadPageComponent implements OnInit {
   }
   
   async upload() {
-    if (!this.selectedFile) {
-      alert('Please select a video file.');
-      return;
-    } else if(this.title == "" || this.title == undefined) {
-      alert('Please enter a title.');
-      return;
-    } else if(this.description == "" || this.description == undefined){
-      alert('Please enter a description.');
-      return;
-    } else if(this.selectedTags.length == 0){
-      alert('Please enter at least one tag.');
-      return;
-    }
+    var metadata: VideoMetadata;
+      
+    if(this.isShort){
+      if (!this.selectedFile) {
+        alert('Please select a video file.');
+        return;
+      } else if(this.selectedTags.length == 0){
+        alert('Please enter at least one tag.');
+        return;
+      }
 
-    var metadata: VideoMetadata = {
-      id: 'no-id',
-      title: this.title,
-      description: this.description,
-      uploadDate: new Date(),
-      tags: this.selectedTags,
-      format: this.selectedFile.name.split('.').pop() || 'mp4',
-      duration: 0,
-      isShort: this.isShort
-    };
+      metadata = {
+        id: 'no-id',
+        title: "-",
+        description: "-",
+        uploadDate: new Date(),
+        tags: this.selectedTags,
+        format: this.selectedFile.name.split('.').pop() || 'mp4',
+        duration: 0,
+        isShort: true,
+        is360: false
+      };
+
+    } else {
+      if (!this.selectedFile) {
+        alert('Please select a video file.');
+        return;
+      } else if(this.title == "" || this.title == undefined) {
+        alert('Please enter a title.');
+        return;
+      } else if(this.description == "" || this.description == undefined){
+        alert('Please enter a description.');
+        return;
+      } else if(this.selectedTags.length == 0){
+        alert('Please enter at least one tag.');
+        return;
+      }
+
+      metadata = {
+        id: 'no-id',
+        title: this.title,
+        description: this.description,
+        uploadDate: new Date(),
+        tags: this.selectedTags,
+        format: this.selectedFile.name.split('.').pop() || 'mp4',
+        duration: 0,
+        isShort: false,
+        is360: this.is360
+      };
+      
+    }
 
     console.log(metadata);
 

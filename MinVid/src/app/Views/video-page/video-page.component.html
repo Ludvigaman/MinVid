@@ -1,10 +1,42 @@
 <div class="pageContent"  *ngIf="videoLoaded">
     <div class="mainVideo">
         <div class="videoContainer">
-            <video controls class="video" (click)="play()" poster={{videoThumbnailUrl}} #videoPlayer>
-                <source src="{{videoUrl}}" type="{{videoFormat}}">
-                Your browser does not support the video tag.
+            
+            <div class="playOverlay" *ngIf="paused && is360" (click)="play()">
+                <mat-icon class="playIcon">play_circle_filled</mat-icon>
+
+                <button class="fullscreenBtn" (click)="toggleFullscreen()">
+                    <mat-icon>fullscreen</mat-icon>
+                </button>
+            </div>
+            
+            <video
+            *ngIf="!is360"
+            controls
+            class="video"
+            (click)="play()"
+            [poster]="videoThumbnailUrl"
+            #videoPlayer>
+
+                <source [src]="videoUrl" [type]="videoFormat">
             </video>
+
+            <div
+            *ngIf="is360"
+            class="threeContainer"
+            #threeContainer
+            (click)="play()">
+                <img src="{{videoThumbnailUrl}}" *ngIf="show360poster" style="width: 100%; align-self: center;">
+            </div>
+
+            <video
+            #video360
+            [src]="videoUrl"
+            playsinline
+            webkit-playsinline
+            style="display:none">
+            </video>
+
             <div class="videoInfo">
                 <div class="first">
                     <h2 style="margin-bottom: 0;">{{videoMetadata.title}}</h2>

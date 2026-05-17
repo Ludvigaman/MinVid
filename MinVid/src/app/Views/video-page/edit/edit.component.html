@@ -21,10 +21,15 @@
     <div class="fileZone" >
         <input type="file" accept=".jpg,.jpeg,.png" (change)="onFileSelected($event)">
     </div>
+
+    <mat-checkbox style="margin-left: -15px;" [(ngModel)]="isShort"><p style="color: white;">Move video to short? <i>(Action not revertable yet)</i></p></mat-checkbox>
+    <mat-checkbox style="margin-left: -15px;" [(ngModel)]="is360"><p style="color: white;">Enable video 360 / VR player?</p></mat-checkbox>
+
     
     <div class="buttons">
-        <a mat-stroked-button (click)="submit()" style="margin-top: 20px; margin-right: 10px; text-align: center;">Save video info</a>
         <a mat-stroked-button (click)="saveThumbnail()" style="margin-top: 20px; text-align: center;">Upload thumbnail</a>
+        &nbsp;
+        <a mat-stroked-button (click)="submit()" style="margin-top: 20px; margin-right: 10px; text-align: center;">Save video info</a>
     </div>
 
 </div>

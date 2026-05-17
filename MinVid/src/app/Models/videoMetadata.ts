@@ -7,8 +7,9 @@ export class VideoMetadata {
     uploadDate: Date;
     duration: number; 
     isShort?: boolean;
+    is360?: boolean;
 
-    constructor(title: string, format: string, description: string, tags: string[], uploadDate: Date, duration: number, isShort?: boolean){
+    constructor(title: string, format: string, description: string, tags: string[], uploadDate: Date, duration: number, isShort?: boolean, is360?: boolean) {
         this.title = title;
         this.format = format;
         this.description = description;
@@ -16,5 +17,6 @@ export class VideoMetadata {
         this.uploadDate = new Date();
         this.duration = duration;
         this.isShort = isShort;
+        this.is360 = is360;
     }
 }
