@@ -28,6 +28,7 @@ export class EditComponent {
     this.description = data.description;
     this.tags = data.tags;
     this.tagString = this.tags.join(", ");
+    this.is360 = this.data.is360 || false;
   }
 
   onNoClick() {
@@ -76,6 +77,8 @@ export class EditComponent {
     this.newVideoMetadata.title = this.title;
     this.newVideoMetadata.description = this.description;
     this.newVideoMetadata.tags = this.tagString.split(',').map(t => t.trim());
+    this.newVideoMetadata.is360 = this.is360;
+    this.newVideoMetadata.isShort = this.isShort;
 
     this.dialogRef.close(this.newVideoMetadata)
 
